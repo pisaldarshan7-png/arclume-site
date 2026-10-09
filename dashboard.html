@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color" content="#0a0907" />
+
+    <title>Arclume — Control Center</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+
+  <body>
+    <div class="dash-grain" aria-hidden="true"></div>
+
+    <!-- ================================================
+       LOADING
+  ================================================= -->
+
+    <section class="state-screen" id="loadingState">
+      <div class="state-mark">A</div>
+
+      <span class="mono state-code"> ARCLUME / BOOT </span>
+
+      <h1>Loading control surface.</h1>
+
+      <div class="boot-line">
+        <i></i>
+      </div>
+    </section>
+
+    <!-- ================================================
+       LOGIN
+  ================================================= -->
+
+    <section class="state-screen hidden" id="loginState">
+      <div class="state-mark">A</div>
+
+      <span class="mono state-code"> AUTH / REQUIRED </span>
+
+      <h1>Connect Discord.</h1>
+
+      <p>
+        Sign in to open the Arclume control surface for servers you can manage.
+      </p>
+
+      <a class="state-action" href="/auth/discord">
+        Continue with Discord
+        <span>↗</span>
+      </a>
+    </section>
+
+    <!-- ================================================
+       NO SERVER
+  ================================================= -->
+
+    <section class="state-screen hidden" id="noServerState">
+      <div class="state-mark">A</div>
+
+      <span class="mono state-code"> SERVER / NONE </span>
+
+      <h1>No manageable server.</h1>
+
+      <p>
+        Arclume only shows servers where your Discord account has Administrator
+        or Manage Server access.
+      </p>
+
+      <a class="state-action" href="logout">
+        Use another Discord account
+        <span>↗</span>
+      </a>
+    </section>
+
+    <!-- ================================================
+       CONTROL APP
+  ================================================= -->
+
+    <div class="control-app hidden" id="controlApp">
+      <!-- HEADER -->
+
+      <header class="control-header">
+        <button class="brand-button" data-page="overview">
+          <span class="brand-mark"> A </span>
+
+          <span>
+            <b> ARCLUME </b>
+
+            <small class="mono"> CONTROL SURFACE </small>
+          </span>
+        </button>
+
+        <div class="header-center mono">
+          <span id="pageCode"> 00 / OVERVIEW </span>
+        </div>
+
+        <div class="header-actions">
+          <button class="command-button" id="commandButton">
+            <span>⌕</span>
+
+            Command
+
+            <kbd> Ctrl K </kbd>
+          </button>
+
+          <button class="server-button" id="serverButton">
+            <span class="server-button-icon" id="headerServerIcon"> A </span>
+
+            <span class="server-button-copy">
+              <small class="mono"> ACTIVE SERVER </small>
+
+              <b id="headerServerName"> Loading… </b>
+            </span>
+
+            <span> ⌄ </span>
+          </button>
+        </div>
+      </header>
+
+      <!-- ================================================
+         MAIN
+    ================================================= -->
+
+      <main class="control-main">
+        <!-- ============================================
+           OVERVIEW
+      ============================================= -->
+
+        <section class="dash-page active" id="page-overview">
+          <div class="overview-hero">
+            <div class="overview-title">
+              <span class="mono eyebrow"> 00 / LIVE CONTEXT </span>
+
+              <h1 id="heroServerName">Server</h1>
+
+              <p>One surface for the systems that shape your community.</p>
+            </div>
+
+            <div class="overview-signal">
+              <span class="mono"> BOT SIGNAL </span>
+
+              <strong id="botStatusText"> CHECKING </strong>
+
+              <i id="botStatusDot"></i>
+            </div>
+          </div>
+
+          <!-- SERVER IDENTITY -->
+
+          <div class="server-identity-band">
+            <div class="server-identity-icon" id="heroServerIcon">A</div>
+
+            <div class="identity-meta">
+              <span class="mono"> DISCORD COMMUNITY </span>
+
+              <b id="identityServerName"> Server </b>
+
+              <small class="mono" id="identityServerId"> ID — </small>
+            </div>
+
+            <div class="identity-user">
+              <span class="mono"> SIGNED IN AS </span>
+
+              <b id="identityUserName"> Discord User </b>
+            </div>
+
+            <button class="switch-server" id="overviewSwitchServer">
+              SWITCH SERVER ↗
+            </button>
+          </div>
+
+          <!-- ============================================
+             SYSTEM LEDGER
+        ============================================= -->
+
+          <section class="status-ledger">
+            <div class="ledger-heading">
+              <span class="mono"> 01 / SYSTEM STATUS </span>
+
+              <h2>Live control ledger</h2>
+            </div>
+
+            <div class="ledger-table">
+              <!-- PROTECTION -->
+
+              <button class="ledger-row active" data-open-page="automod">
+                <span class="ledger-index mono"> 01 </span>
+
+                <span class="ledger-symbol orange"> ◆ </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> SECURITY </small>
+
+                  <b> Protection Matrix </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> RULES </small>
+
+                  <b id="overviewRuleCount"> 0 </b>
+                </span>
+
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b id="overviewProtectionState"> ARMED </b>
+                </span>
+
+                <span class="ledger-arrow"> ↗ </span>
+              </button>
+
+              <!-- WELCOME -->
+
+              <button
+                class="ledger-row"
+                onclick="window.location.href = '/welcome.html'"
+              >
+                <span class="ledger-index mono"> 02 </span>
+
+                <span class="ledger-symbol violet"> ✦ </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> COMMUNITY </small>
+
+                  <b> Welcome Flow </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> MODULE </small>
+
+                  <b> AVAILABLE </b>
+                </span>
+
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b> LIVE </b>
+                </span>
+
+                <span class="ledger-arrow"> ↗ </span>
+              </button>
+
+              <!-- ROLES -->
+
+              <button
+                class="ledger-row active"
+                onclick="window.location.href = '/roles.html'"
+              >
+                <span class="ledger-index mono"> 03 </span>
+
+                <span class="ledger-symbol lime"> ◎ </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> IDENTITY </small>
+
+                  <b> Role Management </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> MODULE </small>
+
+                  <b> AVAILABLE </b>
+                </span>
+
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b> LIVE </b>
+                </span>
+
+                <span class="ledger-arrow"> ↗ </span>
+              </button>
+
+              <!-- SIGNAL LOG -->
+
+              <button
+                class="ledger-row active"
+                onclick="window.location.href = '/logs.html'"
+              >
+                <span class="ledger-index mono"> 04 </span>
+
+                <span class="ledger-symbol"> ⌁ </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> OBSERVABILITY </small>
+
+                  <b> Signal Log </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> MODULE </small>
+
+                  <b> AVAILABLE </b>
+                </span>
+
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b> LIVE </b>
+                </span>
+
+                <span class="ledger-arrow"> ↗ </span>
+              </button>
+            </div>
+          </section>
+        </section>
+
+        <!-- ============================================
+           PROTECTION PAGE
+      ============================================= -->
+
+        <section class="dash-page" id="page-automod">
+          <div class="page-hero compact">
+            <div>
+              <span class="mono eyebrow"> 01 / SECURITY </span>
+
+              <h1>
+                Protection
+                <br />
+
+                <span> Matrix. </span>
+              </h1>
+
+              <p>
+                Rules are written as a simple operational sequence: trigger →
+                response → state.
+              </p>
+            </div>
+
+            <div class="master-control">
+              <div>
+                <span class="mono"> MASTER PROTECTION </span>
+
+                <b id="masterProtectionLabel"> ARMED </b>
+              </div>
+
+              <button class="toggle on" id="masterProtectionToggle">
+                <i></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="matrix-note mono">
+            LOCAL DRAFT — THESE SETTINGS ARE NOT YET SYNCED TO THE LIVE BOT
+          </div>
+
+          <div class="matrix-toolbar">
+            <div class="matrix-summary">
+              <span>
+                <small class="mono"> TOTAL </small>
+
+                <b id="summaryTotal"> 0 </b>
+              </span>
+
+              <span>
+                <small class="mono"> ACTIVE </small>
+
+                <b id="summaryActive"> 0 </b>
+              </span>
+
+              <span>
+                <small class="mono"> DORMANT </small>
+
+                <b id="summaryDormant"> 0 </b>
+              </span>
+            </div>
+
+            <div class="matrix-actions">
+              <label class="matrix-search">
+                <span> ⌕ </span>
+
+                <input id="ruleSearch" placeholder="Search rules…" />
+              </label>
+
+              <button class="secondary-action" id="matrixDefaultsButton">
+                DEFAULTS
+              </button>
+
+              <button class="primary-action" id="newRuleButton">
+                + NEW RULE
+              </button>
+            </div>
+          </div>
+
+          <div class="rule-ledger">
+            <div class="rule-ledger-head mono">
+              <span> RULE </span>
+
+              <span> TRIGGER </span>
+
+              <span> RESPONSE </span>
+
+              <span> STATE </span>
+
+              <span></span>
+            </div>
+
+            <div id="rulesList"></div>
+          </div>
+
+          <div class="empty-state hidden" id="rulesEmpty">
+            No matching rules.
+          </div>
+        </section>
+
+        <!-- ============================================
+           SYSTEM INDEX
+      ============================================= -->
+
+        <section class="dash-page" id="page-systems">
+          <div class="page-hero compact">
+            <div>
+              <span class="mono eyebrow"> 02 / MODULE NETWORK </span>
+
+              <h1>
+                System
+                <br />
+
+                <span> Index. </span>
+              </h1>
+
+              <p>
+                Arclume modules are arranged as an operational sequence, not a
+                grid of cards.
+              </p>
+            </div>
+          </div>
+
+          <div class="system-index">
+            <!-- PROTECTION -->
+
+            <article class="system-index-row live">
+              <span class="mono"> 01 </span>
+
+              <span class="system-index-symbol orange"> ◆ </span>
+
+              <div>
+                <small class="mono"> SECURITY </small>
+
+                <h3>Protection Matrix</h3>
+
+                <p>Automated moderation and protection rules.</p>
+              </div>
+
+              <b class="mono"> AVAILABLE </b>
+
+              <button data-open-page="automod">CONFIGURE ↗</button>
+            </article>
+
+            <!-- WELCOME -->
+
+            <article class="system-index-row live">
+              <span class="mono"> 02 </span>
+
+              <span class="system-index-symbol violet"> ✦ </span>
+
+              <div>
+                <small class="mono"> COMMUNITY </small>
+
+                <h3>Welcome Flow</h3>
+
+                <p>Join and goodbye experiences.</p>
+              </div>
+
+              <b class="mono"> AVAILABLE </b>
+
+              <button onclick="window.location.href = '/welcome.html'">
+                CONFIGURE ↗
+              </button>
+            </article>
+
+            <!-- ROLES -->
+
+            <article class="system-index-row live">
+              <span class="mono"> 03 </span>
+
+              <span class="system-index-symbol lime"> ◎ </span>
+
+              <div>
+                <small class="mono"> IDENTITY </small>
+
+                <h3>Role Management</h3>
+
+                <p>Manual, automatic and self-service member roles.</p>
+              </div>
+
+              <b class="mono"> AVAILABLE </b>
+
+              <button onclick="window.location.href = '/roles.html'">
+                CONFIGURE ↗
+              </button>
+            </article>
+
+            <!-- SIGNAL LOG -->
+
+            <article class="system-index-row live">
+              <span class="mono"> 04 </span>
+
+              <span class="system-index-symbol"> ⌁ </span>
+
+              <div>
+                <small class="mono"> OBSERVABILITY </small>
+
+                <h3>Signal Log</h3>
+
+                <p>Member, role, message and moderation history.</p>
+              </div>
+
+              <b class="mono"> AVAILABLE </b>
+
+              <button onclick="window.location.href = '/logs.html'">
+                CONFIGURE ↗
+              </button>
+            </article>
+
+            <!-- TICKETS -->
+
+            <article class="system-index-row">
+              <span class="mono"> 05 </span>
+
+              <span class="system-index-symbol orange"> ◌ </span>
+
+              <div>
+                <small class="mono"> SUPPORT </small>
+
+                <h3>Ticket Relay</h3>
+
+                <p>Private support channels and routing.</p>
+              </div>
+
+              <b class="mono"> STAGED </b>
+
+              <button disabled>SOON</button>
+            </article>
+
+            <!-- COMMANDS -->
+
+            <article class="system-index-row">
+              <span class="mono"> 06 </span>
+
+              <span class="system-index-symbol violet"> ⌘ </span>
+
+              <div>
+                <small class="mono"> AUTOMATION </small>
+
+                <h3>Command Engine</h3>
+
+                <p>Command permissions and utility actions.</p>
+              </div>
+
+              <b class="mono"> STAGED </b>
+
+              <button disabled>SOON</button>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <!-- ================================================
+         BOTTOM NAVIGATION
+    ================================================= -->
+
+      <nav class="control-dock" aria-label="Dashboard navigation">
+        <button class="active" data-page="overview">
+          <span> 00 </span>
+
+          <b> Overview </b>
+        </button>
+
+        <button data-page="automod">
+          <span> 01 </span>
+
+          <b> Protection </b>
+        </button>
+
+        <button data-page="systems">
+          <span> 02 </span>
+
+          <b> Systems </b>
+        </button>
+
+        <a href="roles.html">
+          <span> 03 </span>
+
+          <b> Roles </b>
+        </a>
+
+        <a href="logs.html">
+          <span> 04 </span>
+
+          <b> Logs </b>
+        </a>
+
+        <a href="logout">
+          <span> ↗ </span>
+
+          <b> Logout </b>
+        </a>
+      </nav>
+    </div>
+
+    <!-- ================================================
+       SERVER OVERLAY
+  ================================================= -->
+
+    <div class="overlay hidden" id="serverOverlay">
+      <section class="server-vault">
+        <header>
+          <div>
+            <span class="mono eyebrow"> SERVER / VAULT </span>
+
+            <h2>Choose context.</h2>
+
+            <p>Only servers you can manage are shown.</p>
+          </div>
+
+          <button class="close-button" data-close="serverOverlay">×</button>
+        </header>
+
+        <div class="server-list" id="serverList"></div>
+      </section>
+    </div>
+
+    <!-- ================================================
+       COMMAND PALETTE
+  ================================================= -->
+
+    <div class="overlay command-overlay hidden" id="commandOverlay">
+      <section class="command-palette">
+        <label>
+          <span> ⌕ </span>
+
+          <input
+            id="commandInput"
+            placeholder="Type a command…"
+            autocomplete="off"
+          />
+
+          <kbd> ESC </kbd>
+        </label>
+
+        <div id="commandResults"></div>
+
+        <footer class="mono">
+          ↑ ↓ NAVIGATE &nbsp;&nbsp; ENTER SELECT &nbsp;&nbsp; CTRL K OPEN
+        </footer>
+      </section>
+    </div>
+
+    <!-- ================================================
+       RULE DRAWER
+  ================================================= -->
+
+    <div class="drawer-backdrop hidden" id="ruleDrawerBackdrop">
+      <aside class="rule-drawer">
+        <header>
+          <div>
+            <span class="mono eyebrow"> RULE / EDITOR </span>
+
+            <h2 id="ruleDrawerTitle">New rule</h2>
+          </div>
+
+          <button class="close-button" id="closeRuleDrawer">×</button>
+        </header>
+
+        <div class="drawer-body">
+          <section class="drawer-step">
+            <span class="step-no mono"> 00 </span>
+
+            <div>
+              <b class="mono step-label"> IDENTITY </b>
+
+              <label>
+                <small class="mono"> RULE NAME </small>
+
+                <input id="ruleName" />
+              </label>
+
+              <label>
+                <small class="mono"> DESCRIPTION </small>
+
+                <textarea id="ruleDescription"></textarea>
+              </label>
+            </div>
+          </section>
+
+          <section class="drawer-step">
+            <span class="step-no mono"> 01 </span>
+
+            <div>
+              <b class="mono step-label"> TRIGGER </b>
+
+              <label>
+                <small class="mono"> TYPE </small>
+
+                <select id="ruleType">
+                  <option value="spam">Message Spam</option>
+
+                  <option value="duplicate">Duplicate Messages</option>
+
+                  <option value="mentions">Mass Mentions</option>
+
+                  <option value="invites">Discord Invites</option>
+
+                  <option value="links">External Links</option>
+
+                  <option value="caps">Excessive Caps</option>
+
+                  <option value="words">Word Filter</option>
+                </select>
+              </label>
+
+              <div class="two-col">
+                <label>
+                  <small class="mono"> THRESHOLD </small>
+
+                  <input id="ruleThreshold" type="number" min="1" />
+                </label>
+
+                <label>
+                  <small class="mono"> WINDOW / SEC </small>
+
+                  <input id="ruleWindow" type="number" min="1" />
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section class="drawer-step">
+            <span class="step-no mono"> 02 </span>
+
+            <div>
+              <b class="mono step-label"> RESPONSE </b>
+
+              <label>
+                <small class="mono"> ACTION </small>
+
+                <select id="ruleAction">
+                  <option>Delete</option>
+
+                  <option>Delete + Warn</option>
+
+                  <option>Delete + Timeout</option>
+                </select>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <footer>
+          <button class="secondary-action" id="cancelRuleDrawer">CANCEL</button>
+
+          <button class="primary-action" id="saveRuleButton">SAVE RULE</button>
+        </footer>
+      </aside>
+    </div>
+
+    <!-- ================================================
+       DEFAULT SETTINGS DRAWER
+  ================================================= -->
+
+    <div class="drawer-backdrop hidden" id="defaultsDrawerBackdrop">
+      <aside class="rule-drawer compact">
+        <header>
+          <div>
+            <span class="mono eyebrow"> MATRIX / DEFAULTS </span>
+
+            <h2>Default response</h2>
+          </div>
+
+          <button class="close-button" id="closeDefaultsDrawer">×</button>
+        </header>
+
+        <div class="drawer-body">
+          <section class="drawer-step">
+            <span class="step-no mono"> A </span>
+
+            <div>
+              <b class="mono step-label"> RESPONSE </b>
+
+              <label>
+                <small class="mono"> DEFAULT ACTION </small>
+
+                <select id="defaultAction">
+                  <option>Delete</option>
+
+                  <option>Delete + Warn</option>
+
+                  <option>Delete + Timeout</option>
+                </select>
+              </label>
+
+              <label>
+                <small class="mono"> TIMEOUT MINUTES </small>
+
+                <input id="defaultTimeout" type="number" min="1" />
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <footer>
+          <button class="secondary-action" id="cancelDefaultsDrawer">
+            CANCEL
+          </button>
+
+          <button class="primary-action" id="saveDefaultsButton">
+            SAVE DEFAULTS
+          </button>
+        </footer>
+      </aside>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>
