@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" content="Arclume Welcome System" />
+
+    <title>Arclume — Welcome System</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #07080b;
+        --panel: #0c0e13;
+        --panel2: #101319;
+        --input: #090b0f;
+
+        --border: rgba(255, 255, 255, 0.075);
+        --border-strong: rgba(255, 255, 255, 0.13);
+
+        --text: #f3f0ea;
+        --muted: rgba(243, 240, 234, 0.48);
+        --muted2: rgba(243, 240, 234, 0.25);
+
+        --cream: #d6cdb5;
+        --green: #8fd0a7;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-height: 100vh;
+
+        background:
+          radial-gradient(
+            circle at 10% 0%,
+            rgba(100, 72, 150, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at 100% 100%,
+            rgba(130, 110, 70, 0.08),
+            transparent 30%
+          ),
+          var(--bg);
+
+        color: var(--text);
+
+        font-family: "Inter", sans-serif;
+
+        overflow-x: hidden;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      select {
+        cursor: pointer;
+      }
+
+      .background-grid {
+        position: fixed;
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: 0.15;
+
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.035) 1px,
+            transparent 1px
+          );
+
+        background-size: 48px 48px;
+
+        mask-image: linear-gradient(to bottom, black, transparent 88%);
+      }
+
+      .shell {
+        width: min(1380px, calc(100% - 40px));
+
+        margin: 0 auto;
+
+        position: relative;
+      }
+
+      /* =================================================
+       HEADER
+    ================================================= */
+
+      .topbar {
+        min-height: 88px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      .topbar-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 18px;
+      }
+
+      .back-button {
+        width: 42px;
+        height: 42px;
+
+        display: grid;
+
+        place-items: center;
+
+        border: 1px solid var(--border);
+
+        background: rgba(255, 255, 255, 0.015);
+
+        transition: 0.2s;
+      }
+
+      .back-button:hover {
+        border-color: var(--border-strong);
+
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .brand {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+      }
+
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+
+        display: grid;
+
+        place-items: center;
+
+        background: #0d0f14;
+
+        border: 1px solid var(--border-strong);
+
+        font-weight: 800;
+
+        font-size: 15px;
+      }
+
+      .brand-copy {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 4px;
+      }
+
+      .brand-copy strong {
+        font-size: 13px;
+
+        letter-spacing: 0.18em;
+      }
+
+      .brand-copy span {
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .connection {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .connection-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: var(--green);
+
+        box-shadow: 0 0 16px rgba(143, 208, 167, 0.5);
+      }
+
+      /* =================================================
+       SERVER
+    ================================================= */
+
+      .server-bar {
+        min-height: 86px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      .server-info {
+        display: flex;
+
+        align-items: center;
+
+        gap: 14px;
+      }
+
+      .server-icon {
+        width: 46px;
+        height: 46px;
+
+        overflow: hidden;
+
+        display: grid;
+
+        place-items: center;
+
+        border: 1px solid var(--border);
+
+        background: var(--panel);
+
+        font-weight: 700;
+      }
+
+      .server-icon img {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+      }
+
+      .server-copy {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 6px;
+      }
+
+      .server-copy span {
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .server-copy strong {
+        font-size: 14px;
+      }
+
+      .system-status {
+        padding: 8px 11px;
+
+        border: 1px solid rgba(143, 208, 167, 0.2);
+
+        background: rgba(143, 208, 167, 0.07);
+
+        color: var(--green);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.12em;
+      }
+
+      /* =================================================
+       HERO
+    ================================================= */
+
+      .hero {
+        padding: 80px 0 68px;
+
+        display: grid;
+
+        grid-template-columns:
+          1.15fr
+          0.85fr;
+
+        gap: 70px;
+
+        align-items: end;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      .eyebrow {
+        display: inline-block;
+
+        margin-bottom: 18px;
+
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.14em;
+      }
+
+      .hero h1 {
+        max-width: 700px;
+
+        font-size: clamp(50px, 7vw, 90px);
+
+        line-height: 0.92;
+
+        letter-spacing: -0.065em;
+
+        font-weight: 700;
+      }
+
+      .hero h1 span {
+        color: var(--cream);
+      }
+
+      .hero p {
+        max-width: 620px;
+
+        margin-top: 28px;
+
+        color: var(--muted);
+
+        line-height: 1.8;
+
+        font-size: 14px;
+      }
+
+      /* =================================================
+       MASTER CARD
+    ================================================= */
+
+      .master-card {
+        padding: 28px;
+
+        border: 1px solid var(--border);
+
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.035),
+          rgba(255, 255, 255, 0.01)
+        );
+      }
+
+      .master-top {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        gap: 20px;
+      }
+
+      .tiny-label {
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .master-top h2 {
+        margin-top: 8px;
+
+        font-size: 26px;
+
+        letter-spacing: -0.04em;
+      }
+
+      .master-bottom {
+        margin-top: 28px;
+
+        padding-top: 20px;
+
+        border-top: 1px solid var(--border);
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 20px;
+      }
+
+      .master-bottom div {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 7px;
+      }
+
+      .master-bottom span {
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .master-bottom strong {
+        font-size: 12px;
+
+        letter-spacing: 0.08em;
+      }
+
+      /* =================================================
+       SWITCH
+    ================================================= */
+
+      .switch {
+        position: relative;
+
+        width: 62px;
+        height: 32px;
+
+        flex-shrink: 0;
+      }
+
+      .switch input {
+        opacity: 0;
+
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+
+        inset: 0;
+
+        background: #090b0f;
+
+        border: 1px solid var(--border-strong);
+
+        transition: 0.25s;
+      }
+
+      .slider::before {
+        content: "";
+
+        position: absolute;
+
+        width: 22px;
+        height: 22px;
+
+        left: 4px;
+        top: 4px;
+
+        background: rgba(255, 255, 255, 0.28);
+
+        transition: 0.25s;
+      }
+
+      .switch input:checked + .slider {
+        background: rgba(143, 208, 167, 0.12);
+
+        border-color: rgba(143, 208, 167, 0.4);
+      }
+
+      .switch input:checked + .slider::before {
+        transform: translateX(30px);
+
+        background: var(--green);
+      }
+
+      /* =================================================
+       SECTIONS
+    ================================================= */
+
+      .section {
+        padding: 72px 0;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      .section-heading {
+        display: grid;
+
+        grid-template-columns:
+          55px
+          1fr;
+
+        gap: 20px;
+
+        margin-bottom: 42px;
+      }
+
+      .section-number {
+        color: var(--muted2);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 10px;
+      }
+
+      .section-heading .eyebrow {
+        margin-bottom: 10px;
+      }
+
+      .section-heading h2 {
+        font-size: 36px;
+
+        letter-spacing: -0.045em;
+      }
+
+      /* =================================================
+       CARDS
+    ================================================= */
+
+      .grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+      }
+
+      .card {
+        padding: 26px;
+
+        border: 1px solid var(--border);
+
+        background: var(--panel);
+      }
+
+      .card.full {
+        grid-column: 1 / -1;
+      }
+
+      .card h3 {
+        margin-bottom: 8px;
+
+        font-size: 18px;
+
+        letter-spacing: -0.025em;
+      }
+
+      .card p {
+        margin-bottom: 22px;
+
+        color: var(--muted);
+
+        font-size: 12px;
+
+        line-height: 1.7;
+      }
+
+      .field-label {
+        display: block;
+
+        margin-bottom: 9px;
+
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.11em;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+
+        border: 1px solid var(--border);
+
+        background: var(--input);
+
+        color: var(--text);
+
+        outline: none;
+
+        transition: 0.2s;
+      }
+
+      input,
+      select {
+        height: 52px;
+
+        padding: 0 15px;
+      }
+
+      textarea {
+        min-height: 145px;
+
+        padding: 15px;
+
+        resize: vertical;
+
+        line-height: 1.65;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(214, 205, 181, 0.4);
+      }
+
+      .option-row {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 24px;
+      }
+
+      .option-copy h3 {
+        margin-bottom: 8px;
+      }
+
+      .option-copy p {
+        margin: 0;
+
+        color: var(--muted);
+
+        line-height: 1.65;
+      }
+
+      .secondary-button {
+        min-height: 42px;
+
+        padding: 0 16px;
+
+        border: 1px solid var(--border);
+
+        background: transparent;
+
+        color: var(--text);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .secondary-button:hover {
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      /* =================================================
+       VARIABLES
+    ================================================= */
+
+      .variables {
+        margin-top: 16px;
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 8px;
+      }
+
+      .variable {
+        padding: 7px 10px;
+
+        border: 1px solid var(--border);
+
+        background: rgba(255, 255, 255, 0.015);
+
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+      }
+
+      /* =================================================
+       PREVIEW
+    ================================================= */
+
+      .preview {
+        max-width: 760px;
+
+        padding: 24px;
+
+        display: flex;
+
+        gap: 15px;
+
+        border: 1px solid var(--border);
+
+        background: #111318;
+      }
+
+      .bot-avatar {
+        width: 44px;
+        height: 44px;
+
+        flex-shrink: 0;
+
+        display: grid;
+
+        place-items: center;
+
+        border-radius: 50%;
+
+        background: #242832;
+
+        font-weight: 800;
+      }
+
+      .preview-content {
+        flex: 1;
+
+        min-width: 0;
+      }
+
+      .preview-author {
+        margin-bottom: 9px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 7px;
+      }
+
+      .preview-author strong {
+        font-size: 13px;
+      }
+
+      .bot-badge {
+        padding: 2px 5px;
+
+        border-radius: 2px;
+
+        background: #5865f2;
+
+        font-size: 8px;
+
+        font-weight: 700;
+      }
+
+      .preview-embed {
+        max-width: 570px;
+
+        padding: 16px;
+
+        border-left: 4px solid var(--cream);
+
+        background: #191c22;
+      }
+
+      .preview-embed h3 {
+        margin-bottom: 10px;
+
+        font-size: 15px;
+      }
+
+      .preview-embed p {
+        color: rgba(243, 240, 234, 0.75);
+
+        font-size: 13px;
+
+        line-height: 1.65;
+
+        white-space: pre-wrap;
+      }
+
+      .preview-member-avatar {
+        width: 50px;
+        height: 50px;
+
+        margin-top: 14px;
+
+        overflow: hidden;
+
+        display: none;
+
+        place-items: center;
+
+        border-radius: 50%;
+
+        background: #292d36;
+      }
+
+      .preview-member-avatar.visible {
+        display: grid;
+      }
+
+      /* =================================================
+       SAVE
+    ================================================= */
+
+      .save-area {
+        min-height: 135px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 24px;
+      }
+
+      .save-copy {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 8px;
+      }
+
+      .save-copy strong {
+        font-size: 14px;
+      }
+
+      .save-actions {
+        display: flex;
+
+        gap: 10px;
+      }
+
+      .test-button,
+      .save-button {
+        min-width: 205px;
+
+        height: 54px;
+
+        padding: 0 20px;
+      }
+
+      .test-button {
+        border: 1px solid var(--border-strong);
+
+        background: transparent;
+
+        color: var(--text);
+
+        font-weight: 600;
+      }
+
+      .save-button {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        border: 1px solid var(--text);
+
+        background: var(--text);
+
+        color: #07080b;
+
+        font-weight: 700;
+      }
+
+      button:disabled {
+        opacity: 0.55;
+
+        cursor: not-allowed;
+      }
+
+      /* =================================================
+       FOOTER
+    ================================================= */
+
+      footer {
+        min-height: 110px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 9px;
+
+        letter-spacing: 0.1em;
+      }
+
+      /* =================================================
+       MOBILE
+    ================================================= */
+
+      @media (max-width: 900px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .card.full {
+          grid-column: auto;
+        }
+
+        .save-area {
+          padding: 28px 0;
+
+          flex-direction: column;
+
+          align-items: stretch;
+        }
+
+        .save-actions {
+          width: 100%;
+        }
+
+        .test-button,
+        .save-button {
+          flex: 1;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .shell {
+          width: calc(100% - 24px);
+        }
+
+        .brand-copy span {
+          display: none;
+        }
+
+        .connection span:last-child {
+          display: none;
+        }
+
+        .server-bar {
+          padding: 18px 0;
+
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+
+        .hero {
+          padding: 55px 0;
+        }
+
+        .hero h1 {
+          font-size: 50px;
+        }
+
+        .section {
+          padding: 55px 0;
+        }
+
+        .section-heading {
+          grid-template-columns:
+            36px
+            1fr;
+        }
+
+        .option-row {
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+
+        .save-actions {
+          flex-direction: column;
+        }
+
+        footer {
+          padding: 30px 0;
+
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="background-grid"></div>
+
+    <div class="shell">
+      <!-- HEADER -->
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <a href="dashboard.html" class="back-button"> ← </a>
+
+          <a href="dashboard.html" class="brand">
+            <div class="brand-logo">A</div>
+
+            <div class="brand-copy">
+              <strong> ARCLUME </strong>
+
+              <span> WELCOME SYSTEM </span>
+            </div>
+          </a>
+        </div>
+
+        <div class="connection">
+          <span class="connection-dot"></span>
+
+          <span id="connectionText"> CONNECTING </span>
+        </div>
+      </header>
+
+      <!-- SERVER -->
+
+      <section class="server-bar">
+        <div class="server-info">
+          <div class="server-icon" id="serverIcon">A</div>
+
+          <div class="server-copy">
+            <span> ACTIVE SERVER </span>
+
+            <strong id="serverName"> Loading server... </strong>
+          </div>
+        </div>
+
+        <span class="system-status" id="systemStatus"> STANDBY </span>
+      </section>
+
+      <!-- HERO -->
+
+      <section class="hero">
+        <div>
+          <span class="eyebrow"> ARRIVAL / IDENTITY / COMMUNITY </span>
+
+          <h1>
+            Welcome
+
+            <span> System. </span>
+          </h1>
+
+          <p>
+            Create a polished first impression for every new member, assign
+            roles automatically and control arrival and goodbye messages from
+            one place.
+          </p>
+        </div>
+
+        <div class="master-card">
+          <div class="master-top">
+            <div>
+              <span class="tiny-label"> MASTER SYSTEM </span>
+
+              <h2>Welcome Messages</h2>
+            </div>
+
+            <label class="switch">
+              <input type="checkbox" id="welcomeEnabled" />
+
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="master-bottom">
+            <div>
+              <span> STATUS </span>
+
+              <strong id="welcomeStatusText"> DISABLED </strong>
+            </div>
+
+            <div>
+              <span> DELIVERY </span>
+
+              <strong> AUTOMATIC </strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DELIVERY -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="section-number"> 01 </span>
+
+          <div>
+            <span class="eyebrow"> DISCORD TARGET </span>
+
+            <h2>Delivery.</h2>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- WELCOME CHANNEL -->
+
+          <div class="card">
+            <h3>Welcome Channel</h3>
+
+            <p>Choose where Arclume sends new member welcome messages.</p>
+
+            <label class="field-label" for="welcomeChannel"> CHANNEL </label>
+
+            <select id="welcomeChannel">
+              <option value="">Loading channels...</option>
+            </select>
+          </div>
+
+          <!-- AUTO ROLE -->
+
+          <div class="card">
+            <h3>Auto Role</h3>
+
+            <p>
+              Optionally give a role automatically when somebody joins the
+              server.
+            </p>
+
+            <label class="field-label" for="autoRole"> ROLE </label>
+
+            <select id="autoRole">
+              <option value="">No automatic role</option>
+            </select>
+          </div>
+
+          <!-- REFRESH -->
+
+          <div class="card full">
+            <div class="option-row">
+              <div class="option-copy">
+                <h3>Refresh Discord Data</h3>
+
+                <p>
+                  Reload the latest channels and assignable roles from Discord.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="secondary-button"
+                id="refreshDiscordData"
+              >
+                REFRESH
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WELCOME MESSAGE -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="section-number"> 02 </span>
+
+          <div>
+            <span class="eyebrow"> WELCOME MESSAGE </span>
+
+            <h2>First impression.</h2>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- TITLE -->
+
+          <div class="card full">
+            <label class="field-label" for="welcomeTitle"> EMBED TITLE </label>
+
+            <input
+              type="text"
+              id="welcomeTitle"
+              maxlength="150"
+              value="Welcome to {server}!"
+              placeholder="Welcome to {server}!"
+            />
+          </div>
+
+          <!-- MESSAGE -->
+
+          <div class="card full">
+            <label class="field-label" for="welcomeMessage">
+              WELCOME MESSAGE
+            </label>
+
+            <textarea
+              id="welcomeMessage"
+              maxlength="1500"
+              placeholder="Write your welcome message..."
+            >
+Welcome {user} to **{server}**! You are member #{membercount}.</textarea
+            >
+
+            <div class="variables">
+              <span class="variable"> {user} </span>
+
+              <span class="variable"> {username} </span>
+
+              <span class="variable"> {server} </span>
+
+              <span class="variable"> {membercount} </span>
+            </div>
+          </div>
+
+          <!-- AVATAR -->
+
+          <div class="card full">
+            <div class="option-row">
+              <div class="option-copy">
+                <h3>Show Member Avatar</h3>
+
+                <p>
+                  Display the new member's Discord avatar inside the welcome
+                  embed.
+                </p>
+              </div>
+
+              <label class="switch">
+                <input type="checkbox" id="showAvatar" checked />
+
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREVIEW -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="section-number"> 03 </span>
+
+          <div>
+            <span class="eyebrow"> LIVE PREVIEW </span>
+
+            <h2>Member view.</h2>
+          </div>
+        </div>
+
+        <div class="preview">
+          <div class="bot-avatar">A</div>
+
+          <div class="preview-content">
+            <div class="preview-author">
+              <strong> Arclume </strong>
+
+              <span class="bot-badge"> BOT </span>
+            </div>
+
+            <div class="preview-embed">
+              <h3 id="previewTitle">Welcome to Your Server!</h3>
+
+              <p id="previewMessage">
+                Welcome @Member to Your Server! You are member #100.
+              </p>
+
+              <div
+                class="preview-member-avatar visible"
+                id="previewMemberAvatar"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GOODBYE -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="section-number"> 04 </span>
+
+          <div>
+            <span class="eyebrow"> DEPARTURES </span>
+
+            <h2>Goodbye messages.</h2>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- ENABLE GOODBYE -->
+
+          <div class="card full">
+            <div class="option-row">
+              <div class="option-copy">
+                <h3>Enable Goodbye Messages</h3>
+
+                <p>Send a message when somebody leaves the Discord server.</p>
+              </div>
+
+              <label class="switch">
+                <input type="checkbox" id="goodbyeEnabled" />
+
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- CHANNEL -->
+
+          <div class="card full">
+            <label class="field-label" for="goodbyeChannel">
+              GOODBYE CHANNEL
+            </label>
+
+            <select id="goodbyeChannel">
+              <option value="">Same as welcome channel</option>
+            </select>
+          </div>
+
+          <!-- TITLE -->
+
+          <div class="card full">
+            <label class="field-label" for="goodbyeTitle">
+              GOODBYE TITLE
+            </label>
+
+            <input
+              type="text"
+              id="goodbyeTitle"
+              maxlength="150"
+              value="Member Left"
+            />
+          </div>
+
+          <!-- MESSAGE -->
+
+          <div class="card full">
+            <label class="field-label" for="goodbyeMessage">
+              GOODBYE MESSAGE
+            </label>
+
+            <textarea id="goodbyeMessage" maxlength="1500">
+**{username}** has left **{server}**.</textarea
+            >
+
+            <div class="variables">
+              <span class="variable"> {username} </span>
+
+              <span class="variable"> {server} </span>
+
+              <span class="variable"> {membercount} </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SAVE -->
+
+      <section class="save-area">
+        <div class="save-copy">
+          <span class="tiny-label"> CONFIGURATION </span>
+
+          <strong id="saveStatus"> No unsaved changes </strong>
+        </div>
+
+        <div class="save-actions">
+          <button type="button" class="test-button" id="testWelcome">
+            Send Test Welcome
+          </button>
+
+          <button type="button" class="save-button" id="saveWelcome">
+            <span> Save Welcome </span>
+
+            <span> → </span>
+          </button>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+
+      <footer>
+        <span> ARCLUME © 2026 </span>
+
+        <span> WELCOME SYSTEM </span>
+
+        <a href="dashboard.html"> RETURN TO CONTROL </a>
+      </footer>
+    </div>
+
+    <script src="welcome.js"></script>
+  </body>
+</html>
