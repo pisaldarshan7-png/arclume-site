@@ -1,0 +1,1287 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Arclume â€” Role Management</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #090908;
+        --panel: #11110f;
+        --panel-soft: #151511;
+        --line: rgba(255, 255, 255, 0.08);
+        --line-strong: rgba(255, 255, 255, 0.13);
+
+        --text: #f0ede5;
+        --muted: #8d8a81;
+        --dim: #625f58;
+
+        --cream: #e8dfc8;
+        --purple: #9c8cff;
+        --green: #91d6a8;
+        --bronze: #bc9670;
+        --red: #df7d7d;
+
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(
+            circle at 85% 0%,
+            rgba(156, 140, 255, 0.08),
+            transparent 26%
+          ),
+          radial-gradient(
+            circle at 0% 70%,
+            rgba(145, 214, 168, 0.045),
+            transparent 28%
+          ),
+          var(--bg);
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .mono {
+        font-family: "DM Mono", monospace;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .state-screen {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 30px;
+      }
+
+      .state-box {
+        width: min(500px, 100%);
+      }
+
+      .state-mark {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 24px;
+        border: 1px solid var(--line-strong);
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--cream);
+        background: var(--panel);
+      }
+
+      .state-box small {
+        color: var(--bronze);
+        font-size: 10px;
+        letter-spacing: 0.13em;
+      }
+
+      .state-box h1 {
+        font-size: clamp(32px, 6vw, 58px);
+        margin: 12px 0;
+        letter-spacing: -0.05em;
+      }
+
+      .state-box p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .state-box a {
+        display: inline-flex;
+        margin-top: 18px;
+        padding: 13px 18px;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        background: var(--cream);
+        color: #111;
+        font-weight: 700;
+      }
+
+      .app {
+        width: min(1450px, calc(100% - 40px));
+        margin: auto;
+        padding: 22px 0 70px;
+      }
+
+      .topbar {
+        min-height: 74px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 60px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line-strong);
+        border-radius: 11px;
+        color: var(--cream);
+        font-weight: 800;
+      }
+
+      .brand strong {
+        display: block;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+      }
+
+      .brand small {
+        display: block;
+        color: var(--muted);
+        margin-top: 3px;
+        font-size: 9px;
+        letter-spacing: 0.12em;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .back-button,
+      .server-button {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--text);
+        border-radius: 12px;
+        min-height: 46px;
+      }
+
+      .back-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 15px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .server-button {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 6px 13px 6px 7px;
+      }
+
+      .server-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: #1b1b18;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        font-weight: 700;
+      }
+
+      .server-icon img,
+      .member-avatar img,
+      .selected-avatar img,
+      .server-choice-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .server-button-copy {
+        text-align: left;
+      }
+
+      .server-button-copy small {
+        display: block;
+        color: var(--dim);
+        font-size: 8px;
+        margin-bottom: 2px;
+      }
+
+      .server-button-copy b {
+        font-size: 11px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 30px;
+        align-items: end;
+        margin-bottom: 42px;
+      }
+
+      .eyebrow {
+        color: var(--bronze);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+      }
+
+      .hero h1 {
+        margin: 10px 0 0;
+        font-size: clamp(50px, 7.5vw, 105px);
+        line-height: 0.87;
+        letter-spacing: -0.07em;
+      }
+
+      .hero h1 span {
+        color: var(--cream);
+        font-weight: 400;
+      }
+
+      .hero-copy {
+        max-width: 390px;
+        color: var(--muted);
+        line-height: 1.7;
+        margin: 0;
+        font-size: 13px;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+
+      .stat {
+        padding: 22px 24px;
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      .stat + .stat {
+        border-left: 1px solid var(--line);
+      }
+
+      .stat small {
+        color: var(--muted);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+      }
+
+      .stat strong {
+        display: block;
+        margin-top: 9px;
+        font-size: 30px;
+        letter-spacing: -0.04em;
+      }
+
+      .section {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(16, 16, 14, 0.77);
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+
+      .section-head {
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .section-head small {
+        color: var(--bronze);
+        font-size: 9px;
+        letter-spacing: 0.12em;
+      }
+
+      .section-head h2 {
+        margin: 7px 0 0;
+        font-size: 22px;
+        letter-spacing: -0.03em;
+      }
+
+      .section-head p {
+        color: var(--muted);
+        margin: 5px 0 0;
+        font-size: 12px;
+      }
+
+      .refresh-button {
+        min-height: 38px;
+        padding: 0 14px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        color: var(--cream);
+        background: transparent;
+        font-size: 9px;
+        letter-spacing: 0.08em;
+      }
+
+      .management-grid {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.9fr) minmax(420px, 1.5fr);
+      }
+
+      .member-panel {
+        border-right: 1px solid var(--line);
+        min-width: 0;
+      }
+
+      .search-wrap {
+        padding: 15px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .search-wrap input {
+        width: 100%;
+        height: 43px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        padding: 0 13px;
+        background: #0d0d0b;
+        color: var(--text);
+        outline: none;
+      }
+
+      .member-list {
+        max-height: 550px;
+        overflow-y: auto;
+      }
+
+      .member-item {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 38px 1fr auto;
+        align-items: center;
+        gap: 11px;
+        padding: 12px 15px;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        background: transparent;
+        color: var(--text);
+        text-align: left;
+      }
+
+      .member-item:hover,
+      .member-item.active {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .member-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: #22221f;
+        font-size: 11px;
+      }
+
+      .member-info {
+        min-width: 0;
+      }
+
+      .member-info strong {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12px;
+      }
+
+      .member-info small {
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .member-role-count {
+        font-family: "DM Mono", monospace;
+        font-size: 8px;
+        color: var(--dim);
+      }
+
+      .member-control {
+        padding: 28px;
+      }
+
+      .selected-member {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 25px;
+      }
+
+      .selected-avatar {
+        width: 58px;
+        height: 58px;
+        flex-shrink: 0;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: #20201c;
+        font-weight: 700;
+      }
+
+      .selected-copy h3 {
+        margin: 0 0 4px;
+        font-size: 18px;
+      }
+
+      .selected-copy p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .selected-roles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 24px;
+      }
+
+      .role-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 9px;
+        font-size: 9px;
+      }
+
+      .role-dot,
+      .role-card-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .control-form label,
+      .settings-field label {
+        display: block;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        margin-bottom: 7px;
+      }
+
+      .control-form select,
+      .settings-field select,
+      .settings-field input,
+      .settings-field textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: #0c0c0a;
+        color: var(--text);
+        outline: none;
+      }
+
+      .control-form select,
+      .settings-field select,
+      .settings-field input {
+        height: 45px;
+        padding: 0 12px;
+      }
+
+      .settings-field textarea {
+        min-height: 105px;
+        resize: vertical;
+        padding: 12px;
+        line-height: 1.6;
+      }
+
+      .action-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-top: 12px;
+      }
+
+      .action-button {
+        min-height: 44px;
+        border-radius: 11px;
+        border: 1px solid var(--line);
+        font-size: 10px;
+        letter-spacing: 0.07em;
+        font-weight: 700;
+      }
+
+      .action-button.give {
+        background: var(--cream);
+        color: #111;
+      }
+
+      .action-button.remove {
+        background: transparent;
+        color: var(--red);
+      }
+
+      .action-button:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      .action-status {
+        min-height: 17px;
+        color: var(--muted);
+        font-size: 10px;
+        margin: 12px 0 0;
+      }
+
+      /* NEW ROLE AUTOMATION SECTION */
+
+      .automation-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .automation-card {
+        padding: 27px;
+        min-width: 0;
+      }
+
+      .automation-card + .automation-card {
+        border-left: 1px solid var(--line);
+      }
+
+      .automation-number {
+        color: var(--bronze);
+        font-size: 9px;
+        letter-spacing: 0.12em;
+      }
+
+      .automation-card h3 {
+        margin: 10px 0 7px;
+        font-size: 21px;
+        letter-spacing: -0.03em;
+      }
+
+      .automation-card > p {
+        min-height: 42px;
+        color: var(--muted);
+        line-height: 1.6;
+        font-size: 11px;
+        margin: 0 0 24px;
+      }
+
+      .settings-field {
+        margin-bottom: 17px;
+      }
+
+      .self-role-list {
+        min-height: 105px;
+        max-height: 260px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: #0c0c0a;
+      }
+
+      .self-role-empty {
+        padding: 18px;
+        color: var(--dim);
+        font-size: 10px;
+      }
+
+      .self-role-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 12px;
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+      }
+
+      .self-role-option:last-child {
+        border-bottom: 0;
+      }
+
+      .self-role-option input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--purple);
+      }
+
+      .self-role-option span {
+        font-size: 11px;
+      }
+
+      .settings-actions {
+        padding: 20px 27px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+      }
+
+      .settings-status {
+        color: var(--muted);
+        font-size: 10px;
+        margin: 0;
+      }
+
+      .save-settings {
+        min-height: 43px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 11px;
+        background: var(--cream);
+        color: #111;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+      }
+
+      /* ROLE DIRECTORY */
+
+      .role-directory {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .role-card {
+        padding: 20px;
+        min-height: 130px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .role-card-top {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .role-card-top strong {
+        font-size: 12px;
+      }
+
+      .role-card-meta {
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 9px;
+        margin: 13px 0;
+      }
+
+      .role-state {
+        display: inline-flex;
+        font-family: "DM Mono", monospace;
+        font-size: 8px;
+        padding: 5px 7px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+      }
+
+      .role-state.manageable {
+        color: var(--green);
+      }
+
+      .role-state.locked {
+        color: var(--dim);
+      }
+
+      /* SERVER OVERLAY */
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        padding: 25px;
+        display: grid;
+        place-items: center;
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(15px);
+      }
+
+      .server-vault {
+        width: min(620px, 100%);
+        max-height: 80vh;
+        overflow: hidden;
+        border-radius: 20px;
+        border: 1px solid var(--line-strong);
+        background: #11110f;
+      }
+
+      .server-vault header {
+        padding: 22px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .server-vault h2 {
+        margin: 5px 0 0;
+      }
+
+      .server-vault header small {
+        color: var(--bronze);
+        font-size: 9px;
+      }
+
+      .close-button {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--text);
+        font-size: 20px;
+      }
+
+      .server-list {
+        max-height: 55vh;
+        overflow: auto;
+      }
+
+      .server-choice {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 42px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        background: transparent;
+        color: var(--text);
+        padding: 14px 18px;
+        text-align: left;
+      }
+
+      .server-choice:hover,
+      .server-choice.active {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .server-choice-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        background: #22221f;
+      }
+
+      .server-choice small {
+        display: block;
+        color: var(--dim);
+        font-size: 8px;
+        margin-bottom: 3px;
+      }
+
+      .server-choice strong {
+        font-size: 12px;
+      }
+
+      .server-choice > span:last-child {
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        font-size: 8px;
+      }
+
+      .toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 200;
+        max-width: 360px;
+        padding: 13px 16px;
+        border-radius: 11px;
+        border: 1px solid var(--line-strong);
+        background: #181815;
+        color: var(--cream);
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        opacity: 0;
+        transform: translateY(12px);
+        pointer-events: none;
+        transition: 0.2s ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast.error {
+        color: #ffaaaa;
+        border-color: rgba(223, 125, 125, 0.35);
+      }
+
+      @media (max-width: 1000px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .management-grid,
+        .automation-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .member-panel,
+        .automation-card + .automation-card {
+          border-right: 0;
+          border-left: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .role-directory {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 650px) {
+        .app {
+          width: min(100% - 24px, 1450px);
+        }
+
+        .topbar {
+          align-items: flex-start;
+        }
+
+        .back-button {
+          display: none;
+        }
+
+        .server-button-copy {
+          display: none;
+        }
+
+        .hero h1 {
+          font-size: 55px;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .stat + .stat {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+        }
+
+        .section-head,
+        .settings-actions {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .role-directory {
+          grid-template-columns: 1fr;
+        }
+
+        .action-row {
+          grid-template-columns: 1fr;
+        }
+
+        .member-control,
+        .automation-card {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- LOADING -->
+
+    <section class="state-screen" id="loadingState">
+      <div class="state-box">
+        <div class="state-mark">A</div>
+
+        <small class="mono"> ROLE ENGINE / BOOT </small>
+
+        <h1>Loading roles.</h1>
+
+        <p>Reading members, role hierarchy and Discord permissions.</p>
+      </div>
+    </section>
+
+    <!-- LOGIN -->
+
+    <section class="state-screen hidden" id="loginState">
+      <div class="state-box">
+        <div class="state-mark">A</div>
+
+        <small class="mono"> AUTH / REQUIRED </small>
+
+        <h1>Connect Discord.</h1>
+
+        <p>Sign in with a Discord account that can manage a server.</p>
+
+        <a href="/auth/discord"> Continue with Discord â†— </a>
+      </div>
+    </section>
+
+    <!-- APP -->
+
+    <div class="app hidden" id="rolesApp">
+      <!-- HEADER -->
+
+      <header class="topbar">
+        <a href="dashboard.html" class="brand">
+          <span class="brand-mark"> A </span>
+
+          <span>
+            <strong> ARCLUME </strong>
+
+            <small class="mono"> ROLE MANAGEMENT </small>
+          </span>
+        </a>
+
+        <div class="top-actions">
+          <a class="back-button mono" href="dashboard.html">
+            â† CONTROL CENTER
+          </a>
+
+          <button class="server-button" id="serverButton">
+            <span class="server-icon" id="serverIcon"> A </span>
+
+            <span class="server-button-copy">
+              <small class="mono"> ACTIVE SERVER </small>
+
+              <b id="serverName"> Loadingâ€¦ </b>
+            </span>
+
+            <span> âŒ„ </span>
+          </button>
+        </div>
+      </header>
+
+      <!-- HERO -->
+
+      <section class="hero">
+        <div>
+          <span class="eyebrow mono"> 03 / IDENTITY CONTROL </span>
+
+          <h1>
+            Roles
+            <br />
+
+            <span> under control. </span>
+          </h1>
+        </div>
+
+        <p class="hero-copy">
+          Manage member roles, configure automatic join roles and prepare
+          self-service role systems from one Arclume surface.
+        </p>
+      </section>
+
+      <!-- STATS -->
+
+      <section class="stats">
+        <div class="stat">
+          <small class="mono"> MEMBERS </small>
+
+          <strong id="memberCountStat"> â€” </strong>
+        </div>
+
+        <div class="stat">
+          <small class="mono"> SERVER ROLES </small>
+
+          <strong id="roleCountStat"> â€” </strong>
+        </div>
+
+        <div class="stat">
+          <small class="mono"> MANAGEABLE </small>
+
+          <strong id="manageableCountStat"> â€” </strong>
+        </div>
+      </section>
+
+      <!-- MEMBER ROLE CONTROL -->
+
+      <section class="section">
+        <header class="section-head">
+          <div>
+            <small class="mono"> 01 / MEMBER CONTROL </small>
+
+            <h2>Direct role management</h2>
+
+            <p id="memberCountLabel">Loading Discord membersâ€¦</p>
+          </div>
+
+          <button class="refresh-button mono" id="refreshButton">
+            REFRESH DISCORD DATA
+          </button>
+        </header>
+
+        <div class="management-grid">
+          <!-- MEMBERS -->
+
+          <div class="member-panel">
+            <div class="search-wrap">
+              <input
+                id="memberSearch"
+                type="search"
+                placeholder="Search membersâ€¦"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="member-list" id="memberList"></div>
+          </div>
+
+          <!-- SELECTED MEMBER -->
+
+          <div class="member-control">
+            <div class="selected-member">
+              <div class="selected-avatar" id="selectedMemberAvatar">?</div>
+
+              <div class="selected-copy">
+                <h3 id="selectedMemberName">No member selected</h3>
+
+                <p id="selectedMemberUsername">Select someone from the list.</p>
+              </div>
+            </div>
+
+            <div class="selected-roles" id="selectedMemberRoles"></div>
+
+            <div class="control-form">
+              <label for="roleSelect"> DISCORD ROLE </label>
+
+              <select id="roleSelect">
+                <option value="">Select a role</option>
+              </select>
+
+              <div class="action-row">
+                <button class="action-button give" id="giveRoleButton" disabled>
+                  GIVE ROLE
+                </button>
+
+                <button
+                  class="action-button remove"
+                  id="removeRoleButton"
+                  disabled
+                >
+                  REMOVE ROLE
+                </button>
+              </div>
+
+              <p class="action-status" id="actionStatus">
+                Select a member first.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- NEW: ROLE AUTOMATION -->
+
+      <section class="section">
+        <header class="section-head">
+          <div>
+            <small class="mono"> 02 / ROLE AUTOMATION </small>
+
+            <h2>Automatic + self roles</h2>
+
+            <p>
+              Configure how members receive roles without manual staff action.
+            </p>
+          </div>
+        </header>
+
+        <div class="automation-grid">
+          <!-- AUTO ROLE -->
+
+          <article class="automation-card">
+            <span class="automation-number mono"> 02A / AUTO ROLE </span>
+
+            <h3>Join assignment</h3>
+
+            <p>
+              Give a selected role automatically when a new member joins the
+              server.
+            </p>
+
+            <div class="settings-field">
+              <label for="autoRoleSelect"> AUTO ROLE </label>
+
+              <select id="autoRoleSelect">
+                <option value="">No automatic role</option>
+              </select>
+            </div>
+          </article>
+
+          <!-- SELF ROLES -->
+
+          <article class="automation-card">
+            <span class="automation-number mono"> 02B / SELF ROLES </span>
+
+            <h3>Member-selected roles</h3>
+
+            <p>
+              Choose which safe roles members will be allowed to assign to
+              themselves.
+            </p>
+
+            <div class="settings-field">
+              <label> ALLOWED SELF ROLES </label>
+
+              <div class="self-role-list" id="selfRoleList">
+                <div class="self-role-empty">
+                  Discord roles will appear here.
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- ROLE PANEL -->
+
+        <div class="automation-card" style="border-top: 1px solid var(--line)">
+          <span class="automation-number mono"> 02C / MEMBER PANEL </span>
+
+          <h3>Self-role panel</h3>
+
+          <p>
+            Prepare the message Arclume will eventually post in Discord for
+            members to choose their roles.
+          </p>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              gap: 17px;
+            "
+          >
+            <div class="settings-field">
+              <label for="panelChannel"> DISCORD CHANNEL </label>
+
+              <select id="panelChannel">
+                <option value="">Select a channel</option>
+              </select>
+            </div>
+
+            <div class="settings-field">
+              <label for="panelTitle"> PANEL TITLE </label>
+
+              <input
+                id="panelTitle"
+                maxlength="100"
+                value="Choose Your Roles"
+              />
+            </div>
+          </div>
+
+          <div class="settings-field">
+            <label for="panelMessage"> PANEL MESSAGE </label>
+
+            <textarea id="panelMessage" maxlength="1000">
+Select the roles you want from the options below.</textarea
+            >
+          </div>
+        </div>
+
+        <!-- SAVE -->
+
+        <footer class="settings-actions">
+          <p class="settings-status mono" id="roleSettingsStatus">
+            ROLE SETTINGS READY
+          </p>
+
+          <button class="save-settings" id="saveRoleSettingsButton">
+            SAVE ROLE SETTINGS
+          </button>
+        </footer>
+      </section>
+
+      <!-- ROLE DIRECTORY -->
+
+      <section class="section">
+        <header class="section-head">
+          <div>
+            <small class="mono"> 03 / ROLE DIRECTORY </small>
+
+            <h2>Server hierarchy</h2>
+
+            <p>
+              Roles above Arclume or managed by Discord integrations cannot be
+              assigned by the bot.
+            </p>
+          </div>
+        </header>
+
+        <div class="role-directory" id="roleDirectory"></div>
+      </section>
+    </div>
+
+    <!-- SERVER SELECTOR -->
+
+    <div class="overlay hidden" id="serverOverlay">
+      <section class="server-vault">
+        <header>
+          <div>
+            <small class="mono"> SERVER / SELECT </small>
+
+            <h2>Choose a server</h2>
+          </div>
+
+          <button class="close-button" id="closeServerOverlay">Ã—</button>
+        </header>
+
+        <div class="server-list" id="serverList"></div>
+      </section>
+    </div>
+
+    <!-- TOAST -->
+
+    <div class="toast" id="toast"></div>
+
+    <script src="roles.js"></script>
+  <script src="reaction-roles.js"></script>
+  </body>
+</html>
+
