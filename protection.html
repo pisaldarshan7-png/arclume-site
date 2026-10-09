@@ -1,0 +1,1940 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color" content="#080808" />
+
+    <title>Arclume — Protection</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #080808;
+        --bg-soft: #0c0c0c;
+        --panel: #101010;
+        --panel-2: #141414;
+
+        --text: #f2eee7;
+        --soft: #aaa49a;
+        --dim: #6d6860;
+
+        --line: rgba(255, 255, 255, 0.08);
+        --line-2: rgba(255, 255, 255, 0.15);
+
+        --cream: #e9dfcf;
+        --green: #9bd9ad;
+        --purple: #ae9cff;
+        --bronze: #c6a376;
+        --red: #ff8585;
+
+        --radius: 16px;
+        --radius-lg: 24px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+
+        color: var(--text);
+
+        background:
+          radial-gradient(
+            circle at 5% 0%,
+            rgba(174, 156, 255, 0.08),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at 100% 15%,
+            rgba(155, 217, 173, 0.04),
+            transparent 24%
+          ),
+          var(--bg);
+
+        font-family: "Inter", system-ui, sans-serif;
+      }
+
+      body::before {
+        content: "";
+
+        position: fixed;
+        inset: 0;
+
+        z-index: -5;
+
+        pointer-events: none;
+
+        opacity: 0.13;
+
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.035) 1px,
+            transparent 1px
+          );
+
+        background-size: 70px 70px;
+      }
+
+      *::selection {
+        background: var(--cream);
+        color: #111;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .mono {
+        font-family: "DM Mono", monospace;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ==========================================
+       HEADER
+    ========================================== */
+
+      .topbar {
+        position: sticky;
+        top: 0;
+
+        z-index: 100;
+
+        height: 82px;
+
+        display: grid;
+
+        grid-template-columns:
+          1fr
+          auto
+          1fr;
+
+        align-items: center;
+
+        gap: 24px;
+
+        padding: 0 clamp(18px, 4vw, 52px);
+
+        border-bottom: 1px solid var(--line);
+
+        background: rgba(8, 8, 8, 0.84);
+
+        backdrop-filter: blur(22px);
+      }
+
+      .brand {
+        width: fit-content;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+
+        display: grid;
+        place-items: center;
+
+        border: 1px solid var(--line-2);
+
+        border-radius: 11px;
+
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.07),
+          rgba(255, 255, 255, 0.01)
+        );
+
+        font-size: 16px;
+        font-weight: 800;
+      }
+
+      .brand-copy strong,
+      .brand-copy small {
+        display: block;
+      }
+
+      .brand-copy strong {
+        font-size: 13px;
+
+        letter-spacing: 0.14em;
+      }
+
+      .brand-copy small {
+        margin-top: 3px;
+
+        color: var(--dim);
+
+        font-size: 7px;
+
+        letter-spacing: 0.14em;
+      }
+
+      .topbar-center {
+        color: var(--dim);
+
+        font-size: 8px;
+
+        letter-spacing: 0.13em;
+      }
+
+      .topbar-actions {
+        justify-self: end;
+
+        display: flex;
+        align-items: center;
+
+        gap: 9px;
+      }
+
+      .back-button,
+      .server-button {
+        min-height: 44px;
+
+        display: inline-flex;
+        align-items: center;
+
+        border: 1px solid var(--line);
+
+        border-radius: 11px;
+
+        background: rgba(255, 255, 255, 0.02);
+
+        color: var(--soft);
+      }
+
+      .back-button {
+        padding: 0 15px;
+
+        gap: 10px;
+
+        font-size: 10px;
+      }
+
+      .server-button {
+        max-width: 230px;
+
+        gap: 10px;
+
+        padding: 5px 13px 5px 6px;
+      }
+
+      .server-icon {
+        width: 34px;
+        height: 34px;
+
+        display: grid;
+        place-items: center;
+
+        flex-shrink: 0;
+
+        overflow: hidden;
+
+        border-radius: 9px;
+
+        background: linear-gradient(135deg, var(--purple), var(--bronze));
+
+        color: #111;
+
+        font-weight: 800;
+      }
+
+      .server-icon img {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+      }
+
+      .server-copy {
+        min-width: 0;
+
+        text-align: left;
+      }
+
+      .server-copy small,
+      .server-copy strong {
+        display: block;
+      }
+
+      .server-copy small {
+        color: var(--dim);
+
+        font-size: 6px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .server-copy strong {
+        max-width: 150px;
+
+        margin-top: 3px;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+
+        color: var(--text);
+
+        font-size: 10px;
+      }
+
+      /* ==========================================
+       PAGE
+    ========================================== */
+
+      .page {
+        width: min(calc(100% - 48px), 1320px);
+
+        margin: 0 auto;
+
+        padding: 72px 0 120px;
+      }
+
+      /* ==========================================
+       HERO
+    ========================================== */
+
+      .hero {
+        min-height: 370px;
+
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1fr)
+          280px;
+
+        align-items: end;
+
+        gap: 70px;
+
+        padding-bottom: 42px;
+
+        border-bottom: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        color: var(--dim);
+
+        font-size: 8px;
+
+        letter-spacing: 0.14em;
+      }
+
+      .hero h1 {
+        margin: 15px 0 0;
+
+        font-size: clamp(64px, 9vw, 124px);
+
+        line-height: 0.87;
+
+        letter-spacing: -0.075em;
+      }
+
+      .hero h1 span {
+        display: block;
+
+        color: var(--soft);
+
+        font-weight: 500;
+      }
+
+      .hero-description {
+        max-width: 660px;
+
+        margin: 28px 0 0;
+
+        color: var(--soft);
+
+        font-size: 14px;
+
+        line-height: 1.8;
+      }
+
+      .hero-status {
+        padding: 22px 0;
+
+        border-top: 1px solid var(--line);
+
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hero-status-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+      }
+
+      .hero-status small {
+        color: var(--dim);
+
+        font-size: 7px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .hero-status strong {
+        display: block;
+
+        margin-top: 12px;
+
+        font-size: 22px;
+      }
+
+      .hero-status p {
+        margin: 10px 0 0;
+
+        color: var(--dim);
+
+        font-size: 10px;
+
+        line-height: 1.6;
+      }
+
+      /* ==========================================
+       TOGGLE
+    ========================================== */
+
+      .toggle {
+        width: 48px;
+        height: 26px;
+
+        display: flex;
+
+        padding: 3px;
+
+        border: 0;
+
+        border-radius: 999px;
+
+        background: #282828;
+
+        transition: background 0.2s ease;
+      }
+
+      .toggle i {
+        width: 20px;
+        height: 20px;
+
+        border-radius: 50%;
+
+        background: #777;
+
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .toggle.on {
+        background: var(--green);
+      }
+
+      .toggle.on i {
+        transform: translateX(22px);
+
+        background: #101010;
+      }
+
+      /* ==========================================
+       SECTION
+    ========================================== */
+
+      .section {
+        padding: 80px 0;
+
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section-heading {
+        display: grid;
+
+        grid-template-columns:
+          190px
+          minmax(0, 1fr);
+
+        gap: 35px;
+
+        align-items: start;
+
+        margin-bottom: 34px;
+      }
+
+      .section-number {
+        color: var(--dim);
+
+        font-size: 8px;
+
+        letter-spacing: 0.13em;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+
+        font-size: clamp(34px, 4vw, 54px);
+
+        letter-spacing: -0.055em;
+      }
+
+      .section-heading p {
+        max-width: 650px;
+
+        margin: 12px 0 0;
+
+        color: var(--soft);
+
+        font-size: 12px;
+
+        line-height: 1.75;
+      }
+
+      /* ==========================================
+       RULES
+    ========================================== */
+
+      .rule-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+      }
+
+      .rule-card {
+        min-height: 175px;
+
+        display: grid;
+
+        grid-template-columns:
+          52px
+          1fr
+          auto;
+
+        align-items: start;
+
+        gap: 16px;
+
+        padding: 25px;
+
+        border: 1px solid var(--line);
+
+        border-radius: var(--radius);
+
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.028),
+          rgba(255, 255, 255, 0.008)
+        );
+
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .rule-card:hover {
+        transform: translateY(-2px);
+
+        border-color: var(--line-2);
+      }
+
+      .rule-icon {
+        width: 46px;
+        height: 46px;
+
+        display: grid;
+        place-items: center;
+
+        border: 1px solid var(--line);
+
+        border-radius: 12px;
+
+        color: var(--purple);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 11px;
+      }
+
+      .rule-card:nth-child(2) .rule-icon,
+      .rule-card:nth-child(5) .rule-icon {
+        color: var(--bronze);
+      }
+
+      .rule-card:nth-child(3) .rule-icon,
+      .rule-card:nth-child(6) .rule-icon {
+        color: var(--green);
+      }
+
+      .rule-copy h3 {
+        margin: 0;
+
+        font-size: 16px;
+
+        letter-spacing: -0.025em;
+      }
+
+      .rule-copy p {
+        margin: 8px 0 0;
+
+        color: var(--dim);
+
+        font-size: 10px;
+
+        line-height: 1.65;
+      }
+
+      .rule-tag {
+        display: inline-flex;
+
+        margin-top: 17px;
+
+        padding: 6px 8px;
+
+        border: 1px solid var(--line);
+
+        border-radius: 7px;
+
+        color: var(--dim);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 6px;
+
+        letter-spacing: 0.08em;
+      }
+
+      /* ==========================================
+       SETTINGS
+    ========================================== */
+
+      .settings-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+      }
+
+      .setting-panel {
+        padding: 28px;
+
+        border: 1px solid var(--line);
+
+        border-radius: var(--radius-lg);
+
+        background: rgba(255, 255, 255, 0.016);
+      }
+
+      .setting-panel.full {
+        grid-column: 1 / -1;
+      }
+
+      .panel-label {
+        display: block;
+
+        margin-bottom: 18px;
+
+        color: var(--dim);
+
+        font-size: 7px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .setting-panel h3 {
+        margin: 0;
+
+        font-size: 20px;
+
+        letter-spacing: -0.035em;
+      }
+
+      .setting-panel > p {
+        margin: 8px 0 22px;
+
+        color: var(--dim);
+
+        font-size: 10px;
+
+        line-height: 1.65;
+      }
+
+      label.field {
+        display: flex;
+        flex-direction: column;
+
+        gap: 8px;
+      }
+
+      label.field + label.field {
+        margin-top: 16px;
+      }
+
+      .field small {
+        color: var(--dim);
+
+        font-size: 7px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .input,
+      select.input,
+      textarea.input {
+        width: 100%;
+
+        min-height: 46px;
+
+        border: 1px solid var(--line);
+
+        border-radius: 10px;
+
+        outline: 0;
+
+        background: #0b0b0b;
+
+        color: var(--text);
+      }
+
+      input.input,
+      select.input {
+        padding: 0 12px;
+      }
+
+      textarea.input {
+        min-height: 150px;
+
+        padding: 12px;
+
+        resize: vertical;
+
+        line-height: 1.6;
+      }
+
+      .input:focus {
+        border-color: rgba(174, 156, 255, 0.5);
+      }
+
+      select.input option {
+        background: #111;
+
+        color: var(--text);
+      }
+
+      .field-help {
+        margin-top: 7px;
+
+        color: var(--dim);
+
+        font-size: 8px;
+
+        line-height: 1.5;
+      }
+
+      /* ==========================================
+       MULTI SELECT
+    ========================================== */
+
+      .multi-select {
+        position: relative;
+      }
+
+      .multi-button {
+        width: 100%;
+
+        min-height: 46px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 0 12px;
+
+        border: 1px solid var(--line);
+
+        border-radius: 10px;
+
+        background: #0b0b0b;
+
+        color: var(--soft);
+
+        text-align: left;
+      }
+
+      .multi-menu {
+        position: absolute;
+
+        top: calc(100% + 7px);
+
+        left: 0;
+        right: 0;
+
+        z-index: 20;
+
+        max-height: 260px;
+
+        overflow-y: auto;
+
+        border: 1px solid var(--line-2);
+
+        border-radius: 12px;
+
+        background: #121212;
+
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+      }
+
+      .multi-option {
+        width: 100%;
+
+        min-height: 46px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+
+        padding: 0 12px;
+
+        border: 0;
+
+        border-bottom: 1px solid var(--line);
+
+        background: transparent;
+
+        color: var(--soft);
+
+        text-align: left;
+      }
+
+      .multi-option:hover {
+        background: rgba(174, 156, 255, 0.06);
+
+        color: var(--text);
+      }
+
+      .multi-option.selected {
+        color: var(--green);
+      }
+
+      .multi-option i {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .multi-option.selected i {
+        background: var(--green);
+      }
+
+      .chip-list {
+        display: flex;
+        flex-wrap: wrap;
+
+        gap: 7px;
+
+        margin-top: 10px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+
+        gap: 7px;
+
+        padding: 7px 9px;
+
+        border: 1px solid var(--line);
+
+        border-radius: 8px;
+
+        color: var(--soft);
+
+        background: rgba(255, 255, 255, 0.015);
+
+        font-size: 8px;
+      }
+
+      .chip button {
+        padding: 0;
+
+        border: 0;
+
+        background: transparent;
+
+        color: var(--dim);
+      }
+
+      /* ==========================================
+       STATUS BAR
+    ========================================== */
+
+      .save-area {
+        position: sticky;
+
+        bottom: 18px;
+
+        z-index: 60;
+
+        margin-top: 55px;
+      }
+
+      .save-bar {
+        min-height: 76px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 25px;
+
+        padding: 14px 16px 14px 22px;
+
+        border: 1px solid var(--line-2);
+
+        border-radius: 17px;
+
+        background: rgba(15, 15, 15, 0.92);
+
+        backdrop-filter: blur(22px);
+
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+      }
+
+      .save-copy small,
+      .save-copy strong {
+        display: block;
+      }
+
+      .save-copy small {
+        color: var(--dim);
+
+        font-size: 7px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .save-copy strong {
+        margin-top: 5px;
+
+        font-size: 11px;
+      }
+
+      .save-actions {
+        display: flex;
+        align-items: center;
+
+        gap: 8px;
+      }
+
+      .secondary-button,
+      .save-button {
+        min-height: 46px;
+
+        padding: 0 17px;
+
+        border-radius: 11px;
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        font-weight: 600;
+      }
+
+      .secondary-button {
+        border: 1px solid var(--line);
+
+        background: transparent;
+
+        color: var(--soft);
+      }
+
+      .save-button {
+        border: 0;
+
+        background: var(--cream);
+
+        color: #111;
+      }
+
+      .save-button:disabled {
+        opacity: 0.45;
+
+        cursor: wait;
+      }
+
+      /* ==========================================
+       STATES
+    ========================================== */
+
+      .state-screen {
+        position: fixed;
+        inset: 0;
+
+        z-index: 500;
+
+        background: var(--bg);
+      }
+
+      .loading-spinner {
+        width: 36px;
+        height: 36px;
+
+        margin-top: 24px;
+
+        border: 2px solid rgba(255, 255, 255, 0.08);
+
+        border-top-color: var(--cream);
+
+        border-radius: 50%;
+
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ==========================================
+       TOAST
+    ========================================== */
+
+      .toast {
+        position: fixed;
+
+        right: 20px;
+        bottom: 20px;
+
+        z-index: 1000;
+
+        min-width: 240px;
+
+        padding: 14px 16px;
+
+        opacity: 0;
+
+        pointer-events: none;
+
+        transform: translateY(10px);
+
+        border: 1px solid var(--line-2);
+
+        border-radius: 10px;
+
+        background: #151515;
+
+        color: var(--text);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+
+        transition: 0.2s;
+      }
+
+      .toast.show {
+        opacity: 1;
+
+        transform: none;
+      }
+
+      .toast.error {
+        color: var(--red);
+
+        border-color: rgba(255, 133, 133, 0.3);
+      }
+
+      /* ==========================================
+       SERVER OVERLAY
+    ========================================== */
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+
+        z-index: 800;
+
+        display: grid;
+        place-items: center;
+
+        padding: 30px;
+
+        background: rgba(0, 0, 0, 0.72);
+
+        backdrop-filter: blur(14px);
+      }
+
+      .server-vault {
+        width: min(850px, 100%);
+
+        max-height: calc(100vh - 60px);
+
+        overflow: hidden;
+
+        border: 1px solid var(--line-2);
+
+        border-radius: var(--radius-lg);
+
+        background: #101010;
+      }
+
+      .server-vault header {
+        display: flex;
+        justify-content: space-between;
+
+        gap: 25px;
+
+        padding: 24px;
+
+        border-bottom: 1px solid var(--line);
+      }
+
+      .server-vault h2 {
+        margin: 7px 0 0;
+
+        font-size: 30px;
+
+        letter-spacing: -0.04em;
+      }
+
+      .server-vault p {
+        margin: 8px 0 0;
+
+        color: var(--dim);
+
+        font-size: 10px;
+      }
+
+      .close-button {
+        width: 40px;
+        height: 40px;
+
+        border: 1px solid var(--line);
+
+        border-radius: 10px;
+
+        background: transparent;
+
+        color: var(--soft);
+
+        font-size: 20px;
+      }
+
+      .server-list {
+        max-height: 560px;
+
+        overflow-y: auto;
+      }
+
+      .server-choice {
+        width: 100%;
+
+        min-height: 84px;
+
+        display: grid;
+
+        grid-template-columns:
+          48px
+          1fr
+          90px;
+
+        align-items: center;
+
+        gap: 14px;
+
+        padding: 0 20px;
+
+        border: 0;
+
+        border-bottom: 1px solid var(--line);
+
+        background: transparent;
+
+        color: var(--text);
+
+        text-align: left;
+      }
+
+      .server-choice:hover,
+      .server-choice.active {
+        background: rgba(174, 156, 255, 0.055);
+      }
+
+      .server-choice-icon {
+        width: 42px;
+        height: 42px;
+
+        display: grid;
+        place-items: center;
+
+        overflow: hidden;
+
+        border-radius: 10px;
+
+        background: linear-gradient(135deg, var(--purple), var(--bronze));
+
+        color: #111;
+
+        font-weight: 800;
+      }
+
+      .server-choice small,
+      .server-choice strong {
+        display: block;
+      }
+
+      .server-choice small {
+        color: var(--dim);
+
+        font-size: 6px;
+      }
+
+      .server-choice strong {
+        margin-top: 5px;
+
+        font-size: 12px;
+      }
+
+      .server-choice > span:last-child {
+        justify-self: end;
+
+        color: var(--dim);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 7px;
+      }
+
+      .server-choice.active > span:last-child {
+        color: var(--green);
+      }
+
+      /* ==========================================
+       FOOTER NOTE
+    ========================================== */
+
+      .creator-note {
+        display: flex;
+        justify-content: space-between;
+
+        gap: 30px;
+
+        padding: 30px 0;
+
+        color: var(--dim);
+
+        font-size: 9px;
+      }
+
+      .creator-note strong,
+      .creator-note a {
+        color: var(--soft);
+      }
+
+      /* ==========================================
+       MOBILE
+    ========================================== */
+
+      @media (max-width: 950px) {
+        .topbar {
+          grid-template-columns:
+            1fr
+            auto;
+        }
+
+        .topbar-center {
+          display: none;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+
+          gap: 40px;
+        }
+
+        .hero-status {
+          max-width: 500px;
+        }
+
+        .section-heading {
+          grid-template-columns: 1fr;
+
+          gap: 10px;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .topbar {
+          height: 72px;
+
+          padding: 0 14px;
+        }
+
+        .brand-copy small,
+        .server-copy {
+          display: none;
+        }
+
+        .back-button {
+          display: none;
+        }
+
+        .server-button {
+          width: 44px;
+          height: 44px;
+
+          padding: 4px;
+        }
+
+        .page {
+          width: calc(100% - 28px);
+
+          padding-top: 45px;
+        }
+
+        .hero {
+          min-height: 320px;
+        }
+
+        .hero h1 {
+          font-size: clamp(58px, 19vw, 88px);
+        }
+
+        .rule-grid,
+        .settings-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .setting-panel.full {
+          grid-column: auto;
+        }
+
+        .save-bar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .save-actions {
+          width: 100%;
+        }
+
+        .save-actions button {
+          flex: 1;
+        }
+
+        .creator-note {
+          flex-direction: column;
+        }
+
+        .overlay {
+          padding: 0;
+        }
+
+        .server-vault {
+          height: 100%;
+          max-height: none;
+
+          border-radius: 0;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .rule-card {
+          grid-template-columns:
+            44px
+            1fr;
+
+          padding: 20px;
+        }
+
+        .rule-card > .toggle {
+          grid-column: 2;
+
+          margin-top: 10px;
+        }
+
+        .matrix-actions {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- =========================================
+       LOADING STATE
+  ========================================== -->
+
+    <section class="state-screen" id="loadingState">
+      <div class="brand-mark">A</div>
+
+      <span
+        class="mono"
+        style="
+          margin-top: 20px;
+          color: var(--dim);
+          font-size: 8px;
+          letter-spacing: 0.12em;
+        "
+      >
+        ARCLUME / PROTECTION
+      </span>
+
+      <h1
+        style="
+          margin: 12px 0 0;
+          font-size: clamp(38px, 6vw, 64px);
+          letter-spacing: -0.055em;
+        "
+      >
+        Loading protection.
+      </h1>
+
+      <div class="loading-spinner"></div>
+    </section>
+
+    <!-- =========================================
+       LOGIN STATE
+  ========================================== -->
+
+    <section class="state-screen hidden" id="loginState">
+      <div class="brand-mark">A</div>
+
+      <span
+        class="mono"
+        style="margin-top: 20px; color: var(--dim); font-size: 8px"
+      >
+        AUTH / REQUIRED
+      </span>
+
+      <h1>Connect Discord.</h1>
+
+      <p>Sign in before configuring Arclume Protection.</p>
+
+      <a class="state-action" href="/auth/discord">
+        Continue with Discord
+        <span>↗</span>
+      </a>
+    </section>
+
+    <!-- =========================================
+       HEADER
+  ========================================== -->
+
+    <header class="topbar">
+      <a class="brand" href="/">
+        <span class="brand-mark"> A </span>
+
+        <span class="brand-copy">
+          <strong> ARCLUME </strong>
+
+          <small class="mono"> COMMUNITY CONTROL </small>
+        </span>
+      </a>
+
+      <div class="topbar-center mono">01 / PROTECTION</div>
+
+      <div class="topbar-actions">
+        <a href="dashboard.html" class="back-button"> ← Dashboard </a>
+
+        <button class="server-button" id="serverButton">
+          <span class="server-icon" id="serverIcon"> A </span>
+
+          <span class="server-copy">
+            <small class="mono"> ACTIVE SERVER </small>
+
+            <strong id="serverName"> Loading… </strong>
+          </span>
+
+          <span> ⌄ </span>
+        </button>
+      </div>
+    </header>
+
+    <!-- =========================================
+       MAIN
+  ========================================== -->
+
+    <main class="page hidden" id="protectionApp">
+      <!-- HERO -->
+
+      <section class="hero">
+        <div>
+          <span class="mono eyebrow"> SECURITY / ARCLUME </span>
+
+          <h1>
+            Protection
+            <span>without noise.</span>
+          </h1>
+
+          <p class="hero-description">
+            Configure the rules Arclume uses to keep your Discord community
+            under control. Enable only what your server actually needs.
+          </p>
+        </div>
+
+        <aside class="hero-status">
+          <div class="hero-status-top">
+            <small class="mono"> MASTER PROTECTION </small>
+
+            <button class="toggle" id="masterToggle" type="button">
+              <i></i>
+            </button>
+          </div>
+
+          <strong id="masterStatus"> CHECKING </strong>
+
+          <p>
+            Disabling this pauses all Arclume protection rules for the selected
+            server.
+          </p>
+        </aside>
+      </section>
+
+      <!-- =======================================
+         RULES
+    ======================================== -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="mono section-number"> 01 / RULE ENGINE </span>
+
+          <div>
+            <h2>Choose what Arclume watches.</h2>
+
+            <p>
+              Every rule can be enabled independently. Master Protection must
+              also be enabled for these rules to take effect.
+            </p>
+          </div>
+        </div>
+
+        <div class="rule-grid">
+          <article class="rule-card">
+            <span class="rule-icon"> SP </span>
+
+            <div class="rule-copy">
+              <h3>Spam Control</h3>
+
+              <p>Detect rapid message bursts from the same member.</p>
+
+              <span class="rule-tag"> MESSAGE RATE </span>
+            </div>
+
+            <button class="toggle rule-toggle" data-rule="spam" type="button">
+              <i></i>
+            </button>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon"> DP </span>
+
+            <div class="rule-copy">
+              <h3>Duplicate Messages</h3>
+
+              <p>Stop repeated identical messages from flooding chat.</p>
+
+              <span class="rule-tag"> DUPLICATE DETECTION </span>
+            </div>
+
+            <button
+              class="toggle rule-toggle"
+              data-rule="duplicate"
+              type="button"
+            >
+              <i></i>
+            </button>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon"> IN </span>
+
+            <div class="rule-copy">
+              <h3>Discord Invites</h3>
+
+              <p>Remove unwanted Discord server invitation links.</p>
+
+              <span class="rule-tag"> INVITE FILTER </span>
+            </div>
+
+            <button
+              class="toggle rule-toggle"
+              data-rule="invites"
+              type="button"
+            >
+              <i></i>
+            </button>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon"> LK </span>
+
+            <div class="rule-copy">
+              <h3>External Links</h3>
+
+              <p>Filter web links when they are not allowed.</p>
+
+              <span class="rule-tag"> LINK FILTER </span>
+            </div>
+
+            <button class="toggle rule-toggle" data-rule="links" type="button">
+              <i></i>
+            </button>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon"> AA </span>
+
+            <div class="rule-copy">
+              <h3>Excessive Caps</h3>
+
+              <p>Detect messages containing excessive capital letters.</p>
+
+              <span class="rule-tag"> MESSAGE FORMAT </span>
+            </div>
+
+            <button class="toggle rule-toggle" data-rule="caps" type="button">
+              <i></i>
+            </button>
+          </article>
+
+          <article class="rule-card">
+            <span class="rule-icon"> WF </span>
+
+            <div class="rule-copy">
+              <h3>Banned Words</h3>
+
+              <p>Detect words or phrases configured by your staff.</p>
+
+              <span class="rule-tag"> CUSTOM FILTER </span>
+            </div>
+
+            <button
+              class="toggle rule-toggle"
+              data-rule="bannedWords"
+              type="button"
+            >
+              <i></i>
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- =======================================
+         RESPONSE
+    ======================================== -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="mono section-number"> 02 / RESPONSE </span>
+
+          <div>
+            <h2>Decide how Arclume responds.</h2>
+
+            <p>
+              Select the default action taken when a protection rule detects
+              unwanted activity.
+            </p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <article class="setting-panel">
+            <span class="mono panel-label"> DEFAULT ACTION </span>
+
+            <h3>Protection response</h3>
+
+            <p>This action applies when Arclume detects a violation.</p>
+
+            <label class="field">
+              <small class="mono"> ACTION </small>
+
+              <select class="input" id="actionSelect">
+                <option value="delete">Delete message</option>
+
+                <option value="warn">Delete + Warn</option>
+
+                <option value="timeout">Delete + Timeout</option>
+              </select>
+            </label>
+          </article>
+
+          <article class="setting-panel">
+            <span class="mono panel-label"> TIMEOUT </span>
+
+            <h3>Timeout duration</h3>
+
+            <p>Used when the selected response includes a timeout.</p>
+
+            <label class="field">
+              <small class="mono"> MINUTES </small>
+
+              <input
+                class="input"
+                id="timeoutMinutes"
+                type="number"
+                min="1"
+                max="10080"
+                value="10"
+              />
+            </label>
+          </article>
+        </div>
+      </section>
+
+      <!-- =======================================
+         WORD FILTER
+    ======================================== -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="mono section-number"> 03 / WORD FILTER </span>
+
+          <div>
+            <h2>Define restricted words.</h2>
+
+            <p>
+              Add one word or phrase per line. Arclume stores the list with your
+              server's protection settings.
+            </p>
+          </div>
+        </div>
+
+        <article class="setting-panel full">
+          <span class="mono panel-label"> BANNED WORDS </span>
+
+          <label class="field">
+            <small class="mono"> WORDS / PHRASES </small>
+
+            <textarea
+              class="input"
+              id="bannedWords"
+              placeholder="word one&#10;another phrase&#10;example"
+            ></textarea>
+
+            <span class="field-help">
+              One entry per line. Maximum 200 entries.
+            </span>
+          </label>
+        </article>
+      </section>
+
+      <!-- =======================================
+         EXCEPTIONS
+    ======================================== -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="mono section-number"> 04 / EXCEPTIONS </span>
+
+          <div>
+            <h2>Choose where Protection stays quiet.</h2>
+
+            <p>
+              Ignore selected channels or roles when Arclume evaluates messages.
+            </p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <!-- CHANNELS -->
+
+          <article class="setting-panel">
+            <span class="mono panel-label"> IGNORED CHANNELS </span>
+
+            <h3>Channel exceptions</h3>
+
+            <p>Protection will not inspect messages in selected channels.</p>
+
+            <div class="multi-select" id="channelSelect">
+              <button
+                class="multi-button"
+                id="channelSelectButton"
+                type="button"
+              >
+                <span> Choose channels </span>
+
+                <span> ⌄ </span>
+              </button>
+
+              <div class="multi-menu hidden" id="channelMenu"></div>
+            </div>
+
+            <div class="chip-list" id="channelChips"></div>
+          </article>
+
+          <!-- ROLES -->
+
+          <article class="setting-panel">
+            <span class="mono panel-label"> IGNORED ROLES </span>
+
+            <h3>Role exceptions</h3>
+
+            <p>Members with selected roles will bypass Protection.</p>
+
+            <div class="multi-select" id="roleSelect">
+              <button class="multi-button" id="roleSelectButton" type="button">
+                <span> Choose roles </span>
+
+                <span> ⌄ </span>
+              </button>
+
+              <div class="multi-menu hidden" id="roleMenu"></div>
+            </div>
+
+            <div class="chip-list" id="roleChips"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- =======================================
+         LOGGING
+    ======================================== -->
+
+      <section class="section">
+        <div class="section-heading">
+          <span class="mono section-number"> 05 / LOGGING </span>
+
+          <div>
+            <h2>Keep staff informed.</h2>
+
+            <p>
+              Choose a Discord channel where Arclume records Protection actions.
+            </p>
+          </div>
+        </div>
+
+        <article class="setting-panel full">
+          <span class="mono panel-label"> PROTECTION LOG </span>
+
+          <label class="field">
+            <small class="mono"> LOG CHANNEL </small>
+
+            <select class="input" id="logChannel">
+              <option value="">No log channel</option>
+            </select>
+          </label>
+        </article>
+      </section>
+
+      <!-- =======================================
+         CREATOR
+    ======================================== -->
+
+      <div class="creator-note">
+        <span>
+          Arclume is independently built by
+          <strong>Darshan Pisal</strong>.
+        </span>
+
+        <a href="mailto:pisaldarshan7@gmail.com?subject=Arclume%20Support">
+          Arclume Support ↗
+        </a>
+      </div>
+
+      <!-- =======================================
+         SAVE
+    ======================================== -->
+
+      <div class="save-area">
+        <div class="save-bar">
+          <div class="save-copy">
+            <small class="mono"> PROTECTION CONFIGURATION </small>
+
+            <strong id="saveStatus"> Ready to save. </strong>
+          </div>
+
+          <div class="save-actions">
+            <button class="secondary-button" id="reloadButton" type="button">
+              RELOAD
+            </button>
+
+            <button class="save-button" id="saveButton" type="button">
+              SAVE CHANGES
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- =========================================
+       SERVER SELECTOR
+  ========================================== -->
+
+    <div class="overlay hidden" id="serverOverlay">
+      <section class="server-vault">
+        <header>
+          <div>
+            <span class="mono eyebrow"> SERVER / SELECT </span>
+
+            <h2>Choose your community.</h2>
+
+            <p>Protection settings are stored separately for each server.</p>
+          </div>
+
+          <button class="close-button" id="closeServerOverlay" type="button">
+            ×
+          </button>
+        </header>
+
+        <div class="server-list" id="serverList"></div>
+      </section>
+    </div>
+
+    <!-- =========================================
+       TOAST
+  ========================================== -->
+
+    <div class="toast" id="toast"></div>
+
+    <script src="protection.js"></script>
+  </body>
+</html>
