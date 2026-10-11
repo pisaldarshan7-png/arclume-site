@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color" content="#08080a" />
+
+    <meta
+      name="description"
+      content="Verify your Discord account with Arclume."
+    />
+
+    <title>Arclume — Web Verification</title>
+
+    <link rel="icon" type="image/png" href="/arclume-logo.png?v=20261002" />
+
+    <link rel="apple-touch-icon" href="/arclume-logo.png?v=20261002" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #08080a;
+        --bg-soft: #0d0d10;
+        --panel: rgba(16, 16, 21, 0.86);
+        --panel-strong: #111116;
+
+        --line: rgba(255, 255, 255, 0.08);
+        --line-strong: rgba(255, 255, 255, 0.14);
+
+        --text: #f4f1e9;
+        --muted: #98938a;
+        --dim: #625f59;
+
+        --violet: #9b86ff;
+        --violet-soft: rgba(155, 134, 255, 0.14);
+
+        --green: #d8ff72;
+        --red: #ff747c;
+        --orange: #ff9c5a;
+
+        --discord: #5865f2;
+
+        --radius: 22px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        color-scheme: dark;
+      }
+
+      body {
+        margin: 0;
+
+        min-height: 100vh;
+
+        overflow-x: hidden;
+
+        background:
+          radial-gradient(
+            circle at 15% 10%,
+            rgba(111, 76, 255, 0.18),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at 86% 18%,
+            rgba(57, 96, 255, 0.12),
+            transparent 27%
+          ),
+          radial-gradient(
+            circle at 50% 100%,
+            rgba(138, 79, 255, 0.08),
+            transparent 34%
+          ),
+          var(--bg);
+
+        color: var(--text);
+
+        font-family: "Inter", sans-serif;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .mono {
+        font-family: "DM Mono", monospace;
+      }
+
+      /* ==================================================
+       BACKGROUND
+    ================================================== */
+
+      .ambient {
+        position: fixed;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        overflow: hidden;
+      }
+
+      .ambient::before,
+      .ambient::after {
+        content: "";
+
+        position: absolute;
+
+        width: 500px;
+        height: 500px;
+
+        border-radius: 50%;
+
+        filter: blur(110px);
+
+        opacity: 0.15;
+      }
+
+      .ambient::before {
+        left: -250px;
+        top: 80px;
+
+        background: #725bff;
+      }
+
+      .ambient::after {
+        right: -240px;
+        bottom: -140px;
+
+        background: #4e6bff;
+      }
+
+      .grid-bg {
+        position: fixed;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: 0.22;
+
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+          );
+
+        background-size: 48px 48px;
+
+        mask-image: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.85),
+          transparent 92%
+        );
+      }
+
+      /* ==================================================
+       LAYOUT
+    ================================================== */
+
+      .page {
+        position: relative;
+
+        z-index: 1;
+
+        width: min(1180px, calc(100% - 36px));
+
+        min-height: 100vh;
+
+        margin: auto;
+
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ==================================================
+       HEADER
+    ================================================== */
+
+      .topbar {
+        min-height: 88px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+
+        gap: 13px;
+      }
+
+      .brand-mark {
+        width: 46px;
+        height: 46px;
+
+        overflow: hidden;
+
+        border: 1px solid var(--line-strong);
+        border-radius: 13px;
+
+        background: #0a0a13;
+
+        box-shadow: 0 0 24px rgba(116, 91, 255, 0.12);
+      }
+
+      .brand-mark img {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .brand-copy strong {
+        display: block;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 14px;
+        letter-spacing: 0.12em;
+      }
+
+      .brand-copy span {
+        display: block;
+
+        margin-top: 4px;
+
+        color: var(--muted);
+
+        font-size: 8px;
+        letter-spacing: 0.12em;
+      }
+
+      .secure-badge {
+        display: flex;
+        align-items: center;
+
+        gap: 8px;
+
+        color: var(--muted);
+
+        font-size: 8px;
+        letter-spacing: 0.1em;
+      }
+
+      .secure-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: var(--green);
+
+        box-shadow: 0 0 14px rgba(216, 255, 114, 0.55);
+      }
+
+      /* ==================================================
+       MAIN
+    ================================================== */
+
+      .main {
+        flex: 1;
+
+        display: grid;
+        place-items: center;
+
+        padding: 60px 0 80px;
+      }
+
+      .verify-shell {
+        width: min(760px, 100%);
+      }
+
+      /* ==================================================
+       SERVER IDENTITY
+    ================================================== */
+
+      .server-header {
+        margin-bottom: 22px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+      }
+
+      .server-identity {
+        display: flex;
+        align-items: center;
+
+        gap: 13px;
+      }
+
+      .server-icon {
+        width: 50px;
+        height: 50px;
+
+        display: grid;
+        place-items: center;
+
+        overflow: hidden;
+
+        flex: 0 0 50px;
+
+        border: 1px solid var(--line);
+        border-radius: 14px;
+
+        background: var(--panel-strong);
+
+        color: var(--text);
+
+        font-size: 17px;
+        font-weight: 800;
+      }
+
+      .server-icon img {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .server-text small {
+        display: block;
+
+        color: var(--dim);
+
+        font-size: 8px;
+        letter-spacing: 0.12em;
+      }
+
+      .server-text strong {
+        display: block;
+
+        margin-top: 6px;
+
+        font-size: 14px;
+      }
+
+      .member-count {
+        color: var(--muted);
+
+        font-size: 8px;
+        letter-spacing: 0.09em;
+      }
+
+      /* ==================================================
+       CARD
+    ================================================== */
+
+      .verify-card {
+        position: relative;
+
+        overflow: hidden;
+
+        padding: 46px;
+
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+
+        background:
+          linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.035),
+            rgba(255, 255, 255, 0.008)
+          ),
+          var(--panel);
+
+        backdrop-filter: blur(22px);
+
+        box-shadow: 0 28px 90px rgba(0, 0, 0, 0.35);
+      }
+
+      .verify-card::before {
+        content: "";
+
+        position: absolute;
+
+        left: 0;
+        right: 0;
+        top: 0;
+
+        height: 1px;
+
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(155, 134, 255, 0.75),
+          transparent
+        );
+      }
+
+      .step-label {
+        color: var(--violet);
+
+        font-size: 8px;
+        letter-spacing: 0.13em;
+      }
+
+      .verify-title {
+        margin: 15px 0 0;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: clamp(38px, 7vw, 70px);
+
+        line-height: 0.95;
+
+        letter-spacing: -0.055em;
+      }
+
+      .verify-message {
+        max-width: 620px;
+
+        margin: 22px 0 0;
+
+        color: var(--muted);
+
+        font-size: 13px;
+
+        line-height: 1.8;
+
+        white-space: pre-wrap;
+      }
+
+      /* ==================================================
+       TRUST ITEMS
+    ================================================== */
+
+      .trust-grid {
+        margin-top: 34px;
+
+        display: grid;
+
+        grid-template-columns: repeat(3, 1fr);
+
+        gap: 10px;
+      }
+
+      .trust-item {
+        min-height: 92px;
+
+        padding: 15px;
+
+        border: 1px solid var(--line);
+        border-radius: 13px;
+
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      .trust-item span {
+        display: block;
+
+        color: var(--violet);
+
+        font-size: 10px;
+      }
+
+      .trust-item strong {
+        display: block;
+
+        margin-top: 13px;
+
+        font-size: 10px;
+      }
+
+      .trust-item p {
+        margin: 6px 0 0;
+
+        color: var(--dim);
+
+        font-size: 8px;
+
+        line-height: 1.5;
+      }
+
+      /* ==================================================
+       DISCORD LOGIN
+    ================================================== */
+
+      .verify-actions {
+        margin-top: 32px;
+        padding-top: 28px;
+
+        border-top: 1px solid var(--line);
+      }
+
+      .discord-button {
+        width: 100%;
+        min-height: 58px;
+
+        padding: 0 20px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 12px;
+
+        border: 0;
+        border-radius: 12px;
+
+        background: var(--discord);
+
+        color: white;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        transition:
+          transform 0.18s ease,
+          filter 0.18s ease;
+      }
+
+      .discord-button:hover {
+        transform: translateY(-2px);
+
+        filter: brightness(1.08);
+      }
+
+      .discord-icon {
+        width: 25px;
+        height: 19px;
+
+        display: block;
+      }
+
+      .legal-note {
+        margin: 14px 0 0;
+
+        text-align: center;
+
+        color: var(--dim);
+
+        font-size: 8px;
+
+        line-height: 1.6;
+      }
+
+      /* ==================================================
+       LOADING
+    ================================================== */
+
+      .loading-state {
+        min-height: 450px;
+
+        display: grid;
+        place-items: center;
+
+        text-align: center;
+      }
+
+      .loading-logo {
+        width: 80px;
+        height: 80px;
+
+        margin: auto;
+
+        overflow: hidden;
+
+        border: 1px solid var(--line-strong);
+        border-radius: 20px;
+
+        animation: pulse 1.7s ease-in-out infinite;
+      }
+
+      .loading-logo img {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+      }
+
+      .loading-state h2 {
+        margin: 22px 0 0;
+
+        font-family: "Syne", sans-serif;
+      }
+
+      .loading-state p {
+        margin: 8px 0 0;
+
+        color: var(--muted);
+
+        font-size: 10px;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 rgba(155, 134, 255, 0);
+        }
+
+        50% {
+          box-shadow: 0 0 42px rgba(155, 134, 255, 0.2);
+        }
+      }
+
+      /* ==================================================
+       RESULT STATE
+    ================================================== */
+
+      .result-state {
+        min-height: 500px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+      }
+
+      .result-inner {
+        width: min(520px, 100%);
+      }
+
+      .result-symbol {
+        width: 84px;
+        height: 84px;
+
+        margin: auto;
+
+        display: grid;
+        place-items: center;
+
+        border: 1px solid var(--line);
+        border-radius: 50%;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 30px;
+      }
+
+      .result-symbol.success {
+        border-color: rgba(216, 255, 114, 0.28);
+
+        background: rgba(216, 255, 114, 0.08);
+
+        color: var(--green);
+      }
+
+      .result-symbol.error {
+        border-color: rgba(255, 116, 124, 0.3);
+
+        background: rgba(255, 116, 124, 0.08);
+
+        color: var(--red);
+      }
+
+      .result-symbol.warning {
+        border-color: rgba(255, 156, 90, 0.28);
+
+        background: rgba(255, 156, 90, 0.08);
+
+        color: var(--orange);
+      }
+
+      .result-state h1 {
+        margin: 24px 0 0;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 38px;
+
+        letter-spacing: -0.04em;
+      }
+
+      .result-state p {
+        margin: 14px auto 0;
+
+        max-width: 470px;
+
+        color: var(--muted);
+
+        font-size: 12px;
+
+        line-height: 1.8;
+      }
+
+      .retry-button {
+        min-height: 48px;
+
+        margin-top: 25px;
+        padding: 0 22px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+
+        background: rgba(255, 255, 255, 0.025);
+
+        color: var(--text);
+
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .retry-button:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* ==================================================
+       DISABLED
+    ================================================== */
+
+      .disabled-state {
+        min-height: 470px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+      }
+
+      .disabled-state h1 {
+        margin: 20px 0 0;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 38px;
+      }
+
+      .disabled-state p {
+        max-width: 460px;
+
+        margin: 12px auto 0;
+
+        color: var(--muted);
+
+        font-size: 12px;
+
+        line-height: 1.7;
+      }
+
+      /* ==================================================
+       UTILITY
+    ================================================== */
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ==================================================
+       FOOTER
+    ================================================== */
+
+      .footer {
+        min-height: 82px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        border-top: 1px solid var(--line);
+
+        color: var(--dim);
+
+        font-size: 8px;
+        letter-spacing: 0.1em;
+      }
+
+      .footer-right {
+        display: flex;
+        align-items: center;
+
+        gap: 14px;
+      }
+
+      /* ==================================================
+       MOBILE
+    ================================================== */
+
+      @media (max-width: 700px) {
+        .page {
+          width: min(100% - 22px, 1180px);
+        }
+
+        .topbar {
+          min-height: 74px;
+        }
+
+        .brand-copy span {
+          display: none;
+        }
+
+        .secure-badge span:last-child {
+          display: none;
+        }
+
+        .main {
+          padding: 35px 0 55px;
+        }
+
+        .server-header {
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+
+        .verify-card {
+          padding: 28px 22px;
+        }
+
+        .verify-title {
+          font-size: 44px;
+        }
+
+        .trust-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .footer {
+          padding: 20px 0;
+
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="ambient"></div>
+    <div class="grid-bg"></div>
+
+    <div class="page">
+      <!-- ==================================================
+         HEADER
+    ================================================== -->
+
+      <header class="topbar">
+        <a href="/" class="brand">
+          <span class="brand-mark">
+            <img src="/arclume-logo.png?v=20261002" alt="Arclume" />
+          </span>
+
+          <span class="brand-copy">
+            <strong> ARCLUME </strong>
+
+            <span class="mono"> WEB VERIFICATION </span>
+          </span>
+        </a>
+
+        <div class="secure-badge mono">
+          <i class="secure-dot"></i>
+
+          <span> DISCORD OAUTH </span>
+
+          <span> / SECURE SESSION </span>
+        </div>
+      </header>
+
+      <!-- ==================================================
+         MAIN
+    ================================================== -->
+
+      <main class="main">
+        <div class="verify-shell">
+          <!-- ==================================================
+             LOADING
+        ================================================== -->
+
+          <section class="loading-state" id="loadingState">
+            <div>
+              <div class="loading-logo">
+                <img src="/arclume-logo.png?v=20261002" alt="Arclume" />
+              </div>
+
+              <h2>Loading verification.</h2>
+
+              <p class="mono">ARCLUME / CHECKING SERVER</p>
+            </div>
+          </section>
+
+          <!-- ==================================================
+             NORMAL VERIFY VIEW
+        ================================================== -->
+
+          <section class="hidden" id="verificationState">
+            <div class="server-header">
+              <div class="server-identity">
+                <div class="server-icon" id="serverIcon">A</div>
+
+                <div class="server-text">
+                  <small class="mono"> VERIFYING FOR </small>
+
+                  <strong id="serverName"> Discord Server </strong>
+                </div>
+              </div>
+
+              <span class="member-count mono" id="memberCount">
+                SERVER CONNECTED
+              </span>
+            </div>
+
+            <article class="verify-card">
+              <span class="step-label mono"> IDENTITY / VERIFICATION </span>
+
+              <h1 class="verify-title" id="pageTitle">
+                Verify your Discord account
+              </h1>
+
+              <p class="verify-message" id="pageMessage">
+                Sign in with Discord to verify your membership and unlock access
+                to the server.
+              </p>
+
+              <div class="trust-grid">
+                <div class="trust-item">
+                  <span class="mono"> 01 </span>
+
+                  <strong> Discord Login </strong>
+
+                  <p>Authentication happens through Discord OAuth.</p>
+                </div>
+
+                <div class="trust-item">
+                  <span class="mono"> 02 </span>
+
+                  <strong> Membership Check </strong>
+
+                  <p>Arclume confirms that your account is in this server.</p>
+                </div>
+
+                <div class="trust-item">
+                  <span class="mono"> 03 </span>
+
+                  <strong> Role Access </strong>
+
+                  <p>Your configured Verified role is applied automatically.</p>
+                </div>
+              </div>
+
+              <div class="verify-actions">
+                <a class="discord-button" id="discordLoginButton" href="#">
+                  <svg
+                    class="discord-icon"
+                    viewBox="0 0 127.14 96.36"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.82 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.27 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.13 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77.6 77.6 0 0 0 6.89 11.12 105.25 105.25 0 0 0 32.16-16.15c2.64-27.38-4.51-51.11-18.87-72.14ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.45-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.23 60 73.23 53s5-12.74 11.46-12.74S96.23 46 96.12 53s-5 12.69-11.43 12.69Z"
+                    />
+                  </svg>
+
+                  <span> Continue with Discord </span>
+                </a>
+
+                <p class="legal-note mono">
+                  Arclume requests your Discord identity and server list only to
+                  confirm membership for this verification.
+                </p>
+              </div>
+            </article>
+          </section>
+
+          <!-- ==================================================
+             RESULT
+        ================================================== -->
+
+          <section class="result-state hidden" id="resultState">
+            <div class="result-inner">
+              <div class="result-symbol" id="resultSymbol">✓</div>
+
+              <h1 id="resultTitle">Verification complete.</h1>
+
+              <p id="resultMessage">You can now return to Discord.</p>
+
+              <a class="retry-button hidden" id="retryButton" href="#">
+                TRY AGAIN
+              </a>
+            </div>
+          </section>
+
+          <!-- ==================================================
+             DISABLED
+        ================================================== -->
+
+          <section class="disabled-state hidden" id="disabledState">
+            <div>
+              <div class="result-symbol warning">!</div>
+
+              <h1>Verification unavailable.</h1>
+
+              <p id="disabledMessage">
+                Web Verification is not currently enabled for this server.
+              </p>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- ==================================================
+         FOOTER
+    ================================================== -->
+
+      <footer class="footer mono">
+        <span> ARCLUME / WEB VERIFY </span>
+
+        <div class="footer-right">
+          <span> SECURED WITH DISCORD OAUTH </span>
+
+          <span> 2026 </span>
+        </div>
+      </footer>
+    </div>
+
+    <script src="/web-verification.js?v=20261002-1"></script>
+  </body>
+</html>

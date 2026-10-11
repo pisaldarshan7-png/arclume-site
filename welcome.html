@@ -5,68 +5,63 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta name="description" content="Arclume Welcome System" />
+    <meta name="theme-color" content="#090908" />
 
-    <title>Arclume — Welcome System</title>
+    <title>Arclume — Welcome Flow</title>
+
+    <link rel="icon" type="image/png" href="/arclume-logo.png?v=20261002" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
 
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+      :root {
+        --bg: #090908;
+        --panel: #10100e;
+        --input: #0c0c0a;
+
+        --line: rgba(255, 255, 255, 0.08);
+        --line2: rgba(255, 255, 255, 0.14);
+
+        --text: #f1eee5;
+        --muted: #8d887e;
+        --dim: #5f5a53;
+
+        --cream: #e8dfc8;
+        --violet: #9b86ff;
+        --green: #d9ff72;
       }
 
-      :root {
-        --bg: #07080b;
-        --panel: #0c0e13;
-        --panel2: #101319;
-        --input: #090b0f;
-
-        --border: rgba(255, 255, 255, 0.075);
-        --border-strong: rgba(255, 255, 255, 0.13);
-
-        --text: #f3f0ea;
-        --muted: rgba(243, 240, 234, 0.48);
-        --muted2: rgba(243, 240, 234, 0.25);
-
-        --cream: #d6cdb5;
-        --green: #8fd0a7;
+      * {
+        box-sizing: border-box;
       }
 
       html {
-        scroll-behavior: smooth;
+        color-scheme: dark;
       }
 
       body {
+        margin: 0;
+
         min-height: 100vh;
 
         background:
           radial-gradient(
-            circle at 10% 0%,
-            rgba(100, 72, 150, 0.1),
-            transparent 28%
+            circle at 90% 0%,
+            rgba(139, 112, 255, 0.1),
+            transparent 25%
           ),
-          radial-gradient(
-            circle at 100% 100%,
-            rgba(130, 110, 70, 0.08),
-            transparent 30%
-          ),
-          var(--bg);
+          #090908;
 
         color: var(--text);
 
         font-family: "Inter", sans-serif;
-
-        overflow-x: hidden;
       }
 
       button,
@@ -76,158 +71,135 @@
         font: inherit;
       }
 
+      button {
+        cursor: pointer;
+      }
+
       a {
         color: inherit;
         text-decoration: none;
       }
 
-      button,
-      select {
-        cursor: pointer;
+      .mono {
+        font-family: "DM Mono", monospace;
       }
 
-      .background-grid {
+      .grain {
         position: fixed;
+
         inset: 0;
 
         pointer-events: none;
 
-        opacity: 0.15;
+        opacity: 0.05;
 
         background-image:
-          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-          linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.035) 1px,
-            transparent 1px
-          );
+          radial-gradient(circle at 30% 20%, white 0 1px, transparent 1px),
+          radial-gradient(circle at 70% 80%, white 0 1px, transparent 1px);
 
-        background-size: 48px 48px;
-
-        mask-image: linear-gradient(to bottom, black, transparent 88%);
+        background-size:
+          13px 13px,
+          19px 19px;
       }
 
       .shell {
-        width: min(1380px, calc(100% - 40px));
+        width: min(1400px, calc(100% - 44px));
 
-        margin: 0 auto;
+        margin: auto;
 
-        position: relative;
+        padding-bottom: 80px;
       }
 
-      /* =================================================
+      /* ============================
        HEADER
-    ================================================= */
+    ============================ */
 
       .topbar {
-        min-height: 88px;
+        min-height: 82px;
 
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
 
-        gap: 20px;
-
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--line);
       }
 
-      .topbar-left {
+      .top-left {
         display: flex;
-
         align-items: center;
 
-        gap: 18px;
+        gap: 14px;
       }
 
-      .back-button {
+      .back {
         width: 42px;
         height: 42px;
 
         display: grid;
-
         place-items: center;
 
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
+        border-radius: 11px;
 
-        background: rgba(255, 255, 255, 0.015);
-
-        transition: 0.2s;
-      }
-
-      .back-button:hover {
-        border-color: var(--border-strong);
-
-        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
       }
 
       .brand {
         display: flex;
-
         align-items: center;
 
         gap: 12px;
       }
 
       .brand-logo {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
 
-        display: grid;
+        overflow: hidden;
 
-        place-items: center;
-
-        background: #0d0f14;
-
-        border: 1px solid var(--border-strong);
-
-        font-weight: 800;
-
-        font-size: 15px;
+        border: 1px solid var(--line2);
+        border-radius: 12px;
       }
 
-      .brand-copy {
-        display: flex;
+      .brand-logo img {
+        width: 100%;
+        height: 100%;
 
-        flex-direction: column;
+        display: block;
 
-        gap: 4px;
+        object-fit: cover;
       }
 
-      .brand-copy strong {
-        font-size: 13px;
+      .brand strong {
+        display: block;
 
-        letter-spacing: 0.18em;
+        font-family: "Syne", sans-serif;
+
+        letter-spacing: 0.1em;
       }
 
-      .brand-copy span {
+      .brand small {
+        display: block;
+
+        margin-top: 3px;
+
         color: var(--muted);
 
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-
-        letter-spacing: 0.12em;
+        font-size: 8px;
       }
 
       .connection {
         display: flex;
-
         align-items: center;
 
         gap: 8px;
 
         color: var(--muted);
 
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-
-        letter-spacing: 0.1em;
+        font-size: 8px;
       }
 
-      .connection-dot {
+      .connection i {
         width: 7px;
         height: 7px;
 
@@ -235,50 +207,43 @@
 
         background: var(--green);
 
-        box-shadow: 0 0 16px rgba(143, 208, 167, 0.5);
+        box-shadow: 0 0 13px rgba(217, 255, 114, 0.5);
       }
 
-      /* =================================================
+      /* ============================
        SERVER
-    ================================================= */
+    ============================ */
 
       .server-bar {
-        min-height: 86px;
+        min-height: 90px;
 
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
 
-        gap: 20px;
-
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--line);
       }
 
       .server-info {
         display: flex;
-
         align-items: center;
 
-        gap: 14px;
+        gap: 12px;
       }
 
       .server-icon {
-        width: 46px;
-        height: 46px;
+        width: 48px;
+        height: 48px;
+
+        display: grid;
+        place-items: center;
 
         overflow: hidden;
 
-        display: grid;
-
-        place-items: center;
-
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
+        border-radius: 12px;
 
         background: var(--panel);
-
-        font-weight: 700;
       }
 
       .server-icon img {
@@ -288,206 +253,132 @@
         object-fit: cover;
       }
 
-      .server-copy {
-        display: flex;
+      .server-copy small {
+        display: block;
 
-        flex-direction: column;
+        color: var(--dim);
 
-        gap: 6px;
-      }
-
-      .server-copy span {
-        color: var(--muted);
-
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-
-        letter-spacing: 0.12em;
+        font-size: 8px;
       }
 
       .server-copy strong {
-        font-size: 14px;
+        display: block;
+
+        margin-top: 5px;
       }
 
-      .system-status {
+      .status {
         padding: 8px 11px;
 
-        border: 1px solid rgba(143, 208, 167, 0.2);
-
-        background: rgba(143, 208, 167, 0.07);
+        border: 1px solid rgba(217, 255, 114, 0.2);
+        border-radius: 8px;
 
         color: var(--green);
 
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-
-        letter-spacing: 0.12em;
+        font-size: 8px;
       }
 
-      /* =================================================
+      /* ============================
        HERO
-    ================================================= */
+    ============================ */
 
       .hero {
-        padding: 80px 0 68px;
+        min-height: 400px;
+
+        padding: 70px 0 55px;
 
         display: grid;
 
         grid-template-columns:
-          1.15fr
-          0.85fr;
-
-        gap: 70px;
+          1.2fr
+          0.8fr;
 
         align-items: end;
 
-        border-bottom: 1px solid var(--border);
+        gap: 50px;
+
+        border-bottom: 1px solid var(--line);
       }
 
       .eyebrow {
-        display: inline-block;
-
-        margin-bottom: 18px;
-
-        color: var(--muted);
-
-        font-family: "DM Mono", monospace;
+        color: var(--violet);
 
         font-size: 9px;
-
-        letter-spacing: 0.14em;
       }
 
       .hero h1 {
-        max-width: 700px;
+        margin: 12px 0 0;
 
-        font-size: clamp(50px, 7vw, 90px);
+        font-family: "Syne", sans-serif;
 
-        line-height: 0.92;
+        font-size: clamp(60px, 8vw, 110px);
 
-        letter-spacing: -0.065em;
+        line-height: 0.83;
 
-        font-weight: 700;
+        letter-spacing: -0.07em;
       }
 
       .hero h1 span {
-        color: var(--cream);
+        color: transparent;
+
+        -webkit-text-stroke: 1px rgba(241, 238, 229, 0.55);
       }
 
       .hero p {
-        max-width: 620px;
+        max-width: 650px;
 
-        margin-top: 28px;
+        margin: 25px 0 0;
 
         color: var(--muted);
 
-        line-height: 1.8;
+        font-size: 12px;
 
-        font-size: 14px;
+        line-height: 1.8;
       }
 
-      /* =================================================
-       MASTER CARD
-    ================================================= */
+      .master {
+        padding: 25px;
 
-      .master-card {
-        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
 
-        border: 1px solid var(--border);
-
-        background: linear-gradient(
-          145deg,
-          rgba(255, 255, 255, 0.035),
-          rgba(255, 255, 255, 0.01)
-        );
+        background: rgba(255, 255, 255, 0.018);
       }
 
       .master-top {
         display: flex;
-
-        justify-content: space-between;
-
         align-items: center;
-
-        gap: 20px;
+        justify-content: space-between;
       }
 
-      .tiny-label {
-        color: var(--muted);
-
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-
-        letter-spacing: 0.12em;
-      }
-
-      .master-top h2 {
-        margin-top: 8px;
-
-        font-size: 26px;
-
-        letter-spacing: -0.04em;
-      }
-
-      .master-bottom {
-        margin-top: 28px;
-
-        padding-top: 20px;
-
-        border-top: 1px solid var(--border);
-
-        display: grid;
-
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 20px;
-      }
-
-      .master-bottom div {
-        display: flex;
-
-        flex-direction: column;
-
-        gap: 7px;
-      }
-
-      .master-bottom span {
-        color: var(--muted);
-
-        font-family: "DM Mono", monospace;
+      .master small {
+        color: var(--dim);
 
         font-size: 8px;
-
-        letter-spacing: 0.12em;
       }
 
-      .master-bottom strong {
-        font-size: 12px;
+      .master h2 {
+        margin: 8px 0 0;
 
-        letter-spacing: 0.08em;
+        font-family: "Syne", sans-serif;
       }
 
-      /* =================================================
+      /* ============================
        SWITCH
-    ================================================= */
+    ============================ */
 
       .switch {
         position: relative;
 
-        width: 62px;
-        height: 32px;
-
-        flex-shrink: 0;
+        width: 58px;
+        height: 30px;
       }
 
       .switch input {
-        opacity: 0;
-
         width: 0;
         height: 0;
+
+        opacity: 0;
       }
 
       .slider {
@@ -495,11 +386,10 @@
 
         inset: 0;
 
-        background: #090b0f;
+        border: 1px solid var(--line2);
+        border-radius: 999px;
 
-        border: 1px solid var(--border-strong);
-
-        transition: 0.25s;
+        background: #171713;
       }
 
       .slider::before {
@@ -507,72 +397,80 @@
 
         position: absolute;
 
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
 
-        left: 4px;
         top: 4px;
+        left: 4px;
 
-        background: rgba(255, 255, 255, 0.28);
+        border-radius: 50%;
 
-        transition: 0.25s;
+        background: #777168;
+
+        transition: 0.2s;
       }
 
       .switch input:checked + .slider {
-        background: rgba(143, 208, 167, 0.12);
-
-        border-color: rgba(143, 208, 167, 0.4);
+        background: rgba(217, 255, 114, 0.12);
       }
 
       .switch input:checked + .slider::before {
-        transform: translateX(30px);
+        transform: translateX(28px);
 
         background: var(--green);
       }
 
-      /* =================================================
+      /* ============================
        SECTIONS
-    ================================================= */
+    ============================ */
 
       .section {
-        padding: 72px 0;
+        padding: 65px 0;
 
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--line);
       }
 
-      .section-heading {
+      .section-head {
         display: grid;
 
         grid-template-columns:
-          55px
+          50px
           1fr;
 
-        gap: 20px;
+        gap: 18px;
 
-        margin-bottom: 42px;
+        margin-bottom: 32px;
       }
 
-      .section-number {
-        color: var(--muted2);
+      .section-head > span {
+        color: var(--dim);
 
-        font-family: "DM Mono", monospace;
-
-        font-size: 10px;
+        font-size: 9px;
       }
 
-      .section-heading .eyebrow {
-        margin-bottom: 10px;
+      .section-head small {
+        color: var(--violet);
+
+        font-size: 8px;
       }
 
-      .section-heading h2 {
-        font-size: 36px;
+      .section-head h2 {
+        margin: 8px 0 0;
 
-        letter-spacing: -0.045em;
+        font-family: "Syne", sans-serif;
+
+        font-size: 34px;
       }
 
-      /* =================================================
-       CARDS
-    ================================================= */
+      .section-head p {
+        margin: 8px 0 0;
+
+        color: var(--muted);
+
+        font-size: 11px;
+
+        line-height: 1.7;
+      }
 
       .grid {
         display: grid;
@@ -583,47 +481,42 @@
       }
 
       .card {
-        padding: 26px;
+        padding: 24px;
 
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
+        border-radius: 16px;
 
-        background: var(--panel);
+        background: rgba(16, 16, 14, 0.72);
       }
 
-      .card.full {
+      .full {
         grid-column: 1 / -1;
       }
 
       .card h3 {
-        margin-bottom: 8px;
+        margin: 0 0 7px;
 
-        font-size: 18px;
-
-        letter-spacing: -0.025em;
+        font-family: "Syne", sans-serif;
       }
 
       .card p {
-        margin-bottom: 22px;
+        margin: 0 0 20px;
 
         color: var(--muted);
 
-        font-size: 12px;
+        font-size: 11px;
 
         line-height: 1.7;
       }
 
-      .field-label {
+      label.field {
         display: block;
 
-        margin-bottom: 9px;
+        margin-bottom: 8px;
 
-        color: var(--muted);
+        color: var(--dim);
 
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-
-        letter-spacing: 0.11em;
+        font-size: 8px;
       }
 
       input,
@@ -631,443 +524,269 @@
       textarea {
         width: 100%;
 
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+
+        outline: none;
 
         background: var(--input);
 
         color: var(--text);
-
-        outline: none;
-
-        transition: 0.2s;
       }
 
       input,
       select {
-        height: 52px;
+        height: 48px;
 
-        padding: 0 15px;
+        padding: 0 13px;
       }
 
       textarea {
-        min-height: 145px;
+        min-height: 150px;
 
-        padding: 15px;
+        padding: 14px;
 
         resize: vertical;
 
-        line-height: 1.65;
+        line-height: 1.6;
       }
 
       input:focus,
       select:focus,
       textarea:focus {
-        border-color: rgba(214, 205, 181, 0.4);
+        border-color: rgba(155, 134, 255, 0.45);
       }
 
-      .option-row {
+      .row {
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
 
-        gap: 24px;
+        gap: 20px;
       }
 
-      .option-copy h3 {
-        margin-bottom: 8px;
+      .row p {
+        margin: 6px 0 0;
       }
-
-      .option-copy p {
-        margin: 0;
-
-        color: var(--muted);
-
-        line-height: 1.65;
-      }
-
-      .secondary-button {
-        min-height: 42px;
-
-        padding: 0 16px;
-
-        border: 1px solid var(--border);
-
-        background: transparent;
-
-        color: var(--text);
-
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-
-        letter-spacing: 0.1em;
-      }
-
-      .secondary-button:hover {
-        background: rgba(255, 255, 255, 0.035);
-      }
-
-      /* =================================================
-       VARIABLES
-    ================================================= */
 
       .variables {
-        margin-top: 16px;
+        margin-top: 14px;
 
         display: flex;
-
         flex-wrap: wrap;
-
-        gap: 8px;
-      }
-
-      .variable {
-        padding: 7px 10px;
-
-        border: 1px solid var(--border);
-
-        background: rgba(255, 255, 255, 0.015);
-
-        color: var(--muted);
-
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-      }
-
-      /* =================================================
-       PREVIEW
-    ================================================= */
-
-      .preview {
-        max-width: 760px;
-
-        padding: 24px;
-
-        display: flex;
-
-        gap: 15px;
-
-        border: 1px solid var(--border);
-
-        background: #111318;
-      }
-
-      .bot-avatar {
-        width: 44px;
-        height: 44px;
-
-        flex-shrink: 0;
-
-        display: grid;
-
-        place-items: center;
-
-        border-radius: 50%;
-
-        background: #242832;
-
-        font-weight: 800;
-      }
-
-      .preview-content {
-        flex: 1;
-
-        min-width: 0;
-      }
-
-      .preview-author {
-        margin-bottom: 9px;
-
-        display: flex;
-
-        align-items: center;
 
         gap: 7px;
       }
 
-      .preview-author strong {
-        font-size: 13px;
-      }
+      .variables span {
+        padding: 6px 8px;
 
-      .bot-badge {
-        padding: 2px 5px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
 
-        border-radius: 2px;
-
-        background: #5865f2;
+        color: var(--muted);
 
         font-size: 8px;
-
-        font-weight: 700;
       }
 
-      .preview-embed {
-        max-width: 570px;
+      /* ============================
+       TEST BAR
+    ============================ */
 
-        padding: 16px;
-
-        border-left: 4px solid var(--cream);
-
-        background: #191c22;
-      }
-
-      .preview-embed h3 {
-        margin-bottom: 10px;
-
-        font-size: 15px;
-      }
-
-      .preview-embed p {
-        color: rgba(243, 240, 234, 0.75);
-
-        font-size: 13px;
-
-        line-height: 1.65;
-
-        white-space: pre-wrap;
-      }
-
-      .preview-member-avatar {
-        width: 50px;
-        height: 50px;
-
-        margin-top: 14px;
-
-        overflow: hidden;
-
-        display: none;
-
-        place-items: center;
-
-        border-radius: 50%;
-
-        background: #292d36;
-      }
-
-      .preview-member-avatar.visible {
-        display: grid;
-      }
-
-      /* =================================================
-       SAVE
-    ================================================= */
-
-      .save-area {
-        min-height: 135px;
+      .test-bar {
+        margin-top: 18px;
+        padding-top: 18px;
 
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
 
-        gap: 24px;
+        gap: 20px;
+
+        border-top: 1px solid var(--line);
       }
 
-      .save-copy {
-        display: flex;
+      .test-copy small {
+        display: block;
 
-        flex-direction: column;
+        color: var(--dim);
 
-        gap: 8px;
+        font-size: 7px;
       }
 
-      .save-copy strong {
-        font-size: 14px;
-      }
+      .test-copy strong {
+        display: block;
 
-      .save-actions {
-        display: flex;
+        margin-top: 5px;
 
-        gap: 10px;
-      }
-
-      .test-button,
-      .save-button {
-        min-width: 205px;
-
-        height: 54px;
-
-        padding: 0 20px;
+        font-size: 10px;
       }
 
       .test-button {
-        border: 1px solid var(--border-strong);
+        min-height: 44px;
+
+        padding: 0 17px;
+
+        border: 1px solid var(--line2);
+        border-radius: 9px;
 
         background: transparent;
 
         color: var(--text);
 
-        font-weight: 600;
+        font-size: 8px;
+        font-weight: 700;
+
+        letter-spacing: 0.08em;
+      }
+
+      .test-button:hover {
+        background: rgba(255, 255, 255, 0.035);
+
+        border-color: rgba(155, 134, 255, 0.5);
+      }
+
+      /* ============================
+       GOODBYE ENABLE
+    ============================ */
+
+      .goodbye-enable {
+        margin-bottom: 14px;
+
+        padding: 23px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        border: 1px solid var(--line);
+        border-radius: 16px;
+
+        background: rgba(16, 16, 14, 0.72);
+      }
+
+      .goodbye-enable h3 {
+        margin: 6px 0 0;
+
+        font-family: "Syne", sans-serif;
+      }
+
+      /* ============================
+       SAVE
+    ============================ */
+
+      .save-area {
+        min-height: 140px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+      }
+
+      .save-state small {
+        display: block;
+
+        color: var(--dim);
+
+        font-size: 8px;
+      }
+
+      .save-state strong {
+        display: block;
+
+        margin-top: 7px;
+
+        font-size: 12px;
       }
 
       .save-button {
+        min-width: 220px;
+        height: 50px;
+
+        padding: 0 18px;
+
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
 
-        border: 1px solid var(--text);
+        border: 0;
+        border-radius: 10px;
 
-        background: var(--text);
+        background: var(--cream);
 
-        color: #07080b;
+        color: #111;
 
-        font-weight: 700;
+        font-weight: 800;
       }
 
       button:disabled {
-        opacity: 0.55;
+        opacity: 0.45;
 
         cursor: not-allowed;
       }
 
-      /* =================================================
-       FOOTER
-    ================================================= */
-
-      footer {
-        min-height: 110px;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        gap: 20px;
-
-        color: var(--muted);
-
-        font-family: "DM Mono", monospace;
-
-        font-size: 9px;
-
-        letter-spacing: 0.1em;
-      }
-
-      /* =================================================
-       MOBILE
-    ================================================= */
-
-      @media (max-width: 900px) {
-        .hero {
-          grid-template-columns: 1fr;
-        }
-
+      @media (max-width: 850px) {
+        .hero,
         .grid {
           grid-template-columns: 1fr;
         }
 
-        .card.full {
+        .full {
           grid-column: auto;
-        }
-
-        .save-area {
-          padding: 28px 0;
-
-          flex-direction: column;
-
-          align-items: stretch;
-        }
-
-        .save-actions {
-          width: 100%;
-        }
-
-        .test-button,
-        .save-button {
-          flex: 1;
         }
       }
 
-      @media (max-width: 620px) {
+      @media (max-width: 600px) {
         .shell {
           width: calc(100% - 24px);
         }
 
-        .brand-copy span {
-          display: none;
-        }
-
-        .connection span:last-child {
-          display: none;
-        }
-
-        .server-bar {
-          padding: 18px 0;
-
-          align-items: flex-start;
-
-          flex-direction: column;
-        }
-
-        .hero {
-          padding: 55px 0;
-        }
-
         .hero h1 {
-          font-size: 50px;
+          font-size: 58px;
         }
 
-        .section {
-          padding: 55px 0;
-        }
-
-        .section-heading {
-          grid-template-columns:
-            36px
-            1fr;
-        }
-
-        .option-row {
-          align-items: flex-start;
+        .test-bar,
+        .save-area {
+          align-items: stretch;
 
           flex-direction: column;
         }
 
-        .save-actions {
-          flex-direction: column;
-        }
-
-        footer {
-          padding: 30px 0;
-
-          align-items: flex-start;
-
-          flex-direction: column;
+        .test-button,
+        .save-button {
+          width: 100%;
         }
       }
     </style>
   </head>
 
   <body>
-    <div class="background-grid"></div>
+    <div class="grain"></div>
 
-    <div class="shell">
+    <main class="shell">
       <!-- HEADER -->
 
       <header class="topbar">
-        <div class="topbar-left">
-          <a href="dashboard.html" class="back-button"> ← </a>
+        <div class="top-left">
+          <a href="/dashboard.html" class="back"> &larr; </a>
 
-          <a href="dashboard.html" class="brand">
-            <div class="brand-logo">A</div>
+          <a href="/dashboard.html" class="brand">
+            <span class="brand-logo">
+              <img src="/arclume-logo.png" alt="Arclume" />
+            </span>
 
-            <div class="brand-copy">
+            <span>
               <strong> ARCLUME </strong>
 
-              <span> WELCOME SYSTEM </span>
-            </div>
+              <small class="mono"> WELCOME FLOW </small>
+            </span>
           </a>
         </div>
 
-        <div class="connection">
-          <span class="connection-dot"></span>
+        <div class="connection mono">
+          <i></i>
 
           <span id="connectionText"> CONNECTING </span>
         </div>
@@ -1080,61 +799,53 @@
           <div class="server-icon" id="serverIcon">A</div>
 
           <div class="server-copy">
-            <span> ACTIVE SERVER </span>
+            <small class="mono"> ACTIVE SERVER </small>
 
-            <strong id="serverName"> Loading server... </strong>
+            <strong id="serverName"> Loading... </strong>
           </div>
         </div>
 
-        <span class="system-status" id="systemStatus"> STANDBY </span>
+        <span class="status mono" id="systemStatus"> STANDBY </span>
       </section>
 
       <!-- HERO -->
 
       <section class="hero">
         <div>
-          <span class="eyebrow"> ARRIVAL / IDENTITY / COMMUNITY </span>
+          <span class="eyebrow mono"> 02 / COMMUNITY </span>
 
           <h1>
             Welcome
+            <br />
 
-            <span> System. </span>
+            <span> Flow. </span>
           </h1>
 
           <p>
-            Create a polished first impression for every new member, assign
-            roles automatically and control arrival and goodbye messages from
-            one place.
+            Build the complete arrival and departure experience for your Discord
+            community.
           </p>
         </div>
 
-        <div class="master-card">
+        <div class="master">
           <div class="master-top">
             <div>
-              <span class="tiny-label"> MASTER SYSTEM </span>
+              <small class="mono"> WELCOME SYSTEM </small>
 
-              <h2>Welcome Messages</h2>
+              <h2>Member greetings</h2>
             </div>
 
             <label class="switch">
-              <input type="checkbox" id="welcomeEnabled" />
+              <input id="welcomeEnabled" type="checkbox" />
 
               <span class="slider"></span>
             </label>
           </div>
 
-          <div class="master-bottom">
-            <div>
-              <span> STATUS </span>
+          <div style="margin-top: 20px">
+            <small class="mono"> CURRENT STATUS </small>
 
-              <strong id="welcomeStatusText"> DISABLED </strong>
-            </div>
-
-            <div>
-              <span> DELIVERY </span>
-
-              <strong> AUTOMATIC </strong>
-            </div>
+            <h3 id="welcomeStatusText">DISABLED</h3>
           </div>
         </div>
       </section>
@@ -1142,65 +853,56 @@
       <!-- DELIVERY -->
 
       <section class="section">
-        <div class="section-heading">
-          <span class="section-number"> 01 </span>
+        <div class="section-head">
+          <span class="mono"> 01 </span>
 
           <div>
-            <span class="eyebrow"> DISCORD TARGET </span>
+            <small class="mono"> ARRIVAL / DELIVERY </small>
 
-            <h2>Delivery.</h2>
+            <h2>Welcome destination</h2>
+
+            <p>
+              Select where new members are welcomed and which role they receive.
+            </p>
           </div>
         </div>
 
         <div class="grid">
-          <!-- WELCOME CHANNEL -->
-
           <div class="card">
             <h3>Welcome Channel</h3>
 
-            <p>Choose where Arclume sends new member welcome messages.</p>
+            <p>Channel where the welcome message is sent.</p>
 
-            <label class="field-label" for="welcomeChannel"> CHANNEL </label>
+            <label class="field mono" for="welcomeChannel"> CHANNEL </label>
 
             <select id="welcomeChannel">
-              <option value="">Loading channels...</option>
+              <option value="">Select a channel</option>
             </select>
           </div>
-
-          <!-- AUTO ROLE -->
 
           <div class="card">
             <h3>Auto Role</h3>
 
-            <p>
-              Optionally give a role automatically when somebody joins the
-              server.
-            </p>
+            <p>Automatically assign a Discord role when someone joins.</p>
 
-            <label class="field-label" for="autoRole"> ROLE </label>
+            <label class="field mono" for="autoRole"> ROLE </label>
 
             <select id="autoRole">
               <option value="">No automatic role</option>
             </select>
           </div>
 
-          <!-- REFRESH -->
-
           <div class="card full">
-            <div class="option-row">
-              <div class="option-copy">
-                <h3>Refresh Discord Data</h3>
+            <div class="row">
+              <div>
+                <h3>Discord Data</h3>
 
                 <p>
-                  Reload the latest channels and assignable roles from Discord.
+                  Reload channels and roles from the currently selected server.
                 </p>
               </div>
 
-              <button
-                type="button"
-                class="secondary-button"
-                id="refreshDiscordData"
-              >
+              <button class="test-button" id="refreshDiscordData" type="button">
                 REFRESH
               </button>
             </div>
@@ -1211,114 +913,77 @@
       <!-- WELCOME MESSAGE -->
 
       <section class="section">
-        <div class="section-heading">
-          <span class="section-number"> 02 </span>
+        <div class="section-head">
+          <span class="mono"> 02 </span>
 
           <div>
-            <span class="eyebrow"> WELCOME MESSAGE </span>
+            <small class="mono"> ARRIVAL / MESSAGE </small>
 
-            <h2>First impression.</h2>
+            <h2>Welcome greeting</h2>
+
+            <p>Customize exactly what Arclume sends when somebody joins.</p>
           </div>
         </div>
 
         <div class="grid">
-          <!-- TITLE -->
+          <div class="card">
+            <h3>Welcome Title</h3>
 
-          <div class="card full">
-            <label class="field-label" for="welcomeTitle"> EMBED TITLE </label>
+            <p>Heading shown at the top of the embed.</p>
+
+            <label class="field mono" for="welcomeTitle"> TITLE </label>
 
             <input
-              type="text"
               id="welcomeTitle"
               maxlength="150"
               value="Welcome to {server}!"
-              placeholder="Welcome to {server}!"
             />
           </div>
 
-          <!-- MESSAGE -->
+          <div class="card">
+            <div class="row">
+              <div>
+                <h3>Member Avatar</h3>
 
-          <div class="card full">
-            <label class="field-label" for="welcomeMessage">
-              WELCOME MESSAGE
-            </label>
-
-            <textarea
-              id="welcomeMessage"
-              maxlength="1500"
-              placeholder="Write your welcome message..."
-            >
-Welcome {user} to **{server}**! You are member #{membercount}.</textarea
-            >
-
-            <div class="variables">
-              <span class="variable"> {user} </span>
-
-              <span class="variable"> {username} </span>
-
-              <span class="variable"> {server} </span>
-
-              <span class="variable"> {membercount} </span>
-            </div>
-          </div>
-
-          <!-- AVATAR -->
-
-          <div class="card full">
-            <div class="option-row">
-              <div class="option-copy">
-                <h3>Show Member Avatar</h3>
-
-                <p>
-                  Display the new member's Discord avatar inside the welcome
-                  embed.
-                </p>
+                <p>Show the joining member's Discord avatar.</p>
               </div>
 
               <label class="switch">
-                <input type="checkbox" id="showAvatar" checked />
+                <input id="showAvatar" type="checkbox" checked />
 
                 <span class="slider"></span>
               </label>
             </div>
           </div>
-        </div>
-      </section>
 
-      <!-- PREVIEW -->
+          <div class="card full">
+            <label class="field mono" for="welcomeMessage">
+              WELCOME MESSAGE
+            </label>
 
-      <section class="section">
-        <div class="section-heading">
-          <span class="section-number"> 03 </span>
+            <textarea id="welcomeMessage" maxlength="1500">
+Welcome {user} to **{server}**! You are member #{membercount}.</textarea
+            >
 
-          <div>
-            <span class="eyebrow"> LIVE PREVIEW </span>
-
-            <h2>Member view.</h2>
-          </div>
-        </div>
-
-        <div class="preview">
-          <div class="bot-avatar">A</div>
-
-          <div class="preview-content">
-            <div class="preview-author">
-              <strong> Arclume </strong>
-
-              <span class="bot-badge"> BOT </span>
+            <div class="variables">
+              <span>{user}</span>
+              <span>{username}</span>
+              <span>{server}</span>
+              <span>{membercount}</span>
             </div>
 
-            <div class="preview-embed">
-              <h3 id="previewTitle">Welcome to Your Server!</h3>
+            <!-- TEST WELCOME HERE -->
 
-              <p id="previewMessage">
-                Welcome @Member to Your Server! You are member #100.
-              </p>
+            <div class="test-bar">
+              <div class="test-copy">
+                <small class="mono"> TEST / WELCOME </small>
 
-              <div
-                class="preview-member-avatar visible"
-                id="previewMemberAvatar"
-              ></div>
+                <strong> Send this welcome message to Discord </strong>
+              </div>
+
+              <button class="test-button" id="testWelcome" type="button">
+                SEND TEST WELCOME
+              </button>
             </div>
           </div>
         </div>
@@ -1327,79 +992,84 @@ Welcome {user} to **{server}**! You are member #{membercount}.</textarea
       <!-- GOODBYE -->
 
       <section class="section">
-        <div class="section-heading">
-          <span class="section-number"> 04 </span>
+        <div class="section-head">
+          <span class="mono"> 03 </span>
 
           <div>
-            <span class="eyebrow"> DEPARTURES </span>
+            <small class="mono"> DEPARTURE / MESSAGE </small>
 
-            <h2>Goodbye messages.</h2>
+            <h2>Goodbye greeting</h2>
+
+            <p>Send a final message when somebody leaves the community.</p>
           </div>
         </div>
 
-        <div class="grid">
-          <!-- ENABLE GOODBYE -->
+        <div class="goodbye-enable">
+          <div>
+            <small class="mono"> GOODBYE SYSTEM </small>
 
-          <div class="card full">
-            <div class="option-row">
-              <div class="option-copy">
-                <h3>Enable Goodbye Messages</h3>
-
-                <p>Send a message when somebody leaves the Discord server.</p>
-              </div>
-
-              <label class="switch">
-                <input type="checkbox" id="goodbyeEnabled" />
-
-                <span class="slider"></span>
-              </label>
-            </div>
+            <h3>Departure messages</h3>
           </div>
 
-          <!-- CHANNEL -->
+          <label class="switch">
+            <input id="goodbyeEnabled" type="checkbox" />
 
-          <div class="card full">
-            <label class="field-label" for="goodbyeChannel">
-              GOODBYE CHANNEL
-            </label>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>Goodbye Channel</h3>
+
+            <p>Leave blank to use the Welcome Channel.</p>
+
+            <label class="field mono" for="goodbyeChannel"> CHANNEL </label>
 
             <select id="goodbyeChannel">
-              <option value="">Same as welcome channel</option>
+              <option value="">Same as Welcome Channel</option>
             </select>
           </div>
 
-          <!-- TITLE -->
+          <div class="card">
+            <h3>Goodbye Title</h3>
 
-          <div class="card full">
-            <label class="field-label" for="goodbyeTitle">
-              GOODBYE TITLE
-            </label>
+            <p>Heading shown when somebody leaves.</p>
 
-            <input
-              type="text"
-              id="goodbyeTitle"
-              maxlength="150"
-              value="Member Left"
-            />
+            <label class="field mono" for="goodbyeTitle"> TITLE </label>
+
+            <input id="goodbyeTitle" maxlength="150" value="Until Next Time" />
           </div>
 
-          <!-- MESSAGE -->
-
           <div class="card full">
-            <label class="field-label" for="goodbyeMessage">
+            <label class="field mono" for="goodbyeMessage">
               GOODBYE MESSAGE
             </label>
 
             <textarea id="goodbyeMessage" maxlength="1500">
-**{username}** has left **{server}**.</textarea
+**{username}** has left **{server}**.
+
+Thanks for being part of the community. We hope to see you again someday.</textarea
             >
 
             <div class="variables">
-              <span class="variable"> {username} </span>
+              <span>{username}</span>
+              <span>{server}</span>
+              <span>{membercount}</span>
+            </div>
 
-              <span class="variable"> {server} </span>
+            <!-- TEST GOODBYE HERE -->
 
-              <span class="variable"> {membercount} </span>
+            <div class="test-bar">
+              <div class="test-copy">
+                <small class="mono"> TEST / GOODBYE </small>
+
+                <strong> Send this goodbye message to Discord </strong>
+              </div>
+
+              <button class="test-button" id="testGoodbye" type="button">
+                SEND TEST GOODBYE
+              </button>
             </div>
           </div>
         </div>
@@ -1408,36 +1078,20 @@ Welcome {user} to **{server}**! You are member #{membercount}.</textarea
       <!-- SAVE -->
 
       <section class="save-area">
-        <div class="save-copy">
-          <span class="tiny-label"> CONFIGURATION </span>
+        <div class="save-state">
+          <small class="mono"> CONFIGURATION </small>
 
           <strong id="saveStatus"> No unsaved changes </strong>
         </div>
 
-        <div class="save-actions">
-          <button type="button" class="test-button" id="testWelcome">
-            Send Test Welcome
-          </button>
+        <button class="save-button" id="saveWelcome" type="button">
+          <span> SAVE SETTINGS </span>
 
-          <button type="button" class="save-button" id="saveWelcome">
-            <span> Save Welcome </span>
-
-            <span> → </span>
-          </button>
-        </div>
+          <span> &rarr; </span>
+        </button>
       </section>
+    </main>
 
-      <!-- FOOTER -->
-
-      <footer>
-        <span> ARCLUME © 2026 </span>
-
-        <span> WELCOME SYSTEM </span>
-
-        <a href="dashboard.html"> RETURN TO CONTROL </a>
-      </footer>
-    </div>
-
-    <script src="welcome.js"></script>
+    <script src="/welcome.js?v=20261002-4"></script>
   </body>
 </html>

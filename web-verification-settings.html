@@ -1,0 +1,1451 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color" content="#08080a" />
+
+    <title>Arclume — Web Verification</title>
+
+    <link rel="icon" type="image/png" href="/arclume-logo.png?v=20261002" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #08080a;
+        --panel: rgba(15, 15, 19, 0.88);
+        --panel-strong: #111116;
+
+        --line: rgba(255, 255, 255, 0.075);
+        --line-strong: rgba(255, 255, 255, 0.14);
+
+        --text: #f4f1e9;
+        --muted: #9c978e;
+        --dim: #5f5c56;
+
+        --violet: #9c87ff;
+        --violet-soft: rgba(156, 135, 255, 0.13);
+
+        --green: #d9ff78;
+        --red: #ff7c83;
+        --orange: #ff9d60;
+
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        color-scheme: dark;
+      }
+
+      body {
+        margin: 0;
+
+        min-height: 100vh;
+
+        background:
+          radial-gradient(
+            circle at 12% 8%,
+            rgba(117, 85, 255, 0.13),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 90% 12%,
+            rgba(75, 96, 255, 0.08),
+            transparent 28%
+          ),
+          var(--bg);
+
+        color: var(--text);
+
+        font-family: "Inter", sans-serif;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .mono {
+        font-family: "DM Mono", monospace;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ==================================================
+       BACKGROUND
+    ================================================== */
+
+      .grid-bg {
+        position: fixed;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: 0.18;
+
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+
+        background-size: 48px 48px;
+
+        mask-image: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 1),
+          transparent 95%
+        );
+      }
+
+      /* ==================================================
+       PAGE
+    ================================================== */
+
+      .page {
+        position: relative;
+
+        z-index: 1;
+
+        width: min(1240px, calc(100% - 34px));
+
+        margin: auto;
+      }
+
+      /* ==================================================
+       TOPBAR
+    ================================================== */
+
+      .topbar {
+        min-height: 84px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+      }
+
+      .brand-logo {
+        width: 45px;
+        height: 45px;
+
+        overflow: hidden;
+
+        border: 1px solid var(--line-strong);
+        border-radius: 13px;
+
+        background: #0d0d12;
+      }
+
+      .brand-logo img {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .brand-copy strong {
+        display: block;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 14px;
+        letter-spacing: 0.12em;
+      }
+
+      .brand-copy span {
+        display: block;
+
+        margin-top: 4px;
+
+        color: var(--muted);
+
+        font-size: 8px;
+        letter-spacing: 0.1em;
+      }
+
+      .back-button {
+        min-height: 40px;
+
+        padding: 0 14px;
+
+        display: inline-flex;
+        align-items: center;
+
+        border: 1px solid var(--line);
+        border-radius: 9px;
+
+        background: rgba(255, 255, 255, 0.02);
+
+        color: var(--muted);
+
+        font-size: 9px;
+
+        transition:
+          border-color 0.18s ease,
+          color 0.18s ease,
+          background 0.18s ease;
+      }
+
+      .back-button:hover {
+        color: var(--text);
+
+        border-color: var(--line-strong);
+
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      /* ==================================================
+       HEADER
+    ================================================== */
+
+      .header {
+        padding: 54px 0 34px;
+
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1fr)
+          auto;
+
+        gap: 30px;
+
+        align-items: end;
+      }
+
+      .eyebrow {
+        color: var(--violet);
+
+        font-size: 8px;
+        letter-spacing: 0.14em;
+      }
+
+      .header h1 {
+        max-width: 760px;
+
+        margin: 13px 0 0;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: clamp(42px, 6vw, 74px);
+
+        line-height: 0.93;
+
+        letter-spacing: -0.055em;
+      }
+
+      .header p {
+        max-width: 640px;
+
+        margin: 20px 0 0;
+
+        color: var(--muted);
+
+        font-size: 12px;
+
+        line-height: 1.75;
+      }
+
+      .connection {
+        min-width: 220px;
+
+        padding: 15px 16px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 11px;
+
+        border: 1px solid var(--line);
+        border-radius: 12px;
+
+        background: rgba(255, 255, 255, 0.018);
+      }
+
+      .connection-dot {
+        width: 8px;
+        height: 8px;
+
+        flex: 0 0 8px;
+
+        border-radius: 50%;
+
+        background: var(--green);
+
+        box-shadow: 0 0 14px rgba(217, 255, 120, 0.45);
+      }
+
+      .connection small {
+        display: block;
+
+        color: var(--dim);
+
+        font-size: 7px;
+        letter-spacing: 0.11em;
+      }
+
+      .connection strong {
+        display: block;
+
+        margin-top: 5px;
+
+        max-width: 165px;
+
+        overflow: hidden;
+
+        font-size: 10px;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* ==================================================
+       MAIN GRID
+    ================================================== */
+
+      .layout {
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1.65fr)
+          minmax(300px, 0.85fr);
+
+        gap: 18px;
+
+        padding-bottom: 70px;
+      }
+
+      .column {
+        display: flex;
+        flex-direction: column;
+
+        gap: 18px;
+      }
+
+      /* ==================================================
+       CARD
+    ================================================== */
+
+      .card {
+        overflow: hidden;
+
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+
+        background:
+          linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.027),
+            rgba(255, 255, 255, 0.006)
+          ),
+          var(--panel);
+
+        backdrop-filter: blur(18px);
+      }
+
+      .card-head {
+        min-height: 78px;
+
+        padding: 20px 22px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        border-bottom: 1px solid var(--line);
+      }
+
+      .card-title small {
+        display: block;
+
+        color: var(--violet);
+
+        font-size: 7px;
+        letter-spacing: 0.13em;
+      }
+
+      .card-title strong {
+        display: block;
+
+        margin-top: 6px;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 16px;
+      }
+
+      .card-body {
+        padding: 22px;
+      }
+
+      /* ==================================================
+       ENABLE SWITCH
+    ================================================== */
+
+      .switch-row {
+        padding: 18px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        border: 1px solid var(--line);
+        border-radius: 13px;
+
+        background: rgba(255, 255, 255, 0.016);
+      }
+
+      .switch-copy strong {
+        display: block;
+
+        font-size: 11px;
+      }
+
+      .switch-copy p {
+        margin: 6px 0 0;
+
+        color: var(--muted);
+
+        font-size: 9px;
+
+        line-height: 1.55;
+      }
+
+      .switch {
+        position: relative;
+
+        width: 50px;
+        height: 28px;
+
+        flex: 0 0 50px;
+      }
+
+      .switch input {
+        position: absolute;
+
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .switch-track {
+        position: absolute;
+
+        inset: 0;
+
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+
+        background: #18181d;
+
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .switch-track::after {
+        content: "";
+
+        position: absolute;
+
+        top: 4px;
+        left: 4px;
+
+        width: 18px;
+        height: 18px;
+
+        border-radius: 50%;
+
+        background: #747178;
+
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .switch input:checked + .switch-track {
+        border-color: rgba(217, 255, 120, 0.28);
+
+        background: rgba(217, 255, 120, 0.11);
+      }
+
+      .switch input:checked + .switch-track::after {
+        transform: translateX(22px);
+
+        background: var(--green);
+      }
+
+      /* ==================================================
+       FORM
+    ================================================== */
+
+      .form-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 17px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+
+        gap: 8px;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .field label {
+        color: var(--muted);
+
+        font-size: 8px;
+        letter-spacing: 0.09em;
+      }
+
+      .field small {
+        color: var(--dim);
+
+        font-size: 8px;
+
+        line-height: 1.5;
+      }
+
+      .input,
+      .select,
+      .textarea {
+        width: 100%;
+
+        border: 1px solid var(--line);
+        outline: none;
+
+        background: #0d0d11;
+
+        color: var(--text);
+
+        transition:
+          border-color 0.18s ease,
+          background 0.18s ease;
+      }
+
+      .input,
+      .select {
+        height: 45px;
+
+        padding: 0 13px;
+
+        border-radius: 10px;
+      }
+
+      .textarea {
+        min-height: 115px;
+
+        resize: vertical;
+
+        padding: 13px;
+
+        border-radius: 10px;
+
+        line-height: 1.65;
+      }
+
+      .input:focus,
+      .select:focus,
+      .textarea:focus {
+        border-color: rgba(156, 135, 255, 0.5);
+
+        background: #101016;
+      }
+
+      .select {
+        cursor: pointer;
+      }
+
+      .divider {
+        height: 1px;
+
+        margin: 22px 0;
+
+        background: var(--line);
+      }
+
+      /* ==================================================
+       URL BOX
+    ================================================== */
+
+      .url-box {
+        padding: 17px;
+
+        border: 1px solid var(--line);
+        border-radius: 12px;
+
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      .url-box small {
+        display: block;
+
+        color: var(--dim);
+
+        font-size: 7px;
+        letter-spacing: 0.1em;
+      }
+
+      .url-line {
+        margin-top: 11px;
+
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1fr)
+          auto;
+
+        gap: 9px;
+      }
+
+      .url-input {
+        height: 42px;
+
+        min-width: 0;
+
+        padding: 0 12px;
+
+        border: 1px solid var(--line);
+        border-radius: 9px;
+
+        outline: none;
+
+        background: #09090d;
+
+        color: var(--muted);
+
+        font-family: "DM Mono", monospace;
+
+        font-size: 8px;
+      }
+
+      .small-button {
+        min-height: 42px;
+
+        padding: 0 14px;
+
+        border: 1px solid var(--line-strong);
+        border-radius: 9px;
+
+        background: rgba(255, 255, 255, 0.025);
+
+        color: var(--text);
+
+        font-size: 8px;
+        font-weight: 700;
+      }
+
+      .small-button:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* ==================================================
+       SAVE
+    ================================================== */
+
+      .save-area {
+        margin-top: 22px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+      }
+
+      .save-status {
+        color: var(--muted);
+
+        font-size: 8px;
+      }
+
+      .save-button {
+        min-width: 180px;
+        min-height: 48px;
+
+        padding: 0 18px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        border: 0;
+        border-radius: 10px;
+
+        background: var(--text);
+
+        color: #0a0a0c;
+
+        font-size: 9px;
+        font-weight: 800;
+
+        transition:
+          transform 0.18s ease,
+          opacity 0.18s ease;
+      }
+
+      .save-button:hover {
+        transform: translateY(-1px);
+      }
+
+      .save-button:disabled {
+        cursor: not-allowed;
+
+        opacity: 0.55;
+      }
+
+      /* ==================================================
+       STATUS CARD
+    ================================================== */
+
+      .status-block {
+        display: flex;
+        flex-direction: column;
+
+        gap: 11px;
+      }
+
+      .status-row {
+        min-height: 62px;
+
+        padding: 14px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 12px;
+
+        border: 1px solid var(--line);
+        border-radius: 11px;
+
+        background: rgba(255, 255, 255, 0.012);
+      }
+
+      .status-row span {
+        color: var(--muted);
+
+        font-size: 8px;
+      }
+
+      .status-value {
+        max-width: 150px;
+
+        overflow: hidden;
+
+        color: var(--text) !important;
+
+        font-size: 9px !important;
+        font-weight: 700;
+
+        text-align: right;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .status-value.good {
+        color: var(--green) !important;
+      }
+
+      .status-value.bad {
+        color: var(--red) !important;
+      }
+
+      /* ==================================================
+       PREVIEW
+    ================================================== */
+
+      .preview {
+        overflow: hidden;
+
+        border: 1px solid var(--line);
+        border-radius: 14px;
+
+        background:
+          radial-gradient(
+            circle at 10% 10%,
+            rgba(120, 90, 255, 0.15),
+            transparent 32%
+          ),
+          #09090c;
+      }
+
+      .preview-top {
+        min-height: 54px;
+
+        padding: 13px 15px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+
+        border-bottom: 1px solid var(--line);
+      }
+
+      .preview-logo {
+        width: 30px;
+        height: 30px;
+
+        overflow: hidden;
+
+        border-radius: 8px;
+      }
+
+      .preview-logo img {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+      }
+
+      .preview-top strong {
+        font-size: 9px;
+      }
+
+      .preview-top small {
+        display: block;
+
+        margin-top: 3px;
+
+        color: var(--dim);
+
+        font-size: 6px;
+      }
+
+      .preview-main {
+        padding: 24px 18px 20px;
+      }
+
+      .preview-label {
+        color: var(--violet);
+
+        font-size: 6px;
+        letter-spacing: 0.1em;
+      }
+
+      .preview-title {
+        margin: 11px 0 0;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 25px;
+
+        line-height: 1;
+
+        letter-spacing: -0.04em;
+      }
+
+      .preview-message {
+        margin: 13px 0 0;
+
+        color: var(--muted);
+
+        font-size: 8px;
+
+        line-height: 1.65;
+
+        white-space: pre-wrap;
+      }
+
+      .preview-button {
+        width: 100%;
+        height: 39px;
+
+        margin-top: 20px;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 8px;
+
+        background: #5865f2;
+
+        color: white;
+
+        font-size: 8px;
+        font-weight: 700;
+      }
+
+      /* ==================================================
+       LOADING
+    ================================================== */
+
+      .loading-cover {
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 50;
+
+        display: grid;
+        place-items: center;
+
+        background: var(--bg);
+      }
+
+      .loading-box {
+        text-align: center;
+      }
+
+      .loading-box img {
+        width: 70px;
+        height: 70px;
+
+        border-radius: 18px;
+      }
+
+      .loading-box strong {
+        display: block;
+
+        margin-top: 18px;
+
+        font-family: "Syne", sans-serif;
+      }
+
+      .loading-box span {
+        display: block;
+
+        margin-top: 7px;
+
+        color: var(--muted);
+
+        font-size: 8px;
+      }
+
+      /* ==================================================
+       TOAST
+    ================================================== */
+
+      .toast {
+        position: fixed;
+
+        right: 22px;
+        bottom: 22px;
+
+        z-index: 100;
+
+        max-width: min(360px, calc(100% - 44px));
+
+        padding: 13px 15px;
+
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+
+        background: #111116;
+
+        color: var(--text);
+
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+
+        font-size: 9px;
+
+        transform: translateY(20px);
+
+        opacity: 0;
+        pointer-events: none;
+
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .toast.show {
+        transform: translateY(0);
+
+        opacity: 1;
+      }
+
+      /* ==================================================
+       RESPONSIVE
+    ================================================== */
+
+      @media (max-width: 900px) {
+        .header {
+          grid-template-columns: 1fr;
+        }
+
+        .connection {
+          width: 100%;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 650px) {
+        .page {
+          width: calc(100% - 20px);
+        }
+
+        .brand-copy span {
+          display: none;
+        }
+
+        .header {
+          padding-top: 35px;
+        }
+
+        .header h1 {
+          font-size: 45px;
+        }
+
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .field.full {
+          grid-column: auto;
+        }
+
+        .url-line {
+          grid-template-columns: 1fr;
+        }
+
+        .save-area {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .save-button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="grid-bg"></div>
+
+    <!-- ==================================================
+       LOADING
+  ================================================== -->
+
+    <div class="loading-cover" id="loadingCover">
+      <div class="loading-box">
+        <img src="/arclume-logo.png?v=20261002" alt="Arclume" />
+
+        <strong> Loading Web Verification </strong>
+
+        <span class="mono"> ARCLUME / FETCHING SERVER CONFIG </span>
+      </div>
+    </div>
+
+    <!-- ==================================================
+       PAGE
+  ================================================== -->
+
+    <div class="page">
+      <!-- ==================================================
+         TOPBAR
+    ================================================== -->
+
+      <header class="topbar">
+        <a href="/dashboard.html" class="brand">
+          <span class="brand-logo">
+            <img src="/arclume-logo.png?v=20261002" alt="Arclume" />
+          </span>
+
+          <span class="brand-copy">
+            <strong> ARCLUME </strong>
+
+            <span class="mono"> WEB VERIFICATION </span>
+          </span>
+        </a>
+
+        <a href="/dashboard.html" class="back-button mono"> ← DASHBOARD </a>
+      </header>
+
+      <!-- ==================================================
+         HEADER
+    ================================================== -->
+
+      <section class="header">
+        <div>
+          <span class="eyebrow mono"> 03 / ACCESS CONTROL </span>
+
+          <h1>Web Verification.</h1>
+
+          <p>
+            Verify members through your Arclume website using Discord OAuth.
+            Members sign in securely, Arclume checks their server membership,
+            then assigns the configured Verified role automatically.
+          </p>
+        </div>
+
+        <div class="connection">
+          <span class="connection-dot"></span>
+
+          <div>
+            <small class="mono"> ACTIVE SERVER </small>
+
+            <strong id="activeServerName"> Loading... </strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================
+         LAYOUT
+    ================================================== -->
+
+      <main class="layout">
+        <!-- ==================================================
+           LEFT COLUMN
+      ================================================== -->
+
+        <div class="column">
+          <!-- ==================================================
+             SYSTEM
+        ================================================== -->
+
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <small class="mono"> SYSTEM </small>
+
+                <strong> Verification Engine </strong>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="switch-row">
+                <div class="switch-copy">
+                  <strong> Enable Web Verification </strong>
+
+                  <p>
+                    Members can verify through the public Arclume verification
+                    page.
+                  </p>
+                </div>
+
+                <label class="switch">
+                  <input type="checkbox" id="verificationEnabled" />
+
+                  <span class="switch-track"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================================================
+             ROLES
+        ================================================== -->
+
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <small class="mono"> PERMISSIONS </small>
+
+                <strong> Verification Roles </strong>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="field">
+                  <label class="mono" for="verifiedRole"> VERIFIED ROLE </label>
+
+                  <select class="select" id="verifiedRole">
+                    <option value="">Select Verified Role</option>
+                  </select>
+
+                  <small>
+                    This role is added after successful verification.
+                  </small>
+                </div>
+
+                <div class="field">
+                  <label class="mono" for="unverifiedRole">
+                    UNVERIFIED ROLE
+                  </label>
+
+                  <select class="select" id="unverifiedRole">
+                    <option value="">None</option>
+                  </select>
+
+                  <small>
+                    Optional role removed after successful verification.
+                  </small>
+                </div>
+
+                <div class="field full">
+                  <label class="mono" for="logChannel">
+                    VERIFICATION LOG CHANNEL
+                  </label>
+
+                  <select class="select" id="logChannel">
+                    <option value="">No Log Channel</option>
+                  </select>
+
+                  <small>
+                    Optional channel where successful verification events are
+                    logged.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================================================
+             PAGE CONTENT
+        ================================================== -->
+
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <small class="mono"> MEMBER EXPERIENCE </small>
+
+                <strong> Verification Page </strong>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="form-grid">
+                <div class="field full">
+                  <label class="mono" for="pageTitle"> PAGE TITLE </label>
+
+                  <input
+                    class="input"
+                    id="pageTitle"
+                    type="text"
+                    maxlength="100"
+                    value="Verify your Discord account"
+                  />
+                </div>
+
+                <div class="field full">
+                  <label class="mono" for="pageMessage"> PAGE MESSAGE </label>
+
+                  <textarea class="textarea" id="pageMessage" maxlength="1200">
+Sign in with Discord to verify your membership and unlock access to the server.</textarea
+                  >
+                </div>
+
+                <div class="field full">
+                  <label class="mono" for="successMessage">
+                    SUCCESS MESSAGE
+                  </label>
+
+                  <textarea
+                    class="textarea"
+                    id="successMessage"
+                    maxlength="500"
+                  >
+Verification complete. You can return to Discord.</textarea
+                  >
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================================================
+             LINK
+        ================================================== -->
+
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <small class="mono"> PUBLIC ACCESS </small>
+
+                <strong> Verification Link </strong>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="url-box">
+                <small class="mono"> MEMBER VERIFICATION URL </small>
+
+                <div class="url-line">
+                  <input
+                    class="url-input"
+                    id="verificationURL"
+                    type="text"
+                    readonly
+                    value="Loading..."
+                  />
+
+                  <button class="small-button mono" id="copyURL" type="button">
+                    COPY
+                  </button>
+
+                  <button class="small-button mono" id="openURL" type="button">
+                    OPEN
+                  </button>
+                </div>
+              </div>
+
+              <div class="save-area">
+                <span class="save-status mono" id="saveStatus"> READY </span>
+
+                <button class="save-button" id="saveVerification" type="button">
+                  <span> SAVE SETTINGS </span>
+
+                  <span> → </span>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ==================================================
+           RIGHT COLUMN
+      ================================================== -->
+
+        <aside class="column">
+          <!-- ==================================================
+             STATUS
+        ================================================== -->
+
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <small class="mono"> STATUS </small>
+
+                <strong> System Check </strong>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="status-block">
+                <div class="status-row">
+                  <span class="mono"> BOT </span>
+
+                  <span class="status-value" id="botStatus"> Checking </span>
+                </div>
+
+                <div class="status-row">
+                  <span class="mono"> WEB VERIFY </span>
+
+                  <span class="status-value" id="verificationStatus">
+                    Disabled
+                  </span>
+                </div>
+
+                <div class="status-row">
+                  <span class="mono"> VERIFIED ROLE </span>
+
+                  <span class="status-value" id="verifiedRoleStatus">
+                    None
+                  </span>
+                </div>
+
+                <div class="status-row">
+                  <span class="mono"> LOGGING </span>
+
+                  <span class="status-value" id="logStatus"> Off </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================================================
+             PREVIEW
+        ================================================== -->
+
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">
+                <small class="mono"> LIVE </small>
+
+                <strong> Member Preview </strong>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="preview">
+                <div class="preview-top">
+                  <span class="preview-logo">
+                    <img src="/arclume-logo.png?v=20261002" alt="Arclume" />
+                  </span>
+
+                  <div>
+                    <strong> ARCLUME </strong>
+
+                    <small class="mono"> WEB VERIFICATION </small>
+                  </div>
+                </div>
+
+                <div class="preview-main">
+                  <span class="preview-label mono">
+                    IDENTITY / VERIFICATION
+                  </span>
+
+                  <h3 class="preview-title" id="previewTitle">
+                    Verify your Discord account
+                  </h3>
+
+                  <p class="preview-message" id="previewMessage">
+                    Sign in with Discord to verify your membership and unlock
+                    access to the server.
+                  </p>
+
+                  <div class="preview-button">Continue with Discord</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <!-- ==================================================
+       TOAST
+  ================================================== -->
+
+    <div class="toast mono" id="toast">Saved.</div>
+
+    <script src="/web-verification-settings.js?v=20261002-1"></script>
+  </body>
+</html>

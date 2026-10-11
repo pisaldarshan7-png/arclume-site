@@ -1,37 +1,40 @@
 /* =========================================================
    ARCLUME — ROLE MANAGEMENT
+   CLEAN BUILD V1
+
+   Handles:
+   - Server selection
+   - Member loading
+   - Role loading
+   - Give role
+   - Remove role
+   - Role directory
+
+   Reaction Roles are handled separately by:
+   public/reaction-roles.js
+========================================================= */
+
+"use strict";
+
+/* =========================================================
+   STATE
 ========================================================= */
 
 let currentUser = null;
+
 let guilds = [];
+
 let currentGuild = null;
 
 let members = [];
+
 let roles = [];
-let channels = [];
 
 let selectedMember = null;
 
 let loadingData = false;
+
 let roleActionBusy = false;
-let settingsBusy = false;
-
-let roleSettings = defaultRoleSettings();
-
-/* =========================================================
-   DEFAULT SETTINGS
-========================================================= */
-
-function defaultRoleSettings() {
-  return {
-    autoRole: "",
-    selfRoles: [],
-    panelChannel: "",
-    panelMessageID: "",
-    panelTitle: "Choose Your Roles",
-    panelMessage: "Select the roles you want from the options below.",
-  };
-}
 
 /* =========================================================
    ELEMENTS
@@ -89,26 +92,10 @@ const refreshButton = document.getElementById("refreshButton");
 
 const roleDirectory = document.getElementById("roleDirectory");
 
-const autoRoleSelect = document.getElementById("autoRoleSelect");
-
-const selfRoleList = document.getElementById("selfRoleList");
-
-const panelChannel = document.getElementById("panelChannel");
-
-const panelTitle = document.getElementById("panelTitle");
-
-const panelMessage = document.getElementById("panelMessage");
-
-const roleSettingsStatus = document.getElementById("roleSettingsStatus");
-
-const saveRoleSettingsButton = document.getElementById(
-  "saveRoleSettingsButton",
-);
-
 const toastElement = document.getElementById("toast");
 
 /* =========================================================
-   HELPERS
+   BASIC HELPERS
 ========================================================= */
 
 function firstLetter(value) {
@@ -231,13 +218,9 @@ function toast(message, error = false) {
 
   clearTimeout(toastTimer);
 
-  toastTimer = setTimeout(
-    () => {
-      toastElement.classList.remove("show");
-    },
-
-    2600,
-  );
+  toastTimer = setTimeout(() => {
+    toastElement.classList.remove("show");
+  }, 2600);
 }
 
 /* =========================================================
@@ -251,17 +234,11 @@ function renderServerIdentity() {
 
   serverName.textContent = currentGuild.name || "Discord Server";
 
-  renderImage(
-    serverIcon,
-
-    guildIconURL(currentGuild),
-
-    currentGuild.name,
-  );
+  renderImage(serverIcon, guildIconURL(currentGuild), currentGuild.name);
 }
 
 /* =========================================================
-   SERVER OVERLAY
+   SERVER SELECTOR
 ========================================================= */
 
 function openServerSelector() {
@@ -313,13 +290,7 @@ function renderServerList() {
 
     state.textContent = guild.id === currentGuild?.id ? "ACTIVE" : "SELECT";
 
-    renderImage(
-      icon,
-
-      guildIconURL(guild),
-
-      guild.name,
-    );
+    renderImage(icon, guildIconURL(guild), guild.name);
 
     button.appendChild(icon);
 
@@ -327,13 +298,9 @@ function renderServerList() {
 
     button.appendChild(state);
 
-    button.addEventListener(
-      "click",
-
-      async () => {
-        await selectGuild(guild.id);
-      },
-    );
+    button.addEventListener("click", async () => {
+      await selectGuild(guild.id);
+    });
 
     serverList.appendChild(button);
   });
@@ -362,13 +329,17 @@ async function selectGuild(guildID) {
 
   selectedMember = null;
 
-  roleSettings = defaultRoleSettings();
-
   memberSearch.value = "";
+
+  roleSelect.value = "";
 
   renderServerIdentity();
 
   renderServerList();
+
+  renderSelectedMember();
+
+  updateActionButtons();
 
   closeServerSelector();
 
@@ -445,13 +416,7 @@ function renderMembers() {
 
     avatar.className = "member-avatar";
 
-    renderImage(
-      avatar,
-
-      memberAvatarURL(member),
-
-      memberDisplayName(member),
-    );
+    renderImage(avatar, memberAvatarURL(member), memberDisplayName(member));
 
     const info = document.createElement("span");
 
@@ -469,13 +434,13 @@ function renderMembers() {
 
     info.appendChild(username);
 
-    const roleCount = document.createElement("span");
+    const count = document.createElement("span");
 
-    roleCount.className = "member-role-count";
+    count.className = "member-role-count";
 
     const memberRoles = Array.isArray(member.roles) ? member.roles : [];
 
-    roleCount.textContent = `${memberRoles.length} ROLE${
+    count.textContent = `${memberRoles.length} ROLE${
       memberRoles.length === 1 ? "" : "S"
     }`;
 
@@ -483,15 +448,11 @@ function renderMembers() {
 
     button.appendChild(info);
 
-    button.appendChild(roleCount);
+    button.appendChild(count);
 
-    button.addEventListener(
-      "click",
-
-      () => {
-        selectMember(member.id);
-      },
-    );
+    button.addEventListener("click", () => {
+      selectMember(member.id);
+    });
 
     memberList.appendChild(button);
   });
@@ -552,9 +513,7 @@ function renderSelectedMember() {
 
   renderImage(
     selectedMemberAvatar,
-
     memberAvatarURL(selectedMember),
-
     memberDisplayName(selectedMember),
   );
 
@@ -632,7 +591,7 @@ function renderRoleSelect() {
     roleSelect.appendChild(option);
   });
 
-  const exists = [...roleSelect.options].some(
+  const exists = Array.from(roleSelect.options).some(
     (option) => option.value === previousValue && !option.disabled,
   );
 
@@ -719,7 +678,7 @@ function renderRoleDirectory() {
 }
 
 /* =========================================================
-   ACTION BUTTON STATE
+   ACTION BUTTONS
 ========================================================= */
 
 function updateActionButtons() {
@@ -783,14 +742,14 @@ async function changeRole(action) {
     return;
   }
 
-  const selectedMemberID = selectedMember.id;
+  const memberID = selectedMember.id;
 
   roleActionBusy = true;
 
   updateActionButtons();
 
   actionStatus.textContent =
-    action === "give" ? "Giving role…" : "Removing role…";
+    action === "give" ? "Giving role..." : "Removing role...";
 
   try {
     const data = await fetchJSON(
@@ -804,7 +763,7 @@ async function changeRole(action) {
         },
 
         body: JSON.stringify({
-          memberID: selectedMemberID,
+          memberID,
 
           roleID: role.id,
         }),
@@ -813,14 +772,11 @@ async function changeRole(action) {
 
     if (data.alreadyAssigned || data.alreadyRemoved) {
       toast(data.message || "No change was needed.");
-
-      return;
     }
 
     await Promise.all([loadRoles(), loadMembers()]);
 
-    selectedMember =
-      members.find((member) => member.id === selectedMemberID) || null;
+    selectedMember = members.find((member) => member.id === memberID) || null;
 
     renderStats();
 
@@ -887,258 +843,7 @@ async function loadMembers() {
 }
 
 /* =========================================================
-   LOAD ROLE SETTINGS
-========================================================= */
-
-async function loadRoleSettings() {
-  const data = await fetchJSON(
-    `/api/guild/${currentGuild.id}/roles-manager/settings`,
-  );
-
-  roleSettings = {
-    ...defaultRoleSettings(),
-
-    ...(data.settings || {}),
-  };
-
-  if (!Array.isArray(roleSettings.selfRoles)) {
-    roleSettings.selfRoles = [];
-  }
-}
-
-/* =========================================================
-   LOAD CHANNELS
-========================================================= */
-
-async function loadChannels() {
-  const data = await fetchJSON(`/api/guild/${currentGuild.id}/welcome-options`);
-
-  channels = Array.isArray(data.channels) ? data.channels : [];
-}
-
-/* =========================================================
-   AUTO ROLE
-========================================================= */
-
-function renderAutoRoleSelect() {
-  autoRoleSelect.replaceChildren();
-
-  const none = document.createElement("option");
-
-  none.value = "";
-
-  none.textContent = "No automatic role";
-
-  autoRoleSelect.appendChild(none);
-
-  manageableRoles().forEach((role) => {
-    const option = document.createElement("option");
-
-    option.value = role.id;
-
-    option.textContent = role.name;
-
-    autoRoleSelect.appendChild(option);
-  });
-
-  const exists = manageableRoles().some(
-    (role) => role.id === roleSettings.autoRole,
-  );
-
-  autoRoleSelect.value = exists ? roleSettings.autoRole : "";
-}
-
-/* =========================================================
-   SELF ROLES
-========================================================= */
-
-function renderSelfRoleList() {
-  selfRoleList.replaceChildren();
-
-  const availableRoles = manageableRoles();
-
-  if (!availableRoles.length) {
-    const empty = document.createElement("div");
-
-    empty.className = "self-role-empty";
-
-    empty.textContent = "No manageable roles are available.";
-
-    selfRoleList.appendChild(empty);
-
-    return;
-  }
-
-  availableRoles.forEach((role) => {
-    const label = document.createElement("label");
-
-    label.className = "self-role-option";
-
-    const checkbox = document.createElement("input");
-
-    checkbox.type = "checkbox";
-
-    checkbox.value = role.id;
-
-    checkbox.checked = roleSettings.selfRoles.includes(role.id);
-
-    const dot = document.createElement("span");
-
-    dot.className = "role-dot";
-
-    dot.style.background = roleColor(role);
-
-    const name = document.createElement("span");
-
-    name.textContent = role.name;
-
-    label.appendChild(checkbox);
-
-    label.appendChild(dot);
-
-    label.appendChild(name);
-
-    selfRoleList.appendChild(label);
-  });
-}
-
-/* =========================================================
-   PANEL CHANNELS
-========================================================= */
-
-function renderPanelChannels() {
-  panelChannel.replaceChildren();
-
-  const placeholder = document.createElement("option");
-
-  placeholder.value = "";
-
-  placeholder.textContent = "Select a channel";
-
-  panelChannel.appendChild(placeholder);
-
-  channels.forEach((channel) => {
-    const option = document.createElement("option");
-
-    option.value = channel.id;
-
-    option.textContent =
-      channel.type === "announcement"
-        ? `📢 ${channel.name}`
-        : `# ${channel.name}`;
-
-    panelChannel.appendChild(option);
-  });
-
-  const exists = channels.some(
-    (channel) => channel.id === roleSettings.panelChannel,
-  );
-
-  panelChannel.value = exists ? roleSettings.panelChannel : "";
-}
-
-/* =========================================================
-   AUTOMATION UI
-========================================================= */
-
-function renderAutomationControls() {
-  renderAutoRoleSelect();
-
-  renderSelfRoleList();
-
-  renderPanelChannels();
-
-  panelTitle.value = roleSettings.panelTitle || "Choose Your Roles";
-
-  panelMessage.value =
-    roleSettings.panelMessage ||
-    "Select the roles you want from the options below.";
-}
-
-/* =========================================================
-   SELECTED SELF ROLES
-========================================================= */
-
-function selectedSelfRoleIDs() {
-  return [
-    ...selfRoleList.querySelectorAll('input[type="checkbox"]:checked'),
-  ].map((checkbox) => checkbox.value);
-}
-
-/* =========================================================
-   SAVE ROLE SETTINGS
-========================================================= */
-
-async function saveRoleSettings() {
-  if (!currentGuild || settingsBusy) {
-    return;
-  }
-
-  settingsBusy = true;
-
-  saveRoleSettingsButton.disabled = true;
-
-  saveRoleSettingsButton.textContent = "SAVING…";
-
-  roleSettingsStatus.textContent = "SAVING ROLE SETTINGS…";
-
-  try {
-    const data = await fetchJSON(
-      `/api/guild/${currentGuild.id}/roles-manager/settings`,
-
-      {
-        method: "PUT",
-
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          autoRole: autoRoleSelect.value,
-
-          selfRoles: selectedSelfRoleIDs(),
-
-          panelChannel: panelChannel.value,
-
-          panelTitle: panelTitle.value,
-
-          panelMessage: panelMessage.value,
-        }),
-      },
-    );
-
-    roleSettings = {
-      ...defaultRoleSettings(),
-
-      ...(data.settings || {}),
-    };
-
-    if (!Array.isArray(roleSettings.selfRoles)) {
-      roleSettings.selfRoles = [];
-    }
-
-    renderAutomationControls();
-
-    roleSettingsStatus.textContent = "ROLE SETTINGS SAVED";
-
-    toast("ROLE SETTINGS SAVED");
-  } catch (error) {
-    console.error("Role settings save error:", error);
-
-    roleSettingsStatus.textContent = error.message || "COULD NOT SAVE SETTINGS";
-
-    toast(error.message || "Could not save Role settings.", true);
-  } finally {
-    settingsBusy = false;
-
-    saveRoleSettingsButton.disabled = false;
-
-    saveRoleSettingsButton.textContent = "SAVE ROLE SETTINGS";
-  }
-}
-
-/* =========================================================
-   RESET SELECTED MEMBER
+   RESET MEMBER
 ========================================================= */
 
 function resetSelectedMember() {
@@ -1164,17 +869,11 @@ async function loadGuildData() {
 
   refreshButton.disabled = true;
 
-  refreshButton.textContent = "REFRESHING…";
+  refreshButton.textContent = "REFRESHING...";
 
-  memberCountLabel.textContent = "Loading Discord members…";
-
-  roleSettingsStatus.textContent = "LOADING ROLE SETTINGS…";
+  memberCountLabel.textContent = "Loading Discord members...";
 
   try {
-    /* ===============================================
-       LOAD MEMBERS + ROLES FIRST
-    =============================================== */
-
     await Promise.all([loadRoles(), loadMembers()]);
 
     resetSelectedMember();
@@ -1192,52 +891,6 @@ async function loadGuildData() {
     memberCountLabel.textContent = `${members.length} member${
       members.length === 1 ? "" : "s"
     } available`;
-
-    /*
-      The important Discord data is ready.
-      Allow refresh again immediately.
-    */
-
-    loadingData = false;
-
-    refreshButton.disabled = false;
-
-    refreshButton.textContent = "REFRESH DISCORD DATA";
-
-    /* ===============================================
-       SETTINGS LOAD SEPARATELY
-       This will NOT block members.
-    =============================================== */
-
-    Promise.allSettled([loadRoleSettings(), loadChannels()]).then((results) => {
-      const settingsResult = results[0];
-
-      const channelResult = results[1];
-
-      if (settingsResult.status === "rejected") {
-        console.error("Role settings error:", settingsResult.reason);
-
-        roleSettings = defaultRoleSettings();
-      }
-
-      if (channelResult.status === "rejected") {
-        console.error("Channel load error:", channelResult.reason);
-
-        channels = [];
-      }
-
-      renderAutomationControls();
-
-      if (settingsResult.status === "fulfilled") {
-        roleSettingsStatus.textContent = "ROLE SETTINGS LOADED";
-      } else {
-        roleSettingsStatus.textContent = "ROLE SETTINGS UNAVAILABLE";
-      }
-
-      if (channelResult.status === "rejected") {
-        toast("Members loaded, but channels could not be loaded.", true);
-      }
-    });
   } catch (error) {
     console.error("Member / role loading error:", error);
 
@@ -1245,7 +898,7 @@ async function loadGuildData() {
       error.message || "Could not load Discord members.";
 
     toast(error.message || "Could not load members and roles.", true);
-
+  } finally {
     loadingData = false;
 
     refreshButton.disabled = false;
@@ -1262,57 +915,35 @@ serverButton.addEventListener("click", openServerSelector);
 
 closeServerOverlay.addEventListener("click", closeServerSelector);
 
-serverOverlay.addEventListener(
-  "click",
-
-  (event) => {
-    if (event.target === serverOverlay) {
-      closeServerSelector();
-    }
-  },
-);
+serverOverlay.addEventListener("click", (event) => {
+  if (event.target === serverOverlay) {
+    closeServerSelector();
+  }
+});
 
 memberSearch.addEventListener("input", renderMembers);
 
 roleSelect.addEventListener("change", updateActionButtons);
 
-giveRoleButton.addEventListener(
-  "click",
+giveRoleButton.addEventListener("click", () => {
+  changeRole("give");
+});
 
-  () => {
-    changeRole("give");
-  },
-);
+removeRoleButton.addEventListener("click", () => {
+  changeRole("remove");
+});
 
-removeRoleButton.addEventListener(
-  "click",
+refreshButton.addEventListener("click", async () => {
+  await loadGuildData();
 
-  () => {
-    changeRole("remove");
-  },
-);
+  toast("DISCORD DATA REFRESHED");
+});
 
-saveRoleSettingsButton.addEventListener("click", saveRoleSettings);
-
-refreshButton.addEventListener(
-  "click",
-
-  async () => {
-    await loadGuildData();
-
-    toast("DISCORD DATA REFRESHED");
-  },
-);
-
-document.addEventListener(
-  "keydown",
-
-  (event) => {
-    if (event.key === "Escape") {
-      closeServerSelector();
-    }
-  },
-);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeServerSelector();
+  }
+});
 
 /* =========================================================
    BOOT
@@ -1366,20 +997,11 @@ async function boot() {
 
     renderServerList();
 
-    /*
-      SHOW PAGE IMMEDIATELY.
-      Do not wait for Discord member fetch.
-    */
-
     loadingState.classList.add("hidden");
 
     loginState.classList.add("hidden");
 
     rolesApp.classList.remove("hidden");
-
-    /*
-      THEN LOAD MEMBERS / ROLES.
-    */
 
     await loadGuildData();
   } catch (error) {

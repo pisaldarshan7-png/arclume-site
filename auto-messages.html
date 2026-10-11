@@ -1,0 +1,2747 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color" content="#08080c" />
+
+    <title>Arclume — Auto Messages</title>
+
+    <link rel="icon" type="image/png" href="/arclume-logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #08080c;
+        --panel: #0f0f15;
+        --panel-2: #13131b;
+
+        --border: rgba(255, 255, 255, 0.09);
+        --border-bright: rgba(255, 255, 255, 0.15);
+
+        --text: #f7f5ff;
+        --muted: rgba(247, 245, 255, 0.5);
+        --muted-2: rgba(247, 245, 255, 0.34);
+
+        --purple: #9b87ff;
+        --purple-2: #745cff;
+
+        --green: #91f7b5;
+        --yellow: #ffd77b;
+        --red: #ff7f92;
+
+        --radius: 22px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+
+        background:
+          radial-gradient(
+            circle at 15% 0%,
+            rgba(103, 78, 255, 0.1),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 100% 20%,
+            rgba(139, 92, 246, 0.08),
+            transparent 30%
+          ),
+          var(--bg);
+
+        color: var(--text);
+
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .grain {
+        position: fixed;
+        inset: 0;
+
+        pointer-events: none;
+
+        z-index: 999;
+
+        opacity: 0.025;
+
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+      }
+
+      /* =====================================================
+       HEADER
+    ===================================================== */
+
+      .topbar {
+        position: sticky;
+        top: 0;
+
+        z-index: 30;
+
+        min-height: 76px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding: 14px clamp(18px, 4vw, 52px);
+
+        border-bottom: 1px solid var(--border);
+
+        background: rgba(8, 8, 12, 0.82);
+
+        backdrop-filter: blur(20px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        color: inherit;
+
+        text-decoration: none;
+      }
+
+      .brand-logo {
+        width: 43px;
+        height: 43px;
+
+        overflow: hidden;
+
+        border: 1px solid var(--border-bright);
+
+        border-radius: 12px;
+
+        background: #050509;
+      }
+
+      .brand-logo img {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .brand-copy b {
+        display: block;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 15px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .brand-copy small {
+        display: block;
+
+        margin-top: 3px;
+
+        color: var(--muted);
+
+        font-size: 9px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+      }
+
+      .server-select {
+        min-width: 190px;
+
+        padding: 11px 12px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 12px;
+
+        outline: none;
+
+        background: #0e0e14;
+
+        color: #fff;
+      }
+
+      .back-button {
+        padding: 11px 14px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 12px;
+
+        background: rgba(255, 255, 255, 0.03);
+
+        color: #fff;
+
+        cursor: pointer;
+
+        text-decoration: none;
+      }
+
+      /* =====================================================
+       PAGE
+    ===================================================== */
+
+      .page {
+        width: min(1500px, calc(100% - 40px));
+
+        margin: 0 auto;
+
+        padding: 44px 0 100px;
+      }
+
+      .hero {
+        display: flex;
+
+        align-items: flex-end;
+        justify-content: space-between;
+
+        gap: 24px;
+
+        margin-bottom: 30px;
+      }
+
+      .eyebrow {
+        display: block;
+
+        margin-bottom: 12px;
+
+        color: #ad9fff;
+
+        font-size: 10px;
+
+        letter-spacing: 0.16em;
+      }
+
+      .hero h1 {
+        margin: 0;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: clamp(38px, 6vw, 78px);
+
+        line-height: 0.95;
+
+        letter-spacing: -0.045em;
+      }
+
+      .hero p {
+        max-width: 700px;
+
+        margin: 16px 0 0;
+
+        color: var(--muted);
+
+        font-size: 13px;
+
+        line-height: 1.7;
+      }
+
+      .live-pill {
+        display: flex;
+
+        align-items: center;
+
+        gap: 9px;
+
+        padding: 11px 14px;
+
+        border: 1px solid rgba(145, 247, 181, 0.2);
+
+        border-radius: 999px;
+
+        background: rgba(145, 247, 181, 0.05);
+
+        color: var(--muted);
+
+        font-size: 10px;
+
+        white-space: nowrap;
+      }
+
+      .live-pill i {
+        width: 8px;
+        height: 8px;
+
+        border-radius: 999px;
+
+        background: var(--green);
+
+        box-shadow: 0 0 14px rgba(145, 247, 181, 0.7);
+      }
+
+      .live-pill.off i {
+        background: var(--red);
+
+        box-shadow: 0 0 14px rgba(255, 127, 146, 0.6);
+      }
+
+      .live-pill.paused i {
+        background: var(--yellow);
+
+        box-shadow: 0 0 14px rgba(255, 215, 123, 0.6);
+      }
+
+      /* =====================================================
+       STATS
+    ===================================================== */
+
+      .stats {
+        display: grid;
+
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+
+        gap: 14px;
+
+        margin-bottom: 20px;
+      }
+
+      .stat {
+        padding: 20px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 18px;
+
+        background: rgba(255, 255, 255, 0.018);
+      }
+
+      .stat small {
+        display: block;
+
+        color: var(--muted);
+
+        font-size: 9px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .stat strong {
+        display: block;
+
+        margin-top: 11px;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 27px;
+      }
+
+      /* =====================================================
+       LAYOUT
+    ===================================================== */
+
+      .layout {
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1.15fr)
+          minmax(340px, 0.85fr);
+
+        gap: 18px;
+      }
+
+      .stack {
+        display: grid;
+
+        gap: 18px;
+      }
+
+      .card {
+        overflow: hidden;
+
+        border: 1px solid var(--border);
+
+        border-radius: var(--radius);
+
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.025),
+          rgba(255, 255, 255, 0.012)
+        );
+      }
+
+      .card-head {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 14px;
+
+        padding: 18px 20px;
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+      }
+
+      .card-head small {
+        display: block;
+
+        color: #a99aff;
+
+        font-size: 9px;
+
+        letter-spacing: 0.13em;
+      }
+
+      .card-head h2 {
+        margin: 5px 0 0;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 20px;
+      }
+
+      .card-body {
+        padding: 20px;
+      }
+
+      /* =====================================================
+       MASTER
+    ===================================================== */
+
+      .master-row {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 20px;
+      }
+
+      .master-copy b {
+        display: block;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 24px;
+      }
+
+      .master-copy p {
+        margin: 7px 0 0;
+
+        color: var(--muted);
+
+        font-size: 11px;
+
+        line-height: 1.6;
+      }
+
+      /* =====================================================
+       SWITCH
+    ===================================================== */
+
+      .switch {
+        position: relative;
+
+        width: 60px;
+        height: 32px;
+
+        flex: 0 0 60px;
+
+        border: 0;
+
+        border-radius: 999px;
+
+        background: #27272e;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+      }
+
+      .switch::after {
+        content: "";
+
+        position: absolute;
+
+        width: 24px;
+        height: 24px;
+
+        top: 4px;
+        left: 4px;
+
+        border-radius: 50%;
+
+        background: white;
+
+        transition: 0.22s;
+      }
+
+      .switch.on {
+        background: linear-gradient(90deg, var(--purple-2), var(--purple));
+
+        box-shadow: 0 0 25px rgba(135, 107, 255, 0.25);
+      }
+
+      .switch.on::after {
+        transform: translateX(28px);
+      }
+
+      /* =====================================================
+       FIELDS
+    ===================================================== */
+
+      .field-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+      }
+
+      .field {
+        min-width: 0;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .field label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: rgba(247, 245, 255, 0.7);
+
+        font-size: 10px;
+
+        letter-spacing: 0.07em;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+
+        border: 1px solid var(--border);
+
+        border-radius: 13px;
+
+        outline: none;
+
+        background: rgba(0, 0, 0, 0.24);
+
+        color: #fff;
+
+        transition: 0.2s;
+      }
+
+      input,
+      select {
+        height: 44px;
+
+        padding: 0 13px;
+      }
+
+      textarea {
+        min-height: 115px;
+
+        padding: 13px;
+
+        resize: vertical;
+
+        line-height: 1.55;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(155, 135, 255, 0.55);
+
+        box-shadow: 0 0 0 3px rgba(155, 135, 255, 0.08);
+      }
+
+      .field-note {
+        margin-top: 7px;
+
+        color: var(--muted-2);
+
+        font-size: 9px;
+
+        line-height: 1.5;
+      }
+
+      /* =====================================================
+       RANGE
+    ===================================================== */
+
+      .range-row {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+      }
+
+      input[type="range"] {
+        height: auto;
+
+        padding: 0;
+
+        accent-color: var(--purple);
+      }
+
+      .range-value {
+        min-width: 50px;
+
+        padding: 7px 9px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 9px;
+
+        color: #d5ccff;
+
+        text-align: center;
+
+        font-size: 10px;
+      }
+
+      /* =====================================================
+       TOGGLES
+    ===================================================== */
+
+      .toggle-list {
+        display: grid;
+
+        gap: 10px;
+      }
+
+      .toggle-item {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 14px;
+
+        padding: 14px;
+
+        border: 1px solid rgba(255, 255, 255, 0.07);
+
+        border-radius: 14px;
+
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      .toggle-item b {
+        display: block;
+
+        font-size: 11px;
+      }
+
+      .toggle-item small {
+        display: block;
+
+        margin-top: 4px;
+
+        color: var(--muted);
+
+        font-size: 9px;
+
+        line-height: 1.45;
+      }
+
+      /* =====================================================
+       CHANNELS
+    ===================================================== */
+
+      .channels {
+        max-height: 330px;
+
+        overflow-y: auto;
+
+        display: grid;
+
+        gap: 7px;
+
+        padding-right: 3px;
+      }
+
+      .channel {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        padding: 11px;
+
+        border: 1px solid rgba(255, 255, 255, 0.07);
+
+        border-radius: 12px;
+
+        cursor: pointer;
+
+        transition: 0.15s;
+
+        user-select: none;
+      }
+
+      .channel:hover {
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .channel.active {
+        border-color: rgba(155, 135, 255, 0.4);
+
+        background: rgba(120, 91, 255, 0.07);
+      }
+
+      .channel input {
+        width: 16px;
+        height: 16px;
+
+        flex: 0 0 16px;
+
+        accent-color: var(--purple);
+      }
+
+      .channel-copy {
+        min-width: 0;
+      }
+
+      .channel-copy b {
+        display: block;
+
+        overflow: hidden;
+
+        font-size: 11px;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+      }
+
+      .channel-copy small {
+        display: block;
+
+        margin-top: 3px;
+
+        color: var(--muted);
+
+        font-size: 8px;
+      }
+
+      /* =====================================================
+       BUTTONS
+    ===================================================== */
+
+      .button-row {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 9px;
+
+        margin-top: 16px;
+      }
+
+      .btn {
+        min-height: 42px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 8px;
+
+        padding: 0 15px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 12px;
+
+        background: rgba(255, 255, 255, 0.025);
+
+        color: #fff;
+
+        cursor: pointer;
+
+        transition: 0.18s;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+
+        border-color: var(--border-bright);
+      }
+
+      .btn.primary {
+        border-color: rgba(155, 135, 255, 0.35);
+
+        background: linear-gradient(120deg, #6852ed, #917cff);
+      }
+
+      .btn.danger {
+        border-color: rgba(255, 127, 146, 0.22);
+
+        color: #ff9bab;
+
+        background: rgba(255, 127, 146, 0.045);
+      }
+
+      .btn.warning {
+        border-color: rgba(255, 215, 123, 0.22);
+
+        color: #ffe5a5;
+
+        background: rgba(255, 215, 123, 0.04);
+      }
+
+      .btn:disabled {
+        opacity: 0.45;
+
+        cursor: not-allowed;
+
+        transform: none;
+      }
+
+      /* =====================================================
+       PREVIEW
+    ===================================================== */
+
+      .preview {
+        margin-top: 14px;
+
+        padding: 15px;
+
+        border: 1px solid rgba(255, 255, 255, 0.07);
+
+        border-radius: 14px;
+
+        background: #111117;
+      }
+
+      .discord-message {
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 11px;
+      }
+
+      .discord-avatar {
+        width: 39px;
+        height: 39px;
+
+        overflow: hidden;
+
+        flex: 0 0 39px;
+
+        border-radius: 50%;
+
+        background: #08080d;
+      }
+
+      .discord-avatar img {
+        width: 100%;
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .discord-body {
+        min-width: 0;
+
+        flex: 1;
+      }
+
+      .discord-name {
+        color: #c3b8ff;
+
+        font-size: 12px;
+
+        font-weight: 600;
+      }
+
+      .discord-bot {
+        margin-left: 5px;
+
+        padding: 2px 4px;
+
+        border-radius: 3px;
+
+        background: #5865f2;
+
+        color: #fff;
+
+        font-size: 7px;
+
+        vertical-align: middle;
+      }
+
+      .discord-content {
+        margin-top: 5px;
+
+        color: #dbdee1;
+
+        font-family: Arial, sans-serif;
+
+        font-size: 13px;
+
+        line-height: 1.45;
+
+        white-space: pre-wrap;
+
+        overflow-wrap: anywhere;
+      }
+
+      /* =====================================================
+       HISTORY
+    ===================================================== */
+
+      .history-list {
+        max-height: 370px;
+
+        overflow-y: auto;
+
+        display: grid;
+
+        gap: 8px;
+      }
+
+      .history-item {
+        padding: 12px;
+
+        border: 1px solid rgba(255, 255, 255, 0.065);
+
+        border-radius: 12px;
+
+        background: rgba(255, 255, 255, 0.012);
+      }
+
+      .history-top {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 12px;
+      }
+
+      .history-kind {
+        color: #b5a8ff;
+
+        font-size: 9px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .history-time {
+        color: var(--muted-2);
+
+        font-size: 8px;
+      }
+
+      .history-content {
+        margin-top: 8px;
+
+        color: rgba(247, 245, 255, 0.72);
+
+        font-size: 10px;
+
+        line-height: 1.5;
+
+        overflow-wrap: anywhere;
+      }
+
+      /* =====================================================
+       TOAST
+    ===================================================== */
+
+      .toast {
+        position: fixed;
+
+        right: 20px;
+        bottom: 20px;
+
+        z-index: 1000;
+
+        max-width: 360px;
+
+        padding: 14px 16px;
+
+        border: 1px solid var(--border-bright);
+
+        border-radius: 13px;
+
+        background: rgba(17, 17, 24, 0.96);
+
+        color: #fff;
+
+        font-size: 10px;
+
+        line-height: 1.5;
+
+        transform: translateY(20px);
+
+        opacity: 0;
+
+        pointer-events: none;
+
+        transition: 0.2s;
+      }
+
+      .toast.show {
+        transform: translateY(0);
+
+        opacity: 1;
+      }
+
+      .toast.success {
+        border-color: rgba(145, 247, 181, 0.3);
+      }
+
+      .toast.error {
+        border-color: rgba(255, 127, 146, 0.35);
+      }
+
+      /* =====================================================
+       LOADING
+    ===================================================== */
+
+      .loading {
+        min-height: 100vh;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 16px;
+
+        text-align: center;
+      }
+
+      .loading-logo {
+        width: 100px;
+        height: 100px;
+
+        overflow: hidden;
+
+        border-radius: 24px;
+
+        border: 1px solid var(--border);
+      }
+
+      .loading-logo img {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+      }
+
+      .loading h1 {
+        margin: 0;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 28px;
+      }
+
+      .loading p {
+        margin: 0;
+
+        color: var(--muted);
+
+        font-size: 10px;
+      }
+
+      /* =====================================================
+       MOBILE
+    ===================================================== */
+
+      @media (max-width: 1050px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .topbar {
+          align-items: stretch;
+
+          flex-direction: column;
+
+          padding: 12px 16px;
+        }
+
+        .top-actions {
+          width: 100%;
+        }
+
+        .server-select {
+          min-width: 0;
+
+          flex: 1;
+        }
+
+        .page {
+          width: min(100% - 26px, 1500px);
+
+          padding-top: 28px;
+        }
+
+        .hero {
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+
+        .field-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .field.full {
+          grid-column: auto;
+        }
+
+        .master-row {
+          align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 450px) {
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .button-row .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- ===================================================
+       LOADING
+  ==================================================== -->
+
+    <section class="loading" id="loadingScreen">
+      <div class="loading-logo">
+        <img src="/arclume-logo.png" alt="Arclume" />
+      </div>
+
+      <h1>Auto Messages</h1>
+
+      <p>Connecting to Arclume...</p>
+    </section>
+
+    <!-- ===================================================
+       APP
+  ==================================================== -->
+
+    <div id="app" class="hidden">
+      <header class="topbar">
+        <a class="brand" href="/dashboard.html">
+          <span class="brand-logo">
+            <img src="/arclume-logo.png" alt="Arclume" />
+          </span>
+
+          <span class="brand-copy">
+            <b>ARCLUME</b>
+
+            <small> AUTO MESSAGES ENGINE </small>
+          </span>
+        </a>
+
+        <div class="top-actions">
+          <select id="serverSelect" class="server-select"></select>
+
+          <a href="/dashboard.html" class="back-button"> Dashboard </a>
+        </div>
+      </header>
+
+      <main class="page">
+        <!-- =================================================
+           HERO
+      ================================================== -->
+
+        <section class="hero">
+          <div>
+            <span class="eyebrow"> 10 / AUTO MESSAGES </span>
+
+            <h1>Conversation Engine</h1>
+
+            <p>
+              Let Arclume naturally join server conversations, reply to members,
+              react, remember recent context, start conversations and send
+              staff-controlled messages.
+            </p>
+          </div>
+
+          <div class="live-pill off" id="statusPill">
+            <i></i>
+
+            <span id="statusText"> OFF </span>
+          </div>
+        </section>
+
+        <!-- =================================================
+           STATS
+      ================================================== -->
+
+        <section class="stats">
+          <article class="stat">
+            <small> AUTO REPLIES </small>
+
+            <strong id="statReplies"> 0 </strong>
+          </article>
+
+          <article class="stat">
+            <small> STARTERS </small>
+
+            <strong id="statStarters"> 0 </strong>
+          </article>
+
+          <article class="stat">
+            <small> SEND NOW </small>
+
+            <strong id="statSay"> 0 </strong>
+          </article>
+
+          <article class="stat">
+            <small> ACTIVE CHANNELS </small>
+
+            <strong id="statChannels"> 0 </strong>
+          </article>
+        </section>
+
+        <section class="layout">
+          <!-- =================================================
+             LEFT SIDE
+        ================================================== -->
+
+          <div class="stack">
+            <!-- MASTER -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> MASTER CONTROL </small>
+
+                  <h2>Auto Messages</h2>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="master-row">
+                  <div class="master-copy">
+                    <b id="masterTitle"> Auto Messages OFF </b>
+
+                    <p>
+                      Arclume only chats inside channels you explicitly enable.
+                    </p>
+                  </div>
+
+                  <button
+                    id="masterSwitch"
+                    class="switch"
+                    type="button"
+                  ></button>
+                </div>
+
+                <div class="button-row">
+                  <button id="pauseButton" class="btn warning" type="button">
+                    ⏸ Pause
+                  </button>
+
+                  <button id="resumeButton" class="btn" type="button">
+                    ▶ Resume
+                  </button>
+
+                  <button id="saveButton" class="btn primary" type="button">
+                    Save Settings
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- CHANNELS -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> TARGET NETWORK </small>
+
+                  <h2>Auto Chat Channels</h2>
+                </div>
+
+                <small id="selectedChannelCount"> 0 SELECTED </small>
+              </div>
+
+              <div class="card-body">
+                <div class="channels" id="channelList">Loading channels...</div>
+              </div>
+            </article>
+
+            <!-- PERSONALITY -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> BEHAVIOUR CORE </small>
+
+                  <h2>Personality</h2>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <label> PERSONALITY </label>
+
+                    <select id="personality">
+                      <option value="friendly">Friendly</option>
+
+                      <option value="funny">Funny</option>
+
+                      <option value="helpful">Helpful</option>
+
+                      <option value="chill">Chill</option>
+
+                      <option value="professional">Professional</option>
+
+                      <option value="chaotic">Chaotic</option>
+
+                      <option value="custom">Custom</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label> RESPONSE LENGTH </label>
+
+                    <select id="responseLength">
+                      <option value="short">Short</option>
+
+                      <option value="normal">Normal</option>
+
+                      <option value="detailed">Detailed</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label> EMOJI LEVEL </label>
+
+                    <select id="emojiLevel">
+                      <option value="none">None</option>
+
+                      <option value="low">Low</option>
+
+                      <option value="normal">Normal</option>
+
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label> RECENT MEMORY </label>
+
+                    <input
+                      id="memoryLimit"
+                      type="number"
+                      min="0"
+                      max="40"
+                      value="12"
+                    />
+                  </div>
+
+                  <div class="field full">
+                    <label> CUSTOM INSTRUCTIONS </label>
+
+                    <textarea
+                      id="customInstructions"
+                      maxlength="2000"
+                      placeholder="Example: Talk casually, use short replies and don't overuse emojis."
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- REPLY CHANCES -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> RESPONSE LOGIC </small>
+
+                  <h2>Reply Intelligence</h2>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field full">
+                    <label> NORMAL REPLY CHANCE </label>
+
+                    <div class="range-row">
+                      <input
+                        id="replyChance"
+                        type="range"
+                        min="0"
+                        max="100"
+                        value="25"
+                      />
+
+                      <span id="replyChanceValue" class="range-value">
+                        25%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="field full">
+                    <label> QUESTION PRIORITY </label>
+
+                    <div class="range-row">
+                      <input
+                        id="questionChance"
+                        type="range"
+                        min="0"
+                        max="100"
+                        value="70"
+                      />
+
+                      <span id="questionChanceValue" class="range-value">
+                        70%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="field full">
+                    <label> MENTION PRIORITY </label>
+
+                    <div class="range-row">
+                      <input
+                        id="mentionChance"
+                        type="range"
+                        min="0"
+                        max="100"
+                        value="100"
+                      />
+
+                      <span id="mentionChanceValue" class="range-value">
+                        100%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label> MIN COOLDOWN </label>
+
+                    <input id="minCooldown" type="number" min="5" value="20" />
+                  </div>
+
+                  <div class="field">
+                    <label> MAX COOLDOWN </label>
+
+                    <input id="maxCooldown" type="number" min="5" value="60" />
+                  </div>
+
+                  <div class="field">
+                    <label> USER COOLDOWN </label>
+
+                    <input id="userCooldown" type="number" min="0" value="45" />
+                  </div>
+
+                  <div class="field">
+                    <label> REACTION CHANCE </label>
+
+                    <input
+                      id="reactionChance"
+                      type="number"
+                      min="0"
+                      max="100"
+                      value="10"
+                    />
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- EXTRA -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> AUTOMATION </small>
+
+                  <h2>Extra Behaviour</h2>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="toggle-list">
+                  <div class="toggle-item">
+                    <div>
+                      <b> Auto Tags </b>
+
+                      <small> Mention the member Arclume replies to. </small>
+                    </div>
+
+                    <button
+                      id="autoTagToggle"
+                      class="switch"
+                      type="button"
+                    ></button>
+                  </div>
+
+                  <div class="toggle-item">
+                    <div>
+                      <b> Auto Reactions </b>
+
+                      <small> React to messages automatically. </small>
+                    </div>
+
+                    <button
+                      id="autoReactToggle"
+                      class="switch"
+                      type="button"
+                    ></button>
+                  </div>
+
+                  <div class="toggle-item">
+                    <div>
+                      <b> Conversation Starters </b>
+
+                      <small>
+                        Start a new topic after chat becomes quiet.
+                      </small>
+                    </div>
+
+                    <button
+                      id="starterToggle"
+                      class="switch"
+                      type="button"
+                    ></button>
+                  </div>
+
+                  <div class="toggle-item">
+                    <div>
+                      <b> Thread Support </b>
+
+                      <small> Allow Auto Messages in Discord threads. </small>
+                    </div>
+
+                    <button
+                      id="threadToggle"
+                      class="switch"
+                      type="button"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- STARTER -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> CONVERSATION STARTER </small>
+
+                  <h2>Activity Detection</h2>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="field-grid">
+                  <div class="field">
+                    <label> STARTER CHANCE </label>
+
+                    <input
+                      id="starterChance"
+                      type="number"
+                      min="0"
+                      max="100"
+                      value="25"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label> MINIMUM ACTIVITY </label>
+
+                    <input
+                      id="minimumActivity"
+                      type="number"
+                      min="2"
+                      value="4"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label> QUIET MIN </label>
+
+                    <input id="quietMin" type="number" min="30" value="90" />
+                  </div>
+
+                  <div class="field">
+                    <label> QUIET MAX </label>
+
+                    <input id="quietMax" type="number" min="30" value="180" />
+                  </div>
+
+                  <div class="field">
+                    <label> STARTER COOLDOWN </label>
+
+                    <input
+                      id="starterCooldown"
+                      type="number"
+                      min="1"
+                      value="30"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label> ACTIVITY WINDOW </label>
+
+                    <input
+                      id="activityWindow"
+                      type="number"
+                      min="1"
+                      value="10"
+                    />
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- =================================================
+             RIGHT SIDE
+        ================================================== -->
+
+          <div class="stack">
+            <!-- SEND NOW -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> MANUAL MESSAGE </small>
+
+                  <h2>Send Now</h2>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="field">
+                  <label> CHANNEL </label>
+
+                  <select id="sayChannel">
+                    <option value="">Select channel</option>
+                  </select>
+                </div>
+
+                <div class="field" style="margin-top: 14px">
+                  <label> MESSAGE </label>
+
+                  <textarea
+                    id="sayMessage"
+                    maxlength="2000"
+                    placeholder="What should Arclume say?"
+                  ></textarea>
+                </div>
+
+                <div class="toggle-item" style="margin-top: 12px">
+                  <div>
+                    <b> Allow User Mentions </b>
+
+                    <small> @everyone and @here remain blocked. </small>
+                  </div>
+
+                  <button
+                    id="sayMentionsToggle"
+                    class="switch"
+                    type="button"
+                  ></button>
+                </div>
+
+                <div class="preview">
+                  <div class="discord-message">
+                    <div class="discord-avatar">
+                      <img src="/arclume-logo.png" alt="Arclume" />
+                    </div>
+
+                    <div class="discord-body">
+                      <div class="discord-name">
+                        Arclume
+
+                        <span class="discord-bot"> APP </span>
+                      </div>
+
+                      <div class="discord-content" id="sayPreview">
+                        Your message preview will appear here.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="button-row">
+                  <button id="sendNowButton" class="btn primary" type="button">
+                    💬 Send Message
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- SAFETY -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> SAFETY FILTER </small>
+
+                  <h2>Ignore Rules</h2>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="field">
+                  <label> BLOCKED WORDS / TOPICS </label>
+
+                  <textarea
+                    id="blockedWords"
+                    placeholder="word1, word2, topic3"
+                  ></textarea>
+                </div>
+              </div>
+            </article>
+
+            <!-- MEMORY -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> MEMORY CONTROL </small>
+
+                  <h2>Conversation Memory</h2>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--muted);
+                    font-size: 10px;
+                    line-height: 1.7;
+                  "
+                >
+                  Clear Arclume's temporary conversation context without
+                  deleting Discord messages.
+                </p>
+
+                <div class="button-row">
+                  <button
+                    id="clearMemoryButton"
+                    class="btn danger"
+                    type="button"
+                  >
+                    Clear Server Memory
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- HISTORY -->
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <small> ACTIVITY LOG </small>
+
+                  <h2>Recent Messages</h2>
+                </div>
+
+                <button id="refreshHistoryButton" class="btn" type="button">
+                  Refresh
+                </button>
+              </div>
+
+              <div class="card-body">
+                <div id="historyList" class="history-list">
+                  No activity yet.
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      /* =====================================================
+       ARCLUME AUTO MESSAGES UI
+    ===================================================== */
+
+      let currentGuildId = null;
+
+      let guilds = [];
+
+      let channels = [];
+
+      let settings = null;
+
+      let toastTimer = null;
+
+      const $ = (id) => document.getElementById(id);
+
+      /* =====================================================
+       DEFAULT FALLBACK
+    ===================================================== */
+
+      const DEFAULT_SETTINGS = {
+        enabled: false,
+        paused: false,
+
+        allowedChannels: [],
+
+        personality: "friendly",
+
+        customInstructions: "",
+
+        replyChance: 25,
+
+        questionChance: 70,
+
+        mentionChance: 100,
+
+        minCooldownSeconds: 20,
+
+        maxCooldownSeconds: 60,
+
+        userCooldownSeconds: 45,
+
+        autoTag: false,
+
+        autoReact: true,
+
+        reactionChance: 10,
+
+        startConversations: false,
+
+        starterChance: 25,
+
+        starterQuietMinSeconds: 90,
+
+        starterQuietMaxSeconds: 180,
+
+        starterCooldownMinutes: 30,
+
+        minimumActivityMessages: 4,
+
+        activityWindowMinutes: 10,
+
+        memoryLimit: 12,
+
+        responseLength: "short",
+
+        emojiLevel: "normal",
+
+        allowThreads: true,
+
+        blockedWords: [],
+      };
+
+      /* =====================================================
+       SAFE SETTINGS
+    ===================================================== */
+
+      function normalizeSettings(value) {
+        if (!value || typeof value !== "object") {
+          return {
+            ...DEFAULT_SETTINGS,
+          };
+        }
+
+        return {
+          ...DEFAULT_SETTINGS,
+          ...value,
+
+          allowedChannels: Array.isArray(value.allowedChannels)
+            ? value.allowedChannels
+            : [],
+
+          blockedWords: Array.isArray(value.blockedWords)
+            ? value.blockedWords
+            : [],
+        };
+      }
+
+      /* =====================================================
+       TOAST
+    ===================================================== */
+
+      function toast(message, type = "success") {
+        const element = $("toast");
+
+        element.textContent = message;
+
+        element.className = `toast ${type} show`;
+
+        clearTimeout(toastTimer);
+
+        toastTimer = setTimeout(() => {
+          element.classList.remove("show");
+        }, 3000);
+      }
+
+      /* =====================================================
+       API
+    ===================================================== */
+
+      async function api(url, options = {}) {
+        const response = await fetch(url, {
+          credentials: "same-origin",
+
+          headers: {
+            "Content-Type": "application/json",
+
+            ...(options.headers || {}),
+          },
+
+          ...options,
+        });
+
+        let data = {};
+
+        try {
+          data = await response.json();
+        } catch {}
+
+        if (!response.ok) {
+          throw new Error(data.error || `Request failed (${response.status})`);
+        }
+
+        return data;
+      }
+
+      /* =====================================================
+       SWITCH
+    ===================================================== */
+
+      function switchState(element, enabled) {
+        element.classList.toggle("on", Boolean(enabled));
+
+        element.dataset.enabled = enabled ? "true" : "false";
+      }
+
+      function switchValue(element) {
+        return element.dataset.enabled === "true";
+      }
+
+      function setupSwitch(element) {
+        element.addEventListener("click", () => {
+          switchState(element, !switchValue(element));
+        });
+      }
+
+      /* =====================================================
+       ESCAPE
+    ===================================================== */
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      /* =====================================================
+       ACCOUNT
+    ===================================================== */
+
+      async function loadAccount() {
+        const data = await api("/api/me");
+
+        if (!data.loggedIn) {
+          window.location.href = "/auth/discord";
+
+          return false;
+        }
+
+        guilds = Array.isArray(data.guilds) ? data.guilds : [];
+
+        if (!guilds.length) {
+          $("loadingScreen").innerHTML = `
+            <div class="loading-logo">
+              <img src="/arclume-logo.png">
+            </div>
+
+            <h1>No manageable server</h1>
+
+            <p>
+              No server found.
+            </p>
+          `;
+
+          return false;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+
+        const requested = params.get("guild");
+
+        const existing = guilds.find((guild) => guild.id === requested);
+
+        currentGuildId = existing ? existing.id : guilds[0].id;
+
+        renderServerSelect();
+
+        return true;
+      }
+
+      /* =====================================================
+       SERVER SELECT
+    ===================================================== */
+
+      function renderServerSelect() {
+        $("serverSelect").innerHTML = guilds
+          .map(
+            (guild) =>
+              `
+                <option
+                  value="${escapeHtml(guild.id)}"
+                  ${guild.id === currentGuildId ? "selected" : ""}
+                >
+                  ${escapeHtml(guild.name)}
+                </option>
+              `,
+          )
+          .join("");
+      }
+
+      /* =====================================================
+       LOAD SERVER
+    ===================================================== */
+
+      async function loadGuild() {
+        try {
+          const settingsData = await api(
+            `/api/auto-messages/${currentGuildId}/settings`,
+          );
+
+          settings = normalizeSettings(settingsData.settings);
+
+          renderSettings();
+
+          const channelData = await api(
+            `/api/auto-messages/${currentGuildId}/channels`,
+          );
+
+          channels = Array.isArray(channelData.channels)
+            ? channelData.channels
+            : [];
+
+          renderChannels();
+
+          await refreshStatus();
+
+          await loadHistory();
+        } catch (error) {
+          console.error(error);
+
+          toast(error.message, "error");
+        }
+      }
+
+      /* =====================================================
+       SETTINGS RENDER
+    ===================================================== */
+
+      function renderSettings() {
+        settings = normalizeSettings(settings);
+
+        switchState($("masterSwitch"), settings.enabled);
+
+        switchState($("autoTagToggle"), settings.autoTag);
+
+        switchState($("autoReactToggle"), settings.autoReact);
+
+        switchState($("starterToggle"), settings.startConversations);
+
+        switchState($("threadToggle"), settings.allowThreads);
+
+        $("personality").value = settings.personality;
+
+        $("responseLength").value = settings.responseLength;
+
+        $("emojiLevel").value = settings.emojiLevel;
+
+        $("memoryLimit").value = settings.memoryLimit;
+
+        $("customInstructions").value = settings.customInstructions || "";
+
+        $("replyChance").value = settings.replyChance;
+
+        $("questionChance").value = settings.questionChance;
+
+        $("mentionChance").value = settings.mentionChance;
+
+        $("minCooldown").value = settings.minCooldownSeconds;
+
+        $("maxCooldown").value = settings.maxCooldownSeconds;
+
+        $("userCooldown").value = settings.userCooldownSeconds;
+
+        $("reactionChance").value = settings.reactionChance;
+
+        $("starterChance").value = settings.starterChance;
+
+        $("minimumActivity").value = settings.minimumActivityMessages;
+
+        $("quietMin").value = settings.starterQuietMinSeconds;
+
+        $("quietMax").value = settings.starterQuietMaxSeconds;
+
+        $("starterCooldown").value = settings.starterCooldownMinutes;
+
+        $("activityWindow").value = settings.activityWindowMinutes;
+
+        $("blockedWords").value = settings.blockedWords.join(", ");
+
+        updateRangeLabels();
+
+        updateMasterTitle();
+      }
+
+      /* =====================================================
+       RANGE LABELS
+    ===================================================== */
+
+      function updateRangeLabels() {
+        $("replyChanceValue").textContent = `${$("replyChance").value}%`;
+
+        $("questionChanceValue").textContent = `${$("questionChance").value}%`;
+
+        $("mentionChanceValue").textContent = `${$("mentionChance").value}%`;
+      }
+
+      /* =====================================================
+       MASTER TITLE
+    ===================================================== */
+
+      function updateMasterTitle() {
+        if (!settings.enabled) {
+          $("masterTitle").textContent = "Auto Messages OFF";
+
+          return;
+        }
+
+        if (settings.paused) {
+          $("masterTitle").textContent = "Auto Messages PAUSED";
+
+          return;
+        }
+
+        $("masterTitle").textContent = "Auto Messages ACTIVE";
+      }
+
+      /* =====================================================
+       CHANNELS
+    ===================================================== */
+
+      function renderChannels() {
+        const selected = new Set(settings.allowedChannels || []);
+
+        const list = $("channelList");
+
+        if (!channels.length) {
+          list.innerHTML = `
+            <div class="field-note">
+              No text channels found.
+            </div>
+          `;
+
+          $("sayChannel").innerHTML = `
+            <option value="">
+              No channels available
+            </option>
+          `;
+
+          return;
+        }
+
+        list.innerHTML = channels
+          .map(
+            (channel) =>
+              `
+                <label
+                  class="channel ${selected.has(channel.id) ? "active" : ""}"
+                >
+                  <input
+                    class="channel-check"
+                    type="checkbox"
+                    value="${escapeHtml(channel.id)}"
+                    ${selected.has(channel.id) ? "checked" : ""}
+                  />
+
+                  <div class="channel-copy">
+                    <b>
+                      #${escapeHtml(channel.name)}
+                    </b>
+
+                    <small>
+                      ${escapeHtml(channel.parentName || "NO CATEGORY")}
+                    </small>
+                  </div>
+                </label>
+              `,
+          )
+          .join("");
+
+        $("sayChannel").innerHTML =
+          `
+          <option value="">
+            Select channel
+          </option>
+        ` +
+          channels
+            .map(
+              (channel) =>
+                `
+                <option
+                  value="${escapeHtml(channel.id)}"
+                >
+                  #${escapeHtml(channel.name)}
+                </option>
+              `,
+            )
+            .join("");
+
+        document.querySelectorAll(".channel-check").forEach((checkbox) => {
+          checkbox.addEventListener("change", () => {
+            const row = checkbox.closest(".channel");
+
+            row.classList.toggle("active", checkbox.checked);
+
+            updateSelectedCount();
+          });
+        });
+
+        updateSelectedCount();
+      }
+
+      function updateSelectedCount() {
+        const count = document.querySelectorAll(
+          ".channel-check:checked",
+        ).length;
+
+        $("selectedChannelCount").textContent = `${count} SELECTED`;
+      }
+
+      function selectedChannels() {
+        return [...document.querySelectorAll(".channel-check:checked")].map(
+          (item) => item.value,
+        );
+      }
+
+      /* =====================================================
+       COLLECT SETTINGS
+    ===================================================== */
+
+      function collectSettings() {
+        return {
+          enabled: switchValue($("masterSwitch")),
+
+          paused: Boolean(settings?.paused),
+
+          allowedChannels: selectedChannels(),
+
+          personality: $("personality").value,
+
+          customInstructions: $("customInstructions").value,
+
+          replyChance: Number($("replyChance").value),
+
+          questionChance: Number($("questionChance").value),
+
+          mentionChance: Number($("mentionChance").value),
+
+          minCooldownSeconds: Number($("minCooldown").value),
+
+          maxCooldownSeconds: Number($("maxCooldown").value),
+
+          userCooldownSeconds: Number($("userCooldown").value),
+
+          autoTag: switchValue($("autoTagToggle")),
+
+          autoReact: switchValue($("autoReactToggle")),
+
+          reactionChance: Number($("reactionChance").value),
+
+          startConversations: switchValue($("starterToggle")),
+
+          starterChance: Number($("starterChance").value),
+
+          starterQuietMinSeconds: Number($("quietMin").value),
+
+          starterQuietMaxSeconds: Number($("quietMax").value),
+
+          starterCooldownMinutes: Number($("starterCooldown").value),
+
+          minimumActivityMessages: Number($("minimumActivity").value),
+
+          activityWindowMinutes: Number($("activityWindow").value),
+
+          memoryLimit: Number($("memoryLimit").value),
+
+          responseLength: $("responseLength").value,
+
+          emojiLevel: $("emojiLevel").value,
+
+          allowThreads: switchValue($("threadToggle")),
+
+          blockedWords: $("blockedWords")
+            .value.split(",")
+            .map((word) => word.trim())
+            .filter(Boolean),
+        };
+      }
+
+      /* =====================================================
+       SAVE
+    ===================================================== */
+
+      async function saveSettings() {
+        const button = $("saveButton");
+
+        button.disabled = true;
+
+        button.textContent = "Saving...";
+
+        try {
+          const data = await api(
+            `/api/auto-messages/${currentGuildId}/settings`,
+            {
+              method: "PUT",
+
+              body: JSON.stringify(collectSettings()),
+            },
+          );
+
+          settings = normalizeSettings(data.settings);
+
+          renderSettings();
+
+          await refreshStatus();
+
+          toast("Settings saved.");
+        } catch (error) {
+          toast(error.message, "error");
+        } finally {
+          button.disabled = false;
+
+          button.textContent = "Save Settings";
+        }
+      }
+
+      /* =====================================================
+       MASTER
+    ===================================================== */
+
+      async function toggleMaster() {
+        try {
+          const enable = !settings.enabled;
+
+          const action = enable ? "enable" : "disable";
+
+          const data = await api(
+            `/api/auto-messages/${currentGuildId}/${action}`,
+            {
+              method: "POST",
+            },
+          );
+
+          settings = normalizeSettings(data.settings);
+
+          renderSettings();
+
+          await refreshStatus();
+
+          toast(enable ? "Auto Messages enabled." : "Auto Messages disabled.");
+        } catch (error) {
+          toast(error.message, "error");
+        }
+      }
+
+      /* =====================================================
+       PAUSE / RESUME
+    ===================================================== */
+
+      async function pauseAutoMessages() {
+        try {
+          const data = await api(`/api/auto-messages/${currentGuildId}/pause`, {
+            method: "POST",
+          });
+
+          settings = normalizeSettings(data.settings);
+
+          renderSettings();
+
+          await refreshStatus();
+
+          toast("Auto Messages paused.");
+        } catch (error) {
+          toast(error.message, "error");
+        }
+      }
+
+      async function resumeAutoMessages() {
+        try {
+          const data = await api(
+            `/api/auto-messages/${currentGuildId}/resume`,
+            {
+              method: "POST",
+            },
+          );
+
+          settings = normalizeSettings(data.settings);
+
+          renderSettings();
+
+          await refreshStatus();
+
+          toast("Auto Messages resumed.");
+        } catch (error) {
+          toast(error.message, "error");
+        }
+      }
+
+      /* =====================================================
+       STATUS
+    ===================================================== */
+
+      async function refreshStatus() {
+        const data = await api(`/api/auto-messages/${currentGuildId}/status`);
+
+        renderStatus(data);
+      }
+
+      function renderStatus(data) {
+        const state = data?.state || "OFF";
+
+        $("statusText").textContent = state;
+
+        $("statusPill").classList.remove("off", "paused");
+
+        if (state === "OFF") {
+          $("statusPill").classList.add("off");
+        }
+
+        if (state === "PAUSED") {
+          $("statusPill").classList.add("paused");
+        }
+
+        const stats = data?.stats || {};
+
+        $("statReplies").textContent = stats.repliesToday ?? stats.replies ?? 0;
+
+        $("statStarters").textContent =
+          stats.startersToday ?? stats.starters ?? 0;
+
+        $("statSay").textContent = stats.sayToday ?? stats.sayMessages ?? 0;
+
+        $("statChannels").textContent = data?.channelCount ?? 0;
+      }
+
+      /* =====================================================
+       SEND NOW
+    ===================================================== */
+
+      async function sendNow() {
+        const channelId = $("sayChannel").value;
+
+        const content = $("sayMessage").value.trim();
+
+        if (!channelId) {
+          toast("Select a channel first.", "error");
+
+          return;
+        }
+
+        if (!content) {
+          toast("Enter a message first.", "error");
+
+          return;
+        }
+
+        const button = $("sendNowButton");
+
+        button.disabled = true;
+
+        button.textContent = "Sending...";
+
+        try {
+          const data = await api(`/api/auto-messages/${currentGuildId}/send`, {
+            method: "POST",
+
+            body: JSON.stringify({
+              channelId,
+
+              content,
+
+              allowUserMentions: switchValue($("sayMentionsToggle")),
+            }),
+          });
+
+          toast(`Message sent • ${data.message.id}`);
+
+          $("sayMessage").value = "";
+
+          updatePreview();
+
+          await refreshStatus();
+
+          await loadHistory();
+        } catch (error) {
+          toast(error.message, "error");
+        } finally {
+          button.disabled = false;
+
+          button.textContent = "💬 Send Message";
+        }
+      }
+
+      /* =====================================================
+       PREVIEW
+    ===================================================== */
+
+      function updatePreview() {
+        $("sayPreview").textContent =
+          $("sayMessage").value.trim() ||
+          "Your message preview will appear here.";
+      }
+
+      /* =====================================================
+       HISTORY
+    ===================================================== */
+
+      async function loadHistory() {
+        try {
+          const data = await api(
+            `/api/auto-messages/${currentGuildId}/history?limit=30`,
+          );
+
+          renderHistory(Array.isArray(data.history) ? data.history : []);
+        } catch (error) {
+          $("historyList").textContent = "History unavailable.";
+        }
+      }
+
+      function renderHistory(items) {
+        const list = $("historyList");
+
+        if (!items.length) {
+          list.textContent = "No Auto Messages activity yet.";
+
+          return;
+        }
+
+        list.innerHTML = items
+          .map((item) => {
+            let time = "";
+
+            try {
+              time = item.created_at
+                ? new Date(item.created_at).toLocaleString()
+                : "";
+            } catch {}
+
+            return `
+                <div class="history-item">
+                  <div class="history-top">
+                    <span class="history-kind">
+                      ${escapeHtml(
+                        String(item.kind || "MESSAGE").toUpperCase(),
+                      )}
+                    </span>
+
+                    <span class="history-time">
+                      ${escapeHtml(time)}
+                    </span>
+                  </div>
+
+                  <div class="history-content">
+                    ${escapeHtml(item.content || "No content")}
+                  </div>
+                </div>
+              `;
+          })
+          .join("");
+      }
+
+      /* =====================================================
+       MEMORY
+    ===================================================== */
+
+      async function clearMemory() {
+        const confirmed = window.confirm(
+          "Clear Arclume conversation memory for this server?",
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        try {
+          await api(`/api/auto-messages/${currentGuildId}/memory/clear`, {
+            method: "POST",
+
+            body: JSON.stringify({}),
+          });
+
+          toast("Conversation memory cleared.");
+        } catch (error) {
+          toast(error.message, "error");
+        }
+      }
+
+      /* =====================================================
+       EVENTS
+    ===================================================== */
+
+      $("serverSelect").addEventListener("change", async () => {
+        currentGuildId = $("serverSelect").value;
+
+        const url = new URL(window.location.href);
+
+        url.searchParams.set("guild", currentGuildId);
+
+        history.replaceState(null, "", url);
+
+        await loadGuild();
+      });
+
+      $("saveButton").addEventListener("click", saveSettings);
+
+      $("masterSwitch").addEventListener("click", toggleMaster);
+
+      $("pauseButton").addEventListener("click", pauseAutoMessages);
+
+      $("resumeButton").addEventListener("click", resumeAutoMessages);
+
+      $("sendNowButton").addEventListener("click", sendNow);
+
+      $("clearMemoryButton").addEventListener("click", clearMemory);
+
+      $("refreshHistoryButton").addEventListener("click", loadHistory);
+
+      $("sayMessage").addEventListener("input", updatePreview);
+
+      $("replyChance").addEventListener("input", updateRangeLabels);
+
+      $("questionChance").addEventListener("input", updateRangeLabels);
+
+      $("mentionChance").addEventListener("input", updateRangeLabels);
+
+      setupSwitch($("autoTagToggle"));
+
+      setupSwitch($("autoReactToggle"));
+
+      setupSwitch($("starterToggle"));
+
+      setupSwitch($("threadToggle"));
+
+      setupSwitch($("sayMentionsToggle"));
+
+      /* =====================================================
+       START
+    ===================================================== */
+
+      async function start() {
+        try {
+          const okay = await loadAccount();
+
+          if (!okay) {
+            return;
+          }
+
+          await loadGuild();
+
+          $("loadingScreen").classList.add("hidden");
+
+          $("app").classList.remove("hidden");
+        } catch (error) {
+          console.error(error);
+
+          $("loadingScreen").innerHTML = `
+            <div class="loading-logo">
+              <img src="/arclume-logo.png">
+            </div>
+
+            <h1>Auto Messages failed to load</h1>
+
+            <p>
+              ${escapeHtml(error.message)}
+            </p>
+          `;
+        }
+      }
+
+      start();
+    </script>
+  </body>
+</html>

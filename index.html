@@ -2,1093 +2,1795 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta
-      name="description"
-      content="Arclume is an independent Discord community control system built by Darshan Pisal."
-    />
+    <meta name="theme-color" content="#09090f" />
 
-    <meta name="theme-color" content="#080808" />
+    <title>Arclume Cloud</title>
 
-    <title>Arclume — Built for Communities</title>
+    <link rel="icon" type="image/png" href="/arclume-cloud-logo.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="style.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #08080d;
+
+        --surface: rgba(255, 255, 255, 0.035);
+        --surface-2: rgba(255, 255, 255, 0.055);
+
+        --border: rgba(255, 255, 255, 0.095);
+        --border-strong: rgba(255, 255, 255, 0.15);
+
+        --text: #f7f5ff;
+
+        --muted: rgba(247, 245, 255, 0.52);
+        --soft: rgba(247, 245, 255, 0.3);
+
+        --purple: #9d8cff;
+        --purple-2: #7566ff;
+
+        --green: #9effc7;
+        --yellow: #ffd37a;
+        --red: #ff8194;
+
+        --radius: 22px;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+
+        background:
+          radial-gradient(
+            circle at 85% 5%,
+            rgba(107, 83, 255, 0.13),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at 10% 90%,
+            rgba(68, 101, 255, 0.08),
+            transparent 30%
+          ),
+          var(--bg);
+
+        color: var(--text);
+
+        font-family: "Syne", sans-serif;
+
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+
+        position: fixed;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.018) 1px,
+            transparent 1px
+          );
+
+        background-size: 52px 52px;
+
+        mask-image: linear-gradient(to bottom, black, transparent);
+
+        opacity: 0.55;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+
+        opacity: 0.38;
+      }
+
+      .mono {
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      .shell {
+        width: min(1500px, calc(100% - 36px));
+
+        margin: 0 auto;
+
+        padding-bottom: 60px;
+      }
+
+      /* =====================================================
+         HEADER
+      ===================================================== */
+
+      .topbar {
+        min-height: 92px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+
+        align-items: center;
+
+        gap: 14px;
+      }
+
+      .brand-logo {
+        width: 48px;
+
+        height: 48px;
+
+        overflow: hidden;
+
+        display: grid;
+
+        place-items: center;
+
+        border: 1px solid var(--border-strong);
+
+        border-radius: 15px;
+
+        background: #101019;
+      }
+
+      .brand-logo img {
+        width: 100%;
+
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .brand-copy strong {
+        display: block;
+
+        font-size: 15px;
+
+        letter-spacing: 0.16em;
+      }
+
+      .brand-copy small {
+        display: block;
+
+        margin-top: 5px;
+
+        color: var(--soft);
+
+        font-size: 8px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .cloud-status {
+        display: flex;
+
+        align-items: center;
+
+        gap: 9px;
+
+        padding: 10px 14px;
+
+        border: 1px solid rgba(255, 211, 122, 0.15);
+
+        border-radius: 999px;
+
+        background: rgba(255, 211, 122, 0.045);
+
+        color: rgba(255, 255, 255, 0.72);
+
+        font-size: 9px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .cloud-status i {
+        width: 8px;
+
+        height: 8px;
+
+        border-radius: 50%;
+
+        background: var(--yellow);
+
+        box-shadow: 0 0 15px rgba(255, 211, 122, 0.5);
+      }
+
+      .cloud-status.online {
+        border-color: rgba(158, 255, 199, 0.15);
+
+        background: rgba(158, 255, 199, 0.045);
+      }
+
+      .cloud-status.online i {
+        background: var(--green);
+
+        box-shadow: 0 0 15px rgba(158, 255, 199, 0.5);
+      }
+
+      .cloud-status.error {
+        border-color: rgba(255, 129, 148, 0.15);
+
+        background: rgba(255, 129, 148, 0.045);
+      }
+
+      .cloud-status.error i {
+        background: var(--red);
+
+        box-shadow: 0 0 15px rgba(255, 129, 148, 0.5);
+      }
+
+      /* =====================================================
+         HERO
+      ===================================================== */
+
+      .hero {
+        padding: 75px 0 45px;
+
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1.25fr)
+          minmax(300px, 0.75fr);
+
+        gap: 50px;
+
+        align-items: end;
+      }
+
+      .eyebrow {
+        display: block;
+
+        color: var(--purple);
+
+        font-size: 9px;
+
+        letter-spacing: 0.15em;
+      }
+
+      .hero h1 {
+        margin: 18px 0 22px;
+
+        font-size: clamp(56px, 7vw, 106px);
+
+        line-height: 0.9;
+
+        letter-spacing: -0.065em;
+      }
+
+      .hero h1 span {
+        color: rgba(255, 255, 255, 0.32);
+      }
+
+      .hero p {
+        max-width: 620px;
+
+        margin: 0;
+
+        color: var(--muted);
+
+        font-size: 15px;
+
+        line-height: 1.8;
+      }
+
+      .hero-card {
+        padding: 24px;
+
+        border: 1px solid var(--border);
+
+        border-radius: var(--radius);
+
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.055),
+          rgba(255, 255, 255, 0.018)
+        );
+
+        backdrop-filter: blur(20px);
+      }
+
+      .hero-card small {
+        color: var(--soft);
+
+        font-size: 8px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .hero-card strong {
+        display: block;
+
+        margin-top: 10px;
+
+        font-size: 29px;
+      }
+
+      .hero-card p {
+        margin-top: 12px;
+
+        font-size: 12px;
+
+        line-height: 1.6;
+      }
+
+      /* =====================================================
+         STATS
+      ===================================================== */
+
+      .stats-grid {
+        display: grid;
+
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+
+        gap: 14px;
+      }
+
+      .stat-card {
+        min-height: 150px;
+
+        padding: 20px;
+
+        border: 1px solid var(--border);
+
+        border-radius: var(--radius);
+
+        background: var(--surface);
+      }
+
+      .stat-card small {
+        color: var(--soft);
+
+        font-size: 8px;
+
+        letter-spacing: 0.12em;
+      }
+
+      .stat-card strong {
+        display: block;
+
+        margin-top: 18px;
+
+        font-size: 30px;
+      }
+
+      .stat-card p {
+        margin: 7px 0 0;
+
+        color: var(--muted);
+
+        font-size: 11px;
+
+        line-height: 1.5;
+      }
+
+      .progress {
+        height: 7px;
+
+        margin-top: 18px;
+
+        overflow: hidden;
+
+        border-radius: 999px;
+
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .progress > i {
+        width: 0%;
+
+        height: 100%;
+
+        display: block;
+
+        border-radius: inherit;
+
+        background: linear-gradient(90deg, var(--purple-2), var(--purple));
+
+        transition: width 0.5s ease;
+      }
+
+      /* =====================================================
+         DASHBOARD
+      ===================================================== */
+
+      .dashboard-grid {
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1.25fr)
+          minmax(320px, 0.75fr);
+
+        gap: 18px;
+
+        margin-top: 18px;
+      }
+
+      .panel {
+        border: 1px solid var(--border);
+
+        border-radius: var(--radius);
+
+        background: rgba(255, 255, 255, 0.025);
+
+        overflow: hidden;
+      }
+
+      .panel-head {
+        min-height: 75px;
+
+        padding: 18px 20px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 16px;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      .panel-head small {
+        display: block;
+
+        color: var(--soft);
+
+        font-size: 8px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .panel-head h3 {
+        margin: 5px 0 0;
+
+        font-size: 19px;
+      }
+
+      .panel-body {
+        padding: 20px;
+      }
+
+      /* =====================================================
+         SERVER
+      ===================================================== */
+
+      .server-box {
+        padding: 18px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 18px;
+
+        background: var(--surface);
+      }
+
+      .server-top {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 16px;
+      }
+
+      .server-identity {
+        display: flex;
+
+        align-items: center;
+
+        gap: 14px;
+      }
+
+      .server-icon {
+        width: 48px;
+
+        height: 48px;
+
+        display: grid;
+
+        place-items: center;
+
+        border: 1px solid rgba(157, 140, 255, 0.2);
+
+        border-radius: 15px;
+
+        background: rgba(157, 140, 255, 0.07);
+
+        color: var(--purple);
+
+        font-size: 20px;
+      }
+
+      .server-copy small {
+        color: var(--soft);
+
+        font-size: 8px;
+      }
+
+      .server-copy b {
+        display: block;
+
+        margin-top: 5px;
+
+        font-size: 15px;
+      }
+
+      .state-badge {
+        padding: 7px 10px;
+
+        border: 1px solid rgba(255, 211, 122, 0.15);
+
+        border-radius: 999px;
+
+        background: rgba(255, 211, 122, 0.05);
+
+        color: var(--yellow);
+
+        font-size: 8px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .state-badge.online {
+        border-color: rgba(158, 255, 199, 0.18);
+
+        background: rgba(158, 255, 199, 0.055);
+
+        color: var(--green);
+      }
+
+      .state-badge.offline {
+        border-color: rgba(255, 129, 148, 0.18);
+
+        background: rgba(255, 129, 148, 0.055);
+
+        color: var(--red);
+      }
+
+      .state-badge.busy {
+        border-color: rgba(255, 211, 122, 0.18);
+
+        background: rgba(255, 211, 122, 0.055);
+
+        color: var(--yellow);
+      }
+
+      .bot-meta {
+        display: grid;
+
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+
+        gap: 8px;
+
+        margin-top: 16px;
+      }
+
+      .bot-meta-card {
+        padding: 12px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 13px;
+
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .bot-meta-card small {
+        display: block;
+
+        color: var(--soft);
+
+        font-family: "IBM Plex Mono", monospace;
+
+        font-size: 7px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .bot-meta-card b {
+        display: block;
+
+        margin-top: 7px;
+
+        overflow: hidden;
+
+        color: rgba(255, 255, 255, 0.78);
+
+        font-size: 11px;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+      }
+
+      .server-actions {
+        display: grid;
+
+        grid-template-columns: repeat(3, 1fr);
+
+        gap: 9px;
+
+        margin-top: 18px;
+      }
+
+      .action-button {
+        min-height: 45px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 13px;
+
+        background: rgba(255, 255, 255, 0.035);
+
+        color: rgba(255, 255, 255, 0.7);
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        transition:
+          transform 0.15s ease,
+          opacity 0.15s ease,
+          background 0.15s ease;
+      }
+
+      .action-button:not(:disabled):hover {
+        transform: translateY(-1px);
+
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .action-button.start {
+        border-color: rgba(158, 255, 199, 0.17);
+
+        color: var(--green);
+      }
+
+      .action-button.restart {
+        border-color: rgba(255, 211, 122, 0.17);
+
+        color: var(--yellow);
+      }
+
+      .action-button.stop {
+        border-color: rgba(255, 129, 148, 0.17);
+
+        color: var(--red);
+      }
+
+      /* =====================================================
+         SYSTEM
+      ===================================================== */
+
+      .info-list {
+        display: grid;
+
+        gap: 10px;
+      }
+
+      .info-row {
+        min-height: 52px;
+
+        padding: 0 13px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 16px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 13px;
+
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .info-row span {
+        color: var(--soft);
+
+        font-size: 8px;
+
+        letter-spacing: 0.08em;
+      }
+
+      .info-row b {
+        max-width: 60%;
+
+        overflow: hidden;
+
+        color: rgba(255, 255, 255, 0.74);
+
+        font-size: 10px;
+
+        font-weight: 500;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+      }
+
+      /* =====================================================
+         CONSOLE
+      ===================================================== */
+
+      .console {
+        margin-top: 18px;
+
+        border: 1px solid var(--border);
+
+        border-radius: var(--radius);
+
+        overflow: hidden;
+
+        background: #07070b;
+      }
+
+      .console-head {
+        min-height: 58px;
+
+        padding: 0 18px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      .console-head b {
+        font-size: 12px;
+      }
+
+      .console-tools {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+      }
+
+      .console-head span {
+        color: var(--soft);
+
+        font-size: 8px;
+      }
+
+      .console-clear {
+        padding: 6px 9px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 9px;
+
+        background: rgba(255, 255, 255, 0.035);
+
+        color: var(--muted);
+
+        font-size: 8px;
+      }
+
+      .console-body {
+        min-height: 240px;
+
+        max-height: 420px;
+
+        overflow-y: auto;
+
+        padding: 18px;
+
+        font-family: "IBM Plex Mono", monospace;
+
+        font-size: 11px;
+
+        line-height: 1.8;
+
+        color: rgba(255, 255, 255, 0.62);
+
+        white-space: pre-wrap;
+
+        overflow-wrap: anywhere;
+      }
+
+      .console-line {
+        margin-bottom: 4px;
+      }
+
+      .console-line .time {
+        color: rgba(255, 255, 255, 0.25);
+
+        margin-right: 8px;
+      }
+
+      .console-line.success {
+        color: var(--green);
+      }
+
+      .console-line.error {
+        color: var(--red);
+      }
+
+      .console-line.warn {
+        color: var(--yellow);
+      }
+
+      /* =====================================================
+         MOBILE
+      ===================================================== */
+
+      @media (max-width: 980px) {
+        .hero,
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .bot-meta {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .shell {
+          width: min(100% - 22px, 1500px);
+        }
+
+        .topbar {
+          min-height: 78px;
+        }
+
+        .brand-copy small {
+          display: none;
+        }
+
+        .hero {
+          padding-top: 48px;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .server-actions {
+          grid-template-columns: 1fr;
+        }
+
+        .bot-meta {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .console-head {
+          align-items: flex-start;
+
+          padding-top: 13px;
+
+          padding-bottom: 13px;
+        }
+
+        .console-tools {
+          flex-direction: column;
+
+          align-items: flex-end;
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <!-- ============================================= -->
-    <!-- BACKGROUND -->
-    <!-- ============================================= -->
+    <div class="shell">
+      <!-- ==================================================
+           HEADER
+      =================================================== -->
 
-    <div class="site-grid" aria-hidden="true"></div>
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-logo">
+            <img
+              src="/arclume-cloud-logo.png"
+              alt="Arclume Cloud"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
 
-    <div class="site-glow site-glow-one" aria-hidden="true"></div>
+          <div class="brand-copy">
+            <strong> ARCLUME CLOUD </strong>
 
-    <div class="site-glow site-glow-two" aria-hidden="true"></div>
+            <small class="mono"> PRIVATE HOSTING NETWORK </small>
+          </div>
+        </div>
 
-    <!-- ============================================= -->
-    <!-- HEADER -->
-    <!-- ============================================= -->
+        <div class="cloud-status" id="cloudStatus">
+          <i></i>
 
-    <header class="site-header">
-      <a href="#top" class="brand" aria-label="Arclume home">
-        <span class="brand-mark"> A </span>
+          <span class="mono" id="cloudStatusText"> CONNECTING </span>
+        </div>
+      </header>
 
-        <span class="brand-copy">
-          <strong> ARCLUME </strong>
-
-          <small> COMMUNITY CONTROL </small>
-        </span>
-      </a>
-
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a href="#story"> Story </a>
-
-        <a href="#systems"> Systems </a>
-
-        <a href="#roadmap"> Roadmap </a>
-
-        <a href="#creator"> Creator </a>
-
-        <a href="#systems"> Status </a>
-      </nav>
-
-      <div class="header-actions">
-        <a href="#systems" class="header-link"> Dashboard </a>
-
-        <a href="https://discord.gg/tmeTZusvp" class="header-primary">
-          Join Arclume
-
-          <span> ↗ </span>
-        </a>
-      </div>
-
-      <button
-        class="mobile-menu-button"
-        id="mobileMenuButton"
-        type="button"
-        aria-label="Open navigation"
-      >
-        <span></span>
-        <span></span>
-      </button>
-    </header>
-
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="#story"> Story </a>
-
-      <a href="#systems"> Systems </a>
-
-      <a href="#roadmap"> Roadmap </a>
-
-      <a href="#creator"> Creator </a>
-
-      <a href="#systems"> System Status </a>
-
-      <a href="#systems"> Dashboard </a>
-
-      <a href="https://discord.gg/tmeTZusvp" class="mobile-primary"> Join Arclume → </a>
-    </div>
-
-    <!-- ============================================= -->
-    <!-- MAIN -->
-    <!-- ============================================= -->
-
-    <main id="top">
-      <!-- =========================================== -->
-      <!-- HERO -->
-      <!-- =========================================== -->
+      <!-- ==================================================
+           HERO
+      =================================================== -->
 
       <section class="hero">
-        <div class="hero-label mono">
-          <span class="status-dot"></span>
+        <div>
+          <span class="mono eyebrow"> ARCLUME / CLOUD CONTROL </span>
 
-          INDEPENDENTLY BUILT / DISCORD COMMUNITY SYSTEM / 2026
-        </div>
+          <h1>
+            Your cloud.
 
-        <div class="hero-layout">
-          <div class="hero-content">
-            <h1>
-              Built to make
-              <span>communities</span>
-              easier to run.
-            </h1>
+            <br />
 
-            <p class="hero-description">
-              Arclume brings moderation, verification, welcoming, server
-              protection and community management into one connected Discord
-              control system.
-            </p>
-
-            <div class="hero-actions">
-              <a href="https://discord.gg/tmeTZusvp" class="primary-button">
-                Join Community
-
-                <span> → </span>
-              </a>
-
-              <a href="#story" class="secondary-button">
-                Why I built Arclume
-              </a>
-            </div>
-
-            <div class="hero-meta">
-              <div>
-                <small class="mono"> CREATED BY </small>
-
-                <strong> Darshan Pisal </strong>
-              </div>
-
-              <div>
-                <small class="mono"> DEVELOPMENT </small>
-
-                <strong> Active </strong>
-              </div>
-
-              <div>
-                <small class="mono"> PLATFORM </small>
-
-                <strong> Discord </strong>
-              </div>
-            </div>
-          </div>
-
-          <!-- HERO CONTROL CARD -->
-
-          <aside class="hero-panel">
-            <div class="panel-header">
-              <div>
-                <span class="panel-eyebrow mono"> ARCLUME / CONTROL NODE </span>
-
-                <strong> Community overview </strong>
-              </div>
-
-              <div class="online-badge">
-                <span></span>
-
-                LIVE
-              </div>
-            </div>
-
-            <div class="panel-feature">
-              <div class="panel-feature-index mono">01</div>
-
-              <div class="panel-feature-copy">
-                <small class="mono"> ACTIVE SYSTEM </small>
-
-                <strong> Protection </strong>
-
-                <p>
-                  Community rules are active and monitoring server activity.
-                </p>
-              </div>
-            </div>
-
-            <div class="panel-system-list">
-              <div class="panel-system">
-                <div>
-                  <span class="system-icon"> P </span>
-
-                  <div>
-                    <strong> Protection </strong>
-
-                    <small> Moderation engine </small>
-                  </div>
-                </div>
-
-                <span class="system-state live"> LIVE </span>
-              </div>
-
-              <div class="panel-system">
-                <div>
-                  <span class="system-icon"> V </span>
-
-                  <div>
-                    <strong> Verification </strong>
-
-                    <small> Member access </small>
-                  </div>
-                </div>
-
-                <span class="system-state live"> LIVE </span>
-              </div>
-
-              <div class="panel-system">
-                <div>
-                  <span class="system-icon"> W </span>
-
-                  <div>
-                    <strong> Welcome </strong>
-
-                    <small> Member arrivals </small>
-                  </div>
-                </div>
-
-                <span class="system-state live"> LIVE </span>
-              </div>
-
-              <div class="panel-system">
-                <div>
-                  <span class="system-icon"> S </span>
-
-                  <div>
-                    <strong> System Status </strong>
-
-                    <small> Health & latency </small>
-                  </div>
-                </div>
-
-                <span class="system-state live"> LIVE </span>
-              </div>
-            </div>
-
-            <div class="panel-footer mono">
-              <span> ARCLUME SYSTEM </span>
-
-              <span> READY </span>
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <!-- =========================================== -->
-      <!-- MARQUEE / SYSTEM STRIP -->
-      <!-- =========================================== -->
-
-      <section class="system-strip">
-        <div class="system-strip-track mono">
-          <span> PROTECTION </span>
-
-          <i></i>
-
-          <span> VERIFICATION </span>
-
-          <i></i>
-
-          <span> WELCOME </span>
-
-          <i></i>
-
-          <span> GOODBYE </span>
-
-          <i></i>
-
-          <span> STATUS </span>
-
-          <i></i>
-
-          <span> ROLES </span>
-
-          <i></i>
-
-          <span> LOGGING </span>
-
-          <i></i>
-
-          <span> COMMANDS </span>
-        </div>
-      </section>
-
-      <!-- =========================================== -->
-      <!-- STORY -->
-      <!-- =========================================== -->
-
-      <section class="section story-section" id="story">
-        <div class="section-label mono">01 / WHY ARCLUME EXISTS</div>
-
-        <div class="story-layout">
-          <div class="story-title">
-            <h2>
-              I wanted one bot
-              <span> instead of five. </span>
-            </h2>
-          </div>
-
-          <div class="story-copy">
-            <p class="story-lead">
-              Arclume started as a personal project with one simple idea:
-              managing a Discord server should not require a collection of
-              disconnected bots and dashboards.
-            </p>
-
-            <p>
-              I wanted moderation, verification, welcome systems, server tools
-              and future community features to live in one place — with one
-              interface and one clear system.
-            </p>
-
-            <p>
-              So I started building Arclume: a community control platform
-              designed around simplicity, control and continuous improvement.
-            </p>
-
-            <div class="signature-block">
-              <span class="signature-mark"> DP </span>
-
-              <div>
-                <strong> Darshan Pisal </strong>
-
-                <small> Creator & Developer of Arclume </small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =========================================== -->
-      <!-- PHILOSOPHY -->
-      <!-- =========================================== -->
-
-      <section class="philosophy-section">
-        <div class="philosophy-grid">
-          <article>
-            <span class="philosophy-number mono"> 01 </span>
-
-            <h3>One control center.</h3>
-
-            <p>
-              Important server systems belong in one connected dashboard instead
-              of scattered across different services.
-            </p>
-          </article>
-
-          <article>
-            <span class="philosophy-number mono"> 02 </span>
-
-            <h3>Useful before complicated.</h3>
-
-            <p>
-              Arclume focuses on features that help communities operate before
-              adding unnecessary complexity.
-            </p>
-          </article>
-
-          <article>
-            <span class="philosophy-number mono"> 03 </span>
-
-            <h3>Built in public.</h3>
-
-            <p>
-              Arclume keeps evolving as new systems are developed, tested and
-              improved with real communities.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <!-- =========================================== -->
-      <!-- SYSTEMS -->
-      <!-- =========================================== -->
-
-      <section class="section systems-section" id="systems">
-        <div class="section-heading">
-          <div>
-            <div class="section-label mono">02 / ACTIVE SYSTEMS</div>
-
-            <h2>
-              The core is already
-              <span> coming alive. </span>
-            </h2>
-          </div>
+            <span> Your rules. </span>
+          </h1>
 
           <p>
-            These systems are currently part of the Arclume control platform.
-            More modules will connect to the same dashboard as development
-            continues.
+            Run Arclume, monitor system resources, manage the Bot Runner and
+            control every hosted service from one private dashboard.
           </p>
         </div>
 
-        <div class="systems-grid">
-          <!-- PROTECTION -->
+        <article class="hero-card">
+          <small class="mono"> CLOUD STATE </small>
 
-          <a href="#systems" class="feature-card feature-card-large">
-            <div class="feature-card-top">
-              <span class="feature-index mono"> SYS.01 </span>
+          <strong id="heroState"> Starting... </strong>
 
-              <span class="feature-live">
-                <i></i>
-                LIVE
-              </span>
-            </div>
-
-            <div class="feature-icon">◇</div>
-
-            <div class="feature-card-content">
-              <h3>Protection</h3>
-
-              <p>
-                Automated protection for spam, duplicate messages, invites,
-                unwanted links, excessive caps and custom banned words.
-              </p>
-            </div>
-
-            <div class="feature-card-footer">
-              <span> Open Protection </span>
-
-              <span> → </span>
-            </div>
-          </a>
-
-          <!-- VERIFICATION -->
-
-          <a href="#systems" class="feature-card">
-            <div class="feature-card-top">
-              <span class="feature-index mono"> SYS.02 </span>
-
-              <span class="feature-live">
-                <i></i>
-                LIVE
-              </span>
-            </div>
-
-            <div class="feature-icon">✓</div>
-
-            <div class="feature-card-content">
-              <h3>Verification</h3>
-
-              <p>
-                Give members controlled access through a configurable
-                verification panel and role system.
-              </p>
-            </div>
-
-            <div class="feature-card-footer">
-              <span> Configure </span>
-
-              <span> → </span>
-            </div>
-          </a>
-
-          <!-- WELCOME -->
-
-          <a href="#systems" class="feature-card">
-            <div class="feature-card-top">
-              <span class="feature-index mono"> SYS.03 </span>
-
-              <span class="feature-live">
-                <i></i>
-                LIVE
-              </span>
-            </div>
-
-            <div class="feature-icon">✦</div>
-
-            <div class="feature-card-content">
-              <h3>Welcome</h3>
-
-              <p>
-                Welcome and goodbye messages, member variables, avatar previews
-                and automatic role assignment.
-              </p>
-            </div>
-
-            <div class="feature-card-footer">
-              <span> Configure </span>
-
-              <span> → </span>
-            </div>
-          </a>
-
-          <!-- STATUS -->
-
-          <a href="#systems" class="feature-card feature-status-card">
-            <div class="feature-card-top">
-              <span class="feature-index mono"> SYS.04 </span>
-
-              <span class="feature-live">
-                <i></i>
-                LIVE
-              </span>
-            </div>
-
-            <div class="feature-icon">◎</div>
-
-            <div class="feature-card-content">
-              <h3>System Status</h3>
-
-              <p>
-                Live bot status, Discord connectivity, database health, API
-                state, latency and uptime.
-              </p>
-            </div>
-
-            <div class="feature-card-footer">
-              <span> View Status </span>
-
-              <span> → </span>
-            </div>
-          </a>
-        </div>
+          <p id="heroUptime">Connecting to Arclume Cloud backend.</p>
+        </article>
       </section>
 
-      <!-- =========================================== -->
-      <!-- CONTROL CENTER -->
-      <!-- =========================================== -->
+      <!-- ==================================================
+           STATS
+      =================================================== -->
 
-      <section class="control-showcase">
-        <div class="control-showcase-copy">
-          <div class="section-label mono">03 / CONTROL CENTER</div>
+      <section class="stats-grid">
+        <article class="stat-card">
+          <small class="mono"> MEMORY USED </small>
 
-          <h2>
-            Configure your server
-            <span> without touching code. </span>
-          </h2>
+          <strong id="memoryUsed"> — </strong>
 
-          <p>
-            Sign in with Discord, select a server you manage and configure
-            Arclume directly from the web.
-          </p>
+          <p id="memoryMeta">Waiting for system data.</p>
 
-          <a href="#systems" class="primary-button">
-            Explore Features
+          <div class="progress">
+            <i id="memoryBar"></i>
+          </div>
+        </article>
 
-            <span> → </span>
-          </a>
-        </div>
+        <article class="stat-card">
+          <small class="mono"> CPU CORES </small>
 
-        <div class="control-window">
-          <div class="window-toolbar">
-            <div class="window-dots">
-              <span></span>
-              <span></span>
-              <span></span>
+          <strong id="cpuCores"> — </strong>
+
+          <p id="cpuModel">Waiting for CPU information.</p>
+        </article>
+
+        <article class="stat-card">
+          <small class="mono"> CLOUD PROCESS </small>
+
+          <strong id="processMemory"> — </strong>
+
+          <p>Current Arclume Cloud process memory.</p>
+        </article>
+
+        <article class="stat-card">
+          <small class="mono"> CLOUD UPTIME </small>
+
+          <strong id="cloudUptime"> — </strong>
+
+          <p>Time since Arclume Cloud started.</p>
+        </article>
+      </section>
+
+      <!-- ==================================================
+           MAIN GRID
+      =================================================== -->
+
+      <section class="dashboard-grid">
+        <section class="panel">
+          <header class="panel-head">
+            <div>
+              <small class="mono"> HOSTED SERVICE / 01 </small>
+
+              <h3>Arclume Bot</h3>
             </div>
 
-            <span class="mono"> ARCLUME / CONTROL </span>
+            <span class="state-badge busy" id="botRunnerBadge"> CHECKING </span>
+          </header>
 
-            <span class="window-live"> ONLINE </span>
-          </div>
+          <div class="panel-body">
+            <div class="server-box">
+              <div class="server-top">
+                <div class="server-identity">
+                  <div class="server-icon">A</div>
 
-          <div class="window-body">
-            <aside class="window-sidebar">
-              <div class="window-logo">A</div>
+                  <div class="server-copy">
+                    <small class="mono"> DISCORD SERVICE </small>
 
-              <span class="active"></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </aside>
-
-            <div class="window-content">
-              <div class="window-heading">
-                <div>
-                  <small class="mono"> COMMUNITY CONTROL </small>
-
-                  <strong> System Overview </strong>
+                    <b> Arclume </b>
+                  </div>
                 </div>
 
-                <div class="window-status">
-                  <i></i>
-                  CONNECTED
+                <span class="state-badge busy" id="discordBadge">
+                  CHECKING
+                </span>
+              </div>
+
+              <div class="bot-meta">
+                <div class="bot-meta-card">
+                  <small> BOT PID </small>
+
+                  <b id="botPid"> — </b>
+                </div>
+
+                <div class="bot-meta-card">
+                  <small> BOT UPTIME </small>
+
+                  <b id="botUptime"> — </b>
+                </div>
+
+                <div class="bot-meta-card">
+                  <small> RESTARTS </small>
+
+                  <b id="botRestarts"> 0 </b>
+                </div>
+
+                <div class="bot-meta-card">
+                  <small> RUNNER STATE </small>
+
+                  <b id="botState"> CHECKING </b>
                 </div>
               </div>
 
-              <div class="window-cards">
-                <div>
-                  <small class="mono"> PROTECTION </small>
-
-                  <strong> Enabled </strong>
-
-                  <span> 6 active rules </span>
-                </div>
-
-                <div>
-                  <small class="mono"> VERIFICATION </small>
-
-                  <strong> Ready </strong>
-
-                  <span> Button method </span>
-                </div>
-
-                <div>
-                  <small class="mono"> WELCOME </small>
-
-                  <strong> Active </strong>
-
-                  <span> Member arrivals </span>
-                </div>
-              </div>
-
-              <div class="window-activity">
-                <div class="window-activity-head">
-                  <span> SYSTEM ACTIVITY </span>
-
-                  <small class="mono"> LIVE </small>
-                </div>
-
-                <div class="activity-line">
-                  <i></i>
-
-                  <span> Protection engine </span>
-
-                  <small> Operational </small>
-                </div>
-
-                <div class="activity-line">
-                  <i></i>
-
-                  <span> Discord gateway </span>
-
-                  <small> Connected </small>
-                </div>
-
-                <div class="activity-line">
-                  <i></i>
-
-                  <span> Database </span>
-
-                  <small> Connected </small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =========================================== -->
-      <!-- ROADMAP -->
-      <!-- =========================================== -->
-
-      <section class="section roadmap-section" id="roadmap">
-        <div class="section-heading">
-          <div>
-            <div class="section-label mono">04 / DEVELOPMENT</div>
-
-            <h2>
-              Arclume is
-              <span> still growing. </span>
-            </h2>
-          </div>
-
-          <p>
-            The core is being built first. Additional community systems will be
-            added gradually instead of shipping unfinished clutter.
-          </p>
-        </div>
-
-        <div class="roadmap">
-          <div class="roadmap-item complete">
-            <div class="roadmap-marker">✓</div>
-
-            <div class="roadmap-content">
-              <small class="mono"> COMPLETE </small>
-
-              <h3>Protection System</h3>
-
-              <p>Moderation filters, configurable rules and actions.</p>
-            </div>
-          </div>
-
-          <div class="roadmap-item complete">
-            <div class="roadmap-marker">✓</div>
-
-            <div class="roadmap-content">
-              <small class="mono"> COMPLETE </small>
-
-              <h3>Verification</h3>
-
-              <p>Member verification and configurable Discord roles.</p>
-            </div>
-          </div>
-
-          <div class="roadmap-item complete">
-            <div class="roadmap-marker">✓</div>
-
-            <div class="roadmap-content">
-              <small class="mono"> COMPLETE </small>
-
-              <h3>Welcome System</h3>
-
-              <p>Welcome, goodbye and automatic roles.</p>
-            </div>
-          </div>
-
-          <div class="roadmap-item complete">
-            <div class="roadmap-marker">✓</div>
-
-            <div class="roadmap-content">
-              <small class="mono"> COMPLETE </small>
-
-              <h3>System Status</h3>
-
-              <p>Live infrastructure and Discord connection monitoring.</p>
-            </div>
-          </div>
-
-          <div class="roadmap-item active">
-            <div class="roadmap-marker">05</div>
-
-            <div class="roadmap-content">
-              <small class="mono"> NEXT </small>
-
-              <h3>Role Management</h3>
-
-              <p>Server role controls and future role automation.</p>
-            </div>
-          </div>
-
-          <div class="roadmap-item">
-            <div class="roadmap-marker">06</div>
-
-            <div class="roadmap-content">
-              <small class="mono"> PLANNED </small>
-
-              <h3>Activity & Logs</h3>
-
-              <p>A connected view of important server and Arclume activity.</p>
-            </div>
-          </div>
-
-          <div class="roadmap-item">
-            <div class="roadmap-marker">07</div>
-
-            <div class="roadmap-content">
-              <small class="mono"> PLANNED </small>
-
-              <h3>Reaction Roles</h3>
-
-              <p>Self-assignable Discord roles controlled through Arclume.</p>
-            </div>
-          </div>
-
-          <div class="roadmap-item">
-            <div class="roadmap-marker">08</div>
-
-            <div class="roadmap-content">
-              <small class="mono"> FUTURE </small>
-
-              <h3>Arclume Pro</h3>
-
-              <p>
-                Premium community tools, advanced automation and expanded
-                limits.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =========================================== -->
-      <!-- CREATOR -->
-      <!-- =========================================== -->
-
-      <section class="creator-section" id="creator">
-        <div class="creator-card">
-          <div class="creator-visual">
-            <div class="creator-monogram">DP</div>
-
-            <span class="creator-tag mono"> BUILDER / 2026 </span>
-          </div>
-
-          <div class="creator-copy">
-            <div class="section-label mono">05 / BEHIND ARCLUME</div>
-
-            <h2>
-              Built independently by
-              <span> Darshan Pisal. </span>
-            </h2>
-
-            <p>
-              Arclume is an independent project I am building and improving over
-              time. My goal is to create a Discord platform that feels focused,
-              powerful and enjoyable to manage.
-            </p>
-
-            <p>
-              If you find a bug, have an idea, need help with Arclume or simply
-              want to share feedback, you can contact me directly.
-            </p>
-
-            <div class="creator-contact">
-              <div>
-                <small class="mono"> SUPPORT </small>
-
-                <a href="mailto:pisaldarshan7@gmail.com">
-                  pisaldarshan7@gmail.com
-                </a>
-              </div>
-
-              <div>
-                <small class="mono"> ROLE </small>
-
-                <strong> Creator & Developer </strong>
+              <div class="server-actions">
+                <button
+                  class="action-button start"
+                  id="startButton"
+                  type="button"
+                >
+                  ▶ START
+                </button>
+
+                <button
+                  class="action-button restart"
+                  id="restartButton"
+                  type="button"
+                >
+                  ↻ RESTART
+                </button>
+
+                <button
+                  class="action-button stop"
+                  id="stopButton"
+                  type="button"
+                >
+                  ■ STOP
+                </button>
               </div>
             </div>
 
-            <a
-              href="mailto:pisaldarshan7@gmail.com?subject=Arclume%20Support"
-              class="secondary-button creator-button"
-            >
-              Contact Support
+            <div class="console">
+              <div class="console-head">
+                <b> Live Console </b>
 
-              <span> ↗ </span>
-            </a>
+                <div class="console-tools">
+                  <span class="mono"> ARCLUME / OUTPUT </span>
+
+                  <button
+                    class="console-clear mono"
+                    id="clearConsoleButton"
+                    type="button"
+                  >
+                    CLEAR VIEW
+                  </button>
+                </div>
+              </div>
+
+              <div class="console-body" id="consoleBody">
+                <div class="console-line">Waiting for Bot Runner logs...</div>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <!-- =================================================
+             SYSTEM
+        ================================================== -->
+
+        <aside class="panel">
+          <header class="panel-head">
+            <div>
+              <small class="mono"> HOST MACHINE </small>
+
+              <h3>System</h3>
+            </div>
+          </header>
+
+          <div class="panel-body">
+            <div class="info-list">
+              <div class="info-row">
+                <span class="mono"> HOSTNAME </span>
+
+                <b id="hostname"> — </b>
+              </div>
+
+              <div class="info-row">
+                <span class="mono"> PLATFORM </span>
+
+                <b id="platform"> — </b>
+              </div>
+
+              <div class="info-row">
+                <span class="mono"> ARCHITECTURE </span>
+
+                <b id="architecture"> — </b>
+              </div>
+
+              <div class="info-row">
+                <span class="mono"> NODE </span>
+
+                <b id="nodeVersion"> — </b>
+              </div>
+
+              <div class="info-row">
+                <span class="mono"> CLOUD PID </span>
+
+                <b id="processID"> — </b>
+              </div>
+
+              <div class="info-row">
+                <span class="mono"> TIMEZONE </span>
+
+                <b id="timezone"> — </b>
+              </div>
+            </div>
+          </div>
+        </aside>
       </section>
-
-      <!-- =========================================== -->
-      <!-- SUPPORT -->
-      <!-- =========================================== -->
-
-      <section class="support-section">
-        <div class="support-inner">
-          <div>
-            <span class="section-label mono"> NEED HELP? </span>
-
-            <h2>Something not working?</h2>
-
-            <p>Send an Arclume support message directly to the developer.</p>
-          </div>
-
-          <a
-            href="mailto:pisaldarshan7@gmail.com?subject=Arclume%20Support"
-            class="primary-button"
-          >
-            Email Support
-
-            <span> ↗ </span>
-          </a>
-        </div>
-      </section>
-
-      <!-- =========================================== -->
-      <!-- CTA -->
-      <!-- =========================================== -->
-
-      <section class="final-cta">
-        <div class="final-cta-inner">
-          <span class="final-cta-label mono">
-            YOUR COMMUNITY / YOUR CONTROL
-          </span>
-
-          <h2>
-            Bring Arclume
-            <span> into your server. </span>
-          </h2>
-
-          <p>
-            Start with the core systems today and grow with Arclume as new
-            community tools are released.
-          </p>
-
-          <div class="final-actions">
-            <a href="#" class="primary-button discord-add">
-              Add Arclume
-
-              <span> ↗ </span>
-            </a>
-
-            <a href="#systems" class="secondary-button">
-              View Dashboard
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- ============================================= -->
-    <!-- FOOTER -->
-    <!-- ============================================= -->
-
-    <footer class="site-footer">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <a href="#top" class="brand">
-            <span class="brand-mark"> A </span>
-
-            <span class="brand-copy">
-              <strong> ARCLUME </strong>
-
-              <small> COMMUNITY CONTROL </small>
-            </span>
-          </a>
-
-          <p>An independently built Discord community control system.</p>
-
-          <span class="footer-created mono"> BUILT BY DARSHAN PISAL </span>
-        </div>
-
-        <div class="footer-links">
-          <div class="footer-column">
-            <strong class="mono"> PRODUCT </strong>
-
-            <a href="#systems"> Dashboard </a>
-
-            <a href="#systems"> Protection </a>
-
-            <a href="#systems"> Verification </a>
-
-            <a href="#systems"> Welcome </a>
-
-            <a href="#systems"> Status </a>
-          </div>
-
-          <div class="footer-column">
-            <strong class="mono"> PROJECT </strong>
-
-            <a href="#story"> Story </a>
-
-            <a href="#roadmap"> Roadmap </a>
-
-            <a href="#creator"> Creator </a>
-
-            <a href="mailto:pisaldarshan7@gmail.com"> Support </a>
-          </div>
-
-          <div class="footer-column">
-            <strong class="mono"> LEGAL </strong>
-
-            <a href="privacy.html"> Privacy </a>
-
-            <a href="terms.html"> Terms </a>
-          </div>
-
-          <div class="footer-column">
-            <strong class="mono"> ACCESS </strong>
-
-            <a href="https://discord.gg/tmeTZusvp"> Join Discord </a>
-
-            <a href="https://discord.gg/tmeTZusvp" class="discord-add"> Add Arclume </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <span> © 2026 Arclume. All rights reserved. </span>
-
-        <span class="footer-system-status">
-          <i></i>
-
-          DEVELOPMENT ACTIVE
-        </span>
-
-        <span> Built independently by Darshan Pisal. </span>
-      </div>
-    </footer>
-
-    <!-- ============================================= -->
-    <!-- JAVASCRIPT -->
-    <!-- ============================================= -->
+    </div>
 
     <script>
-      /* ==================================================
-         DISCORD APPLICATION
-      ================================================== */
+      "use strict";
 
-      const APPLICATION_ID = "1553414098430205972";
+      const $ = (id) => document.getElementById(id);
 
-      /* ==================================================
-         ADD ARCLUME
-      ================================================== */
+      let lastBotState = null;
 
-      const addButtons = document.querySelectorAll(".discord-add");
+      let actionRunning = false;
 
-      addButtons.forEach((button) => {
-        button.addEventListener(
-          "click",
+      let logsLoadedOnce = false;
 
-          (event) => {
-            event.preventDefault();
+      /* =====================================================
+         HELPERS
+      ===================================================== */
 
-            const inviteURL =
-              "https://discord.com/oauth2/authorize" +
-              "?client_id=" +
-              APPLICATION_ID +
-              "&scope=bot%20applications.commands";
+      function escapeHTML(text) {
+        return String(text ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
 
-            window.open(inviteURL, "_blank", "noopener,noreferrer");
-          },
-        );
-      });
-
-      /* ==================================================
-         MOBILE MENU
-      ================================================== */
-
-      const mobileMenuButton = document.getElementById("mobileMenuButton");
-
-      const mobileMenu = document.getElementById("mobileMenu");
-
-      mobileMenuButton?.addEventListener(
-        "click",
-
-        () => {
-          mobileMenu?.classList.toggle("open");
-
-          mobileMenuButton.classList.toggle("open");
-        },
-      );
-
-      mobileMenu?.querySelectorAll("a").forEach((link) => {
-        link.addEventListener(
-          "click",
-
-          () => {
-            mobileMenu.classList.remove("open");
-
-            mobileMenuButton?.classList.remove("open");
-          },
-        );
-      });
-
-      /* ==================================================
-         HEADER SCROLL
-      ================================================== */
-
-      const header = document.querySelector(".site-header");
-
-      window.addEventListener(
-        "scroll",
-
-        () => {
-          if (window.scrollY > 20) {
-            header?.classList.add("scrolled");
-          } else {
-            header?.classList.remove("scrolled");
+      function firstDefined(...values) {
+        for (const value of values) {
+          if (value !== undefined && value !== null) {
+            return value;
           }
-        },
-      );
+        }
 
-      /* ==================================================
-         REVEAL ANIMATION
-      ================================================== */
+        return undefined;
+      }
 
-      const revealItems = document.querySelectorAll(
-        ".feature-card, .roadmap-item, .philosophy-grid article",
-      );
+      function normalizeText(value) {
+        return String(value ?? "")
+          .trim()
+          .toLowerCase();
+      }
 
-      const revealObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("revealed");
+      function formatSeconds(seconds) {
+        const total = Math.max(0, Math.floor(Number(seconds) || 0));
 
-              revealObserver.unobserve(entry.target);
-            }
+        const days = Math.floor(total / 86400);
+
+        const hours = Math.floor((total % 86400) / 3600);
+
+        const minutes = Math.floor((total % 3600) / 60);
+
+        const secs = total % 60;
+
+        if (days) {
+          return `${days}d ${hours}h ${minutes}m`;
+        }
+
+        if (hours) {
+          return `${hours}h ${minutes}m ${secs}s`;
+        }
+
+        if (minutes) {
+          return `${minutes}m ${secs}s`;
+        }
+
+        return `${secs}s`;
+      }
+
+      function setBadge(element, text, type) {
+        if (!element) {
+          return;
+        }
+
+        element.classList.remove("online", "offline", "busy");
+
+        element.classList.add(type);
+
+        element.textContent = text;
+      }
+
+      async function readJSON(response) {
+        let data = null;
+
+        try {
+          data = await response.json();
+        } catch {}
+
+        if (!response.ok) {
+          const message =
+            data?.error ||
+            data?.message ||
+            `Request failed (${response.status})`;
+
+          throw new Error(message);
+        }
+
+        return data || {};
+      }
+
+      /* =====================================================
+         CLOUD
+      ===================================================== */
+
+      async function loadCloud() {
+        const status = $("cloudStatus");
+
+        const statusText = $("cloudStatusText");
+
+        try {
+          const [healthResponse, systemResponse] = await Promise.all([
+            fetch("/api/health", {
+              cache: "no-store",
+            }),
+
+            fetch("/api/system", {
+              cache: "no-store",
+            }),
+          ]);
+
+          const health = await readJSON(healthResponse);
+
+          const system = await readJSON(systemResponse);
+
+          status.classList.remove("error");
+
+          status.classList.add("online");
+
+          statusText.textContent = "CLOUD ONLINE";
+
+          $("heroState").textContent = "Online";
+
+          $("heroUptime").textContent =
+            `Arclume Cloud has been running for ${health.uptime || "—"}.`;
+
+          $("cloudUptime").textContent = health.uptime || "—";
+
+          /* MEMORY */
+
+          const memory = system.memory || {};
+
+          $("memoryUsed").textContent = memory.usedText || "—";
+
+          $("memoryMeta").textContent =
+            `${memory.percent || 0}% of ${memory.totalText || "unknown"} used`;
+
+          $("memoryBar").style.width = `${Math.min(
+            100,
+            Math.max(0, Number(memory.percent || 0)),
+          )}%`;
+
+          /* CPU */
+
+          $("cpuCores").textContent = system.cpu?.cores ?? "—";
+
+          $("cpuModel").textContent = system.cpu?.model || "Unknown CPU";
+
+          /* CLOUD PROCESS */
+
+          $("processMemory").textContent =
+            system.process?.memory?.rssText || "—";
+
+          /* SYSTEM */
+
+          $("hostname").textContent = system.machine?.hostname || "—";
+
+          $("platform").textContent = system.machine?.platform || "—";
+
+          $("architecture").textContent = system.machine?.architecture || "—";
+
+          $("nodeVersion").textContent = system.process?.node || "—";
+
+          $("processID").textContent = system.process?.pid || "—";
+
+          $("timezone").textContent = system.time?.timezone || "—";
+        } catch (error) {
+          status.classList.remove("online");
+
+          status.classList.add("error");
+
+          statusText.textContent = "CLOUD OFFLINE";
+
+          $("heroState").textContent = "Connection error";
+
+          $("heroUptime").textContent = "Could not connect to Arclume Cloud.";
+
+          console.error(error);
+        }
+      }
+
+      /* =====================================================
+         BOT STATUS NORMALIZER
+
+         Supports different Bot Runner response shapes.
+      ===================================================== */
+
+      function normalizeBotStatus(raw) {
+        const source = raw?.bot || raw?.runner || raw || {};
+
+        const rawState = normalizeText(
+          firstDefined(source.state, source.status, raw.state, raw.status),
+        );
+
+        const pid = firstDefined(
+          source.pid,
+          source.processId,
+          source.processID,
+          raw.pid,
+          raw.processId,
+        );
+
+        const explicitRunning = firstDefined(
+          source.running,
+          source.isRunning,
+          source.online,
+          source.active,
+          raw.running,
+          raw.isRunning,
+          raw.online,
+          raw.botOnline,
+        );
+
+        let running = explicitRunning === true;
+
+        if (explicitRunning === undefined) {
+          running =
+            Boolean(pid) ||
+            ["running", "online", "started", "ready", "connected"].includes(
+              rawState,
+            );
+        }
+
+        if (["stopped", "offline", "dead", "exited"].includes(rawState)) {
+          running = false;
+        }
+
+        const connectedValue = firstDefined(
+          source.discordConnected,
+          source.discordReady,
+          source.connected,
+          source.ready,
+          raw.discordConnected,
+          raw.discordReady,
+          raw.connected,
+          raw.ready,
+          raw.botOnline,
+        );
+
+        const connected =
+          connectedValue === undefined ? running : Boolean(connectedValue);
+
+        const uptimeRaw = firstDefined(
+          source.uptimeText,
+          source.uptime,
+          source.uptimeSeconds,
+          raw.uptimeText,
+          raw.uptime,
+          raw.uptimeSeconds,
+        );
+
+        let uptime = "—";
+
+        if (typeof uptimeRaw === "number") {
+          uptime = formatSeconds(uptimeRaw);
+        } else if (uptimeRaw) {
+          uptime = String(uptimeRaw);
+        }
+
+        const restarts =
+          Number(
+            firstDefined(
+              source.restarts,
+              source.restartCount,
+              raw.restarts,
+              raw.restartCount,
+              0,
+            ),
+          ) || 0;
+
+        const state = rawState || (running ? "running" : "stopped");
+
+        return {
+          running,
+          connected,
+          pid: pid || "—",
+          uptime,
+          restarts,
+          state,
+        };
+      }
+
+      /* =====================================================
+         BOT STATUS
+      ===================================================== */
+
+      function renderBotStatus(status) {
+        lastBotState = status;
+
+        const runnerBadge = $("botRunnerBadge");
+
+        const discordBadge = $("discordBadge");
+
+        if (status.running) {
+          setBadge(runnerBadge, "RUNNING", "online");
+        } else {
+          setBadge(runnerBadge, "STOPPED", "offline");
+        }
+
+        if (status.running && status.connected) {
+          setBadge(discordBadge, "CONNECTED", "online");
+        } else if (status.running) {
+          setBadge(discordBadge, "STARTING", "busy");
+        } else {
+          setBadge(discordBadge, "OFFLINE", "offline");
+        }
+
+        $("botPid").textContent = status.pid;
+
+        $("botUptime").textContent = status.running ? status.uptime : "—";
+
+        $("botRestarts").textContent = String(status.restarts);
+
+        $("botState").textContent = String(
+          status.state || "unknown",
+        ).toUpperCase();
+
+        updateActionButtons(status.running);
+      }
+
+      function updateActionButtons(running) {
+        const start = $("startButton");
+
+        const restart = $("restartButton");
+
+        const stop = $("stopButton");
+
+        if (actionRunning) {
+          start.disabled = true;
+          restart.disabled = true;
+          stop.disabled = true;
+
+          return;
+        }
+
+        start.disabled = Boolean(running);
+
+        restart.disabled = !running;
+
+        stop.disabled = !running;
+      }
+
+      async function loadBotStatus() {
+        try {
+          const response = await fetch("/api/bot/status", {
+            cache: "no-store",
           });
-        },
 
-        {
-          threshold: 0.12,
-        },
-      );
+          const data = await readJSON(response);
 
-      revealItems.forEach((item) => {
-        revealObserver.observe(item);
+          const normalized = normalizeBotStatus(data);
+
+          renderBotStatus(normalized);
+        } catch (error) {
+          setBadge($("botRunnerBadge"), "API ERROR", "offline");
+
+          setBadge($("discordBadge"), "UNKNOWN", "offline");
+
+          $("botState").textContent = "UNAVAILABLE";
+
+          updateActionButtons(false);
+
+          console.error("Bot status error:", error);
+        }
+      }
+
+      /* =====================================================
+         BOT ACTIONS
+      ===================================================== */
+
+      async function botAction(action) {
+        if (actionRunning) {
+          return;
+        }
+
+        actionRunning = true;
+
+        updateActionButtons(lastBotState?.running || false);
+
+        const labels = {
+          start: "Starting Arclume...",
+
+          restart: "Restarting Arclume...",
+
+          stop: "Stopping Arclume...",
+        };
+
+        setBadge(
+          $("botRunnerBadge"),
+          action === "stop"
+            ? "STOPPING"
+            : action === "restart"
+              ? "RESTARTING"
+              : "STARTING",
+          "busy",
+        );
+
+        try {
+          const response = await fetch(`/api/bot/${action}`, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({}),
+          });
+
+          const data = await readJSON(response);
+
+          console.log(labels[action], data);
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, action === "restart" ? 1600 : 900),
+          );
+
+          await Promise.all([loadBotStatus(), loadBotLogs()]);
+        } catch (error) {
+          console.error(`${action} failed:`, error);
+
+          setBadge($("botRunnerBadge"), "ACTION FAILED", "offline");
+        } finally {
+          actionRunning = false;
+
+          updateActionButtons(lastBotState?.running || false);
+
+          setTimeout(loadBotStatus, 800);
+        }
+      }
+
+      /* =====================================================
+         LOGS
+      ===================================================== */
+
+      function normalizeLogs(data) {
+        const raw = firstDefined(
+          data?.logs,
+          data?.lines,
+          data?.output,
+          data?.items,
+          data?.data,
+          [],
+        );
+
+        if (Array.isArray(raw)) {
+          return raw.map((item) => {
+            if (typeof item === "string") {
+              return item;
+            }
+
+            if (item && typeof item === "object") {
+              return String(
+                firstDefined(
+                  item.message,
+                  item.text,
+                  item.line,
+                  item.output,
+                  JSON.stringify(item),
+                ),
+              );
+            }
+
+            return String(item ?? "");
+          });
+        }
+
+        if (typeof raw === "string") {
+          return raw.split(/\r?\n/);
+        }
+
+        return [];
+      }
+
+      function logClass(line) {
+        const text = String(line).toLowerCase();
+
+        if (
+          text.includes("❌") ||
+          text.includes("error") ||
+          text.includes("failed")
+        ) {
+          return "error";
+        }
+
+        if (text.includes("⚠") || text.includes("warning")) {
+          return "warn";
+        }
+
+        if (
+          text.includes("✅") ||
+          text.includes("online") ||
+          text.includes("ready") ||
+          text.includes("connected")
+        ) {
+          return "success";
+        }
+
+        return "";
+      }
+
+      function renderLogs(logs) {
+        const box = $("consoleBody");
+
+        if (!box) {
+          return;
+        }
+
+        const nearBottom =
+          box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+
+        if (!logs.length) {
+          box.innerHTML =
+            '<div class="console-line">No Bot Runner logs yet.</div>';
+
+          return;
+        }
+
+        box.innerHTML = logs
+          .map((line) => {
+            const safe = escapeHTML(line);
+
+            const css = logClass(line);
+
+            return `<div class="console-line ${css}">${safe}</div>`;
+          })
+          .join("");
+
+        if (!logsLoadedOnce || nearBottom) {
+          box.scrollTop = box.scrollHeight;
+        }
+
+        logsLoadedOnce = true;
+      }
+
+      async function loadBotLogs() {
+        try {
+          const response = await fetch("/api/bot/logs?limit=250", {
+            cache: "no-store",
+          });
+
+          const data = await readJSON(response);
+
+          renderLogs(normalizeLogs(data));
+        } catch (error) {
+          if (!logsLoadedOnce) {
+            renderLogs(["Could not connect to Bot Runner log API."]);
+          }
+
+          console.error("Bot logs error:", error);
+        }
+      }
+
+      /* =====================================================
+         EVENTS
+      ===================================================== */
+
+      $("startButton")?.addEventListener("click", () => botAction("start"));
+
+      $("restartButton")?.addEventListener("click", () => botAction("restart"));
+
+      $("stopButton")?.addEventListener("click", () => botAction("stop"));
+
+      $("clearConsoleButton")?.addEventListener("click", () => {
+        const box = $("consoleBody");
+
+        if (box) {
+          box.innerHTML =
+            '<div class="console-line">Console view cleared. New runner output will appear automatically.</div>';
+        }
+
+        logsLoadedOnce = false;
       });
+
+      /* =====================================================
+         INITIALIZE
+      ===================================================== */
+
+      async function boot() {
+        await Promise.allSettled([loadCloud(), loadBotStatus(), loadBotLogs()]);
+      }
+
+      boot();
+
+      setInterval(loadCloud, 5000);
+
+      setInterval(loadBotStatus, 2000);
+
+      setInterval(loadBotLogs, 1500);
     </script>
   </body>
 </html>

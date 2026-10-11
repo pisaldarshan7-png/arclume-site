@@ -1,9 +1,5 @@
 /* =====================================================
-   ARCLUME — WELCOME SYSTEM
-===================================================== */
-
-/* =====================================================
-   ELEMENTS
+   ARCLUME — WELCOME FLOW
 ===================================================== */
 
 const connectionText = document.getElementById("connectionText");
@@ -30,12 +26,6 @@ const welcomeMessage = document.getElementById("welcomeMessage");
 
 const showAvatar = document.getElementById("showAvatar");
 
-const previewTitle = document.getElementById("previewTitle");
-
-const previewMessage = document.getElementById("previewMessage");
-
-const previewMemberAvatar = document.getElementById("previewMemberAvatar");
-
 const goodbyeEnabled = document.getElementById("goodbyeEnabled");
 
 const goodbyeChannel = document.getElementById("goodbyeChannel");
@@ -47,6 +37,8 @@ const goodbyeMessage = document.getElementById("goodbyeMessage");
 const saveWelcome = document.getElementById("saveWelcome");
 
 const testWelcome = document.getElementById("testWelcome");
+
+const testGoodbye = document.getElementById("testGoodbye");
 
 const saveStatus = document.getElementById("saveStatus");
 
@@ -65,7 +57,7 @@ let savedState = null;
 let loading = false;
 
 /* =====================================================
-   DEFAULT SETTINGS
+   DEFAULTS
 ===================================================== */
 
 function defaultSettings() {
@@ -104,48 +96,6 @@ function cleanText(value) {
   return String(value || "").trim();
 }
 
-function avatarURL(user) {
-  if (!user || !user.id || !user.avatar) {
-    return "";
-  }
-
-  return (
-    `https://cdn.discordapp.com/avatars/` +
-    `${user.id}/${user.avatar}.png?size=128`
-  );
-}
-
-/* =====================================================
-   PREVIEW VARIABLES
-===================================================== */
-
-function replaceVariables(value) {
-  let text = String(value || "");
-
-  const username =
-    currentUser?.global_name || currentUser?.username || "Member";
-
-  const replacements = {
-    "{user}": `@${username}`,
-
-    "{username}": username,
-
-    "{server}": currentGuildName || "Your Server",
-
-    "{membercount}": "100",
-  };
-
-  for (const [variable, replacement] of Object.entries(replacements)) {
-    text = text.split(variable).join(replacement);
-  }
-
-  return text;
-}
-
-/* =====================================================
-   CURRENT SETTINGS
-===================================================== */
-
 function getCurrentSettings() {
   return {
     enabled: Boolean(welcomeEnabled?.checked),
@@ -175,67 +125,6 @@ function getCurrentSettings() {
 }
 
 /* =====================================================
-   APPLY SETTINGS
-===================================================== */
-
-function applySettings(settings) {
-  const defaults = defaultSettings();
-
-  const config = {
-    ...defaults,
-    ...(settings || {}),
-  };
-
-  if (welcomeEnabled) {
-    welcomeEnabled.checked = Boolean(config.enabled);
-  }
-
-  if (welcomeChannel) {
-    welcomeChannel.value = config.welcomeChannel || "";
-  }
-
-  if (welcomeTitle) {
-    welcomeTitle.value = config.title || defaults.title;
-  }
-
-  if (welcomeMessage) {
-    welcomeMessage.value = config.message || defaults.message;
-  }
-
-  if (showAvatar) {
-    showAvatar.checked = config.showAvatar !== false;
-  }
-
-  if (autoRole) {
-    autoRole.value = config.autoRole || "";
-  }
-
-  if (goodbyeEnabled) {
-    goodbyeEnabled.checked = Boolean(config.goodbyeEnabled);
-  }
-
-  if (goodbyeChannel) {
-    goodbyeChannel.value = config.goodbyeChannel || "";
-  }
-
-  if (goodbyeTitle) {
-    goodbyeTitle.value = config.goodbyeTitle || defaults.goodbyeTitle;
-  }
-
-  if (goodbyeMessage) {
-    goodbyeMessage.value = config.goodbyeMessage || defaults.goodbyeMessage;
-  }
-
-  updateInterface();
-
-  updatePreview();
-
-  savedState = clone(getCurrentSettings());
-
-  showSavedState();
-}
-
-/* =====================================================
    STATUS
 ===================================================== */
 
@@ -251,65 +140,10 @@ function updateInterface() {
   }
 }
 
-/* =====================================================
-   PREVIEW
-===================================================== */
-
-function updatePreview() {
-  if (previewTitle) {
-    previewTitle.textContent = replaceVariables(
-      welcomeTitle?.value || "Welcome to {server}!",
-    );
-  }
-
-  if (previewMessage) {
-    previewMessage.textContent = replaceVariables(
-      welcomeMessage?.value ||
-        "Welcome {user} to **{server}**! You are member #{membercount}.",
-    );
-  }
-
-  if (previewMemberAvatar) {
-    const shouldShow = Boolean(showAvatar?.checked);
-
-    previewMemberAvatar.classList.toggle("visible", shouldShow);
-
-    const imageURL = avatarURL(currentUser);
-
-    if (shouldShow && imageURL) {
-      previewMemberAvatar.innerHTML = `
-        <img
-          src="${imageURL}"
-          alt=""
-          style="
-            width:100%;
-            height:100%;
-            object-fit:cover;
-          "
-        >
-      `;
-    } else if (shouldShow) {
-      previewMemberAvatar.innerHTML = "";
-
-      previewMemberAvatar.textContent = String(currentUser?.username || "M")
-        .charAt(0)
-        .toUpperCase();
-    } else {
-      previewMemberAvatar.innerHTML = "";
-    }
-  }
-}
-
-/* =====================================================
-   SAVE STATE
-===================================================== */
-
 function showSavedState() {
-  if (!saveStatus) {
-    return;
+  if (saveStatus) {
+    saveStatus.textContent = "No unsaved changes";
   }
-
-  saveStatus.textContent = "No unsaved changes";
 }
 
 function updateSaveState() {
@@ -324,7 +158,7 @@ function updateSaveState() {
 }
 
 /* =====================================================
-   GUILD DISPLAY
+   SERVER DISPLAY
 ===================================================== */
 
 function updateGuild(guild) {
@@ -336,13 +170,16 @@ function updateGuild(guild) {
     return;
   }
 
+  serverIcon.innerHTML = "";
+
   if (guild.icon) {
-    serverIcon.innerHTML = `
-      <img
-        src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128"
-        alt=""
-      >
-    `;
+    const image = document.createElement("img");
+
+    image.src = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128`;
+
+    image.alt = guild.name || "";
+
+    serverIcon.appendChild(image);
   } else {
     serverIcon.textContent = String(guild.name || "A")
       .charAt(0)
@@ -372,22 +209,22 @@ async function loadAccount() {
   const guilds = Array.isArray(data.guilds) ? data.guilds : [];
 
   if (!guilds.length) {
-    if (saveStatus) {
-      saveStatus.textContent = "No manageable Discord server";
-    }
+    saveStatus.textContent = "No manageable server";
 
     return false;
   }
 
-  const guild = guilds[0];
+  const selectedGuildID = localStorage.getItem("arclume-selected-guild");
+
+  const guild = guilds.find((item) => item.id === selectedGuildID) || guilds[0];
 
   currentGuildID = guild.id;
 
   currentGuildName = guild.name;
 
-  updateGuild(guild);
+  localStorage.setItem("arclume-selected-guild", guild.id);
 
-  updatePreview();
+  updateGuild(guild);
 
   return true;
 }
@@ -404,27 +241,19 @@ async function loadStatus() {
 
     const data = await response.json();
 
-    if (connectionText) {
-      connectionText.textContent = data.botOnline
-        ? "SYSTEM ONLINE"
-        : "SYSTEM OFFLINE";
-    }
+    connectionText.textContent = data.botOnline
+      ? "SYSTEM ONLINE"
+      : "SYSTEM OFFLINE";
   } catch {
-    if (connectionText) {
-      connectionText.textContent = "CONNECTION ERROR";
-    }
+    connectionText.textContent = "CONNECTION ERROR";
   }
 }
 
 /* =====================================================
-   CHANNEL DROPDOWNS
+   DROPDOWNS
 ===================================================== */
 
 function fillChannels(channels, selectedWelcome = "", selectedGoodbye = "") {
-  if (!welcomeChannel || !goodbyeChannel) {
-    return;
-  }
-
   welcomeChannel.innerHTML = `
     <option value="">
       Select a channel
@@ -433,26 +262,26 @@ function fillChannels(channels, selectedWelcome = "", selectedGoodbye = "") {
 
   goodbyeChannel.innerHTML = `
     <option value="">
-      Same as welcome channel
+      Same as Welcome Channel
     </option>
   `;
 
   for (const channel of channels) {
-    const welcomeOption = document.createElement("option");
+    const option1 = document.createElement("option");
 
-    welcomeOption.value = channel.id;
+    option1.value = channel.id;
 
-    welcomeOption.textContent = `# ${channel.name}`;
+    option1.textContent = `# ${channel.name}`;
 
-    welcomeChannel.appendChild(welcomeOption);
+    welcomeChannel.appendChild(option1);
 
-    const goodbyeOption = document.createElement("option");
+    const option2 = document.createElement("option");
 
-    goodbyeOption.value = channel.id;
+    option2.value = channel.id;
 
-    goodbyeOption.textContent = `# ${channel.name}`;
+    option2.textContent = `# ${channel.name}`;
 
-    goodbyeChannel.appendChild(goodbyeOption);
+    goodbyeChannel.appendChild(option2);
   }
 
   welcomeChannel.value = selectedWelcome || "";
@@ -460,15 +289,7 @@ function fillChannels(channels, selectedWelcome = "", selectedGoodbye = "") {
   goodbyeChannel.value = selectedGoodbye || "";
 }
 
-/* =====================================================
-   ROLE DROPDOWN
-===================================================== */
-
-function fillRoles(roles, selectedRole = "") {
-  if (!autoRole) {
-    return;
-  }
-
+function fillRoles(roles, selected = "") {
   autoRole.innerHTML = `
     <option value="">
       No automatic role
@@ -489,29 +310,27 @@ function fillRoles(roles, selectedRole = "") {
     autoRole.appendChild(option);
   }
 
-  autoRole.value = selectedRole || "";
+  autoRole.value = selected || "";
 }
 
 /* =====================================================
-   LOAD DISCORD CHANNELS + ROLES
+   LOAD DISCORD OPTIONS
 ===================================================== */
 
-async function loadDiscordOptions(preserveSelections = true) {
+async function loadDiscordOptions(preserve = true) {
   if (!currentGuildID) {
     return;
   }
 
-  const selectedWelcome = preserveSelections ? welcomeChannel?.value || "" : "";
+  const oldWelcome = preserve ? welcomeChannel.value : "";
 
-  const selectedGoodbye = preserveSelections ? goodbyeChannel?.value || "" : "";
+  const oldGoodbye = preserve ? goodbyeChannel.value : "";
 
-  const selectedRole = preserveSelections ? autoRole?.value || "" : "";
+  const oldRole = preserve ? autoRole.value : "";
 
-  if (refreshDiscordData) {
-    refreshDiscordData.disabled = true;
+  refreshDiscordData.disabled = true;
 
-    refreshDiscordData.textContent = "REFRESHING...";
-  }
+  refreshDiscordData.textContent = "REFRESHING...";
 
   try {
     const response = await fetch(
@@ -527,7 +346,7 @@ async function loadDiscordOptions(preserveSelections = true) {
       throw new Error(data.error || "Could not load Discord data.");
     }
 
-    if (data.guild?.name) {
+    if (data.guild) {
       currentGuildName = data.guild.name;
 
       updateGuild(data.guild);
@@ -535,27 +354,59 @@ async function loadDiscordOptions(preserveSelections = true) {
 
     fillChannels(
       Array.isArray(data.channels) ? data.channels : [],
-      selectedWelcome,
-      selectedGoodbye,
+      oldWelcome,
+      oldGoodbye,
     );
 
-    fillRoles(Array.isArray(data.roles) ? data.roles : [], selectedRole);
-
-    updatePreview();
+    fillRoles(Array.isArray(data.roles) ? data.roles : [], oldRole);
   } catch (error) {
-    console.error("Welcome Discord options error:", error);
+    console.error("Welcome Discord data error:", error);
 
-    if (saveStatus) {
-      saveStatus.textContent =
-        error.message || "Could not load Discord channels and roles";
-    }
+    saveStatus.textContent = error.message;
   } finally {
-    if (refreshDiscordData) {
-      refreshDiscordData.disabled = false;
+    refreshDiscordData.disabled = false;
 
-      refreshDiscordData.textContent = "REFRESH";
-    }
+    refreshDiscordData.textContent = "REFRESH";
   }
+}
+
+/* =====================================================
+   APPLY SETTINGS
+===================================================== */
+
+function applySettings(settings) {
+  const defaults = defaultSettings();
+
+  const config = {
+    ...defaults,
+    ...(settings || {}),
+  };
+
+  welcomeEnabled.checked = Boolean(config.enabled);
+
+  welcomeTitle.value = config.title;
+
+  welcomeMessage.value = config.message;
+
+  showAvatar.checked = config.showAvatar !== false;
+
+  goodbyeEnabled.checked = Boolean(config.goodbyeEnabled);
+
+  goodbyeTitle.value = config.goodbyeTitle;
+
+  goodbyeMessage.value = config.goodbyeMessage;
+
+  welcomeChannel.value = config.welcomeChannel || "";
+
+  autoRole.value = config.autoRole || "";
+
+  goodbyeChannel.value = config.goodbyeChannel || "";
+
+  updateInterface();
+
+  savedState = clone(getCurrentSettings());
+
+  showSavedState();
 }
 
 /* =====================================================
@@ -563,10 +414,6 @@ async function loadDiscordOptions(preserveSelections = true) {
 ===================================================== */
 
 async function loadWelcomeSettings() {
-  if (!currentGuildID) {
-    return;
-  }
-
   loading = true;
 
   try {
@@ -577,7 +424,7 @@ async function loadWelcomeSettings() {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Could not load Welcome settings.");
+      throw new Error(data.error || "Could not load settings.");
     }
 
     const settings = data.settings || defaultSettings();
@@ -588,23 +435,18 @@ async function loadWelcomeSettings() {
   } catch (error) {
     console.error("Welcome load error:", error);
 
-    applySettings(defaultSettings());
-
-    if (saveStatus) {
-      saveStatus.textContent =
-        error.message || "Could not load Welcome settings";
-    }
+    saveStatus.textContent = error.message;
   } finally {
     loading = false;
   }
 }
 
 /* =====================================================
-   SAVE SETTINGS
+   SAVE
 ===================================================== */
 
 async function saveWelcomeSettings() {
-  if (!currentGuildID || !saveWelcome) {
+  if (!currentGuildID) {
     return;
   }
 
@@ -613,18 +455,16 @@ async function saveWelcomeSettings() {
   if (settings.enabled && !settings.welcomeChannel) {
     saveStatus.textContent = "Select a Welcome Channel first";
 
-    welcomeChannel?.focus();
-
     return;
   }
 
-  const original = saveWelcome.innerHTML;
+  const old = saveWelcome.innerHTML;
 
   saveWelcome.disabled = true;
 
   saveWelcome.innerHTML = `
     <span>Saving...</span>
-    <span>···</span>
+    <span>...</span>
   `;
 
   try {
@@ -653,57 +493,47 @@ async function saveWelcomeSettings() {
       <span>✓</span>
     `;
 
-    saveStatus.textContent = "Saved to Arclume database";
-
-    setTimeout(() => {
-      saveWelcome.innerHTML = original;
-
-      saveWelcome.disabled = false;
-
-      showSavedState();
-    }, 1200);
+    saveStatus.textContent = "Settings saved";
   } catch (error) {
-    console.error("Welcome save error:", error);
+    saveStatus.textContent = error.message;
 
     saveWelcome.innerHTML = `
-      <span>Save failed</span>
+      <span>Save Failed</span>
       <span>!</span>
     `;
-
-    saveStatus.textContent = error.message || "Save failed";
-
-    setTimeout(() => {
-      saveWelcome.innerHTML = original;
-
-      saveWelcome.disabled = false;
-    }, 1600);
   }
+
+  setTimeout(() => {
+    saveWelcome.innerHTML = old;
+
+    saveWelcome.disabled = false;
+  }, 1400);
 }
 
 /* =====================================================
-   SEND TEST WELCOME
+   TEST WELCOME
 ===================================================== */
 
 async function sendTestWelcome() {
-  if (!currentGuildID || !testWelcome) {
-    return;
-  }
+  const channelID = welcomeChannel.value;
 
-  if (!welcomeChannel?.value) {
+  if (!channelID) {
     saveStatus.textContent = "Select a Welcome Channel first";
 
-    welcomeChannel?.focus();
+    welcomeChannel.focus();
 
     return;
   }
 
-  const originalText = testWelcome.textContent;
+  const original = testWelcome.textContent;
 
   testWelcome.disabled = true;
 
-  testWelcome.textContent = "Sending...";
+  testWelcome.textContent = "SENDING...";
 
   try {
+    const payload = getCurrentSettings();
+
     const response = await fetch(`/api/guild/${currentGuildID}/welcome/test`, {
       method: "POST",
 
@@ -713,104 +543,171 @@ async function sendTestWelcome() {
         "Content-Type": "application/json",
       },
 
-      body: JSON.stringify(getCurrentSettings()),
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Could not send test message.");
+      throw new Error(data.error || "Could not send test welcome.");
     }
 
-    testWelcome.textContent = "Test Sent ✓";
+    testWelcome.textContent = "TEST SENT ✓";
 
     saveStatus.textContent = "Test welcome sent to Discord";
   } catch (error) {
-    console.error("Test Welcome error:", error);
+    testWelcome.textContent = "TEST FAILED";
 
-    testWelcome.textContent = "Test Failed";
-
-    saveStatus.textContent = error.message || "Test welcome failed";
+    saveStatus.textContent = error.message;
   }
 
   setTimeout(() => {
-    testWelcome.textContent = originalText;
-
     testWelcome.disabled = false;
-  }, 1500);
+
+    testWelcome.textContent = original;
+  }, 1600);
+}
+
+/* =====================================================
+   TEST GOODBYE
+
+   Uses the existing Welcome test endpoint.
+   We simply send the Goodbye title/message as
+   the temporary test embed.
+===================================================== */
+
+async function sendTestGoodbye() {
+  const channelID = goodbyeChannel.value || welcomeChannel.value;
+
+  if (!channelID) {
+    saveStatus.textContent = "Select a Welcome or Goodbye Channel first";
+
+    return;
+  }
+
+  const original = testGoodbye.textContent;
+
+  testGoodbye.disabled = true;
+
+  testGoodbye.textContent = "SENDING...";
+
+  try {
+    const current = getCurrentSettings();
+
+    const testPayload = {
+      ...current,
+
+      /*
+        Existing backend test route sends to
+        welcomeChannel, so temporarily point it
+        to the Goodbye Channel.
+      */
+
+      welcomeChannel: channelID,
+
+      title: cleanText(goodbyeTitle.value) || "Member Left",
+
+      message:
+        cleanText(goodbyeMessage.value) ||
+        "**{username}** has left **{server}**.",
+
+      showAvatar: true,
+    };
+
+    const response = await fetch(`/api/guild/${currentGuildID}/welcome/test`, {
+      method: "POST",
+
+      credentials: "same-origin",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(testPayload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Could not send test goodbye.");
+    }
+
+    testGoodbye.textContent = "TEST SENT ✓";
+
+    saveStatus.textContent = "Test goodbye sent to Discord";
+  } catch (error) {
+    console.error("Goodbye test error:", error);
+
+    testGoodbye.textContent = "TEST FAILED";
+
+    saveStatus.textContent = error.message;
+  }
+
+  setTimeout(() => {
+    testGoodbye.disabled = false;
+
+    testGoodbye.textContent = original;
+  }, 1600);
 }
 
 /* =====================================================
    EVENTS
 ===================================================== */
 
-function setupEvents() {
-  welcomeEnabled?.addEventListener("change", () => {
-    updateInterface();
-    updateSaveState();
-  });
+welcomeEnabled.addEventListener("change", () => {
+  updateInterface();
 
-  showAvatar?.addEventListener("change", () => {
-    updatePreview();
-    updateSaveState();
-  });
+  updateSaveState();
+});
 
-  goodbyeEnabled?.addEventListener("change", updateSaveState);
+goodbyeEnabled.addEventListener("change", updateSaveState);
 
-  [welcomeChannel, autoRole, goodbyeChannel].forEach((element) => {
-    element?.addEventListener("change", updateSaveState);
-  });
+showAvatar.addEventListener("change", updateSaveState);
 
-  [welcomeTitle, welcomeMessage].forEach((element) => {
-    element?.addEventListener("input", () => {
-      updatePreview();
-      updateSaveState();
-    });
-  });
+[welcomeChannel, goodbyeChannel, autoRole].forEach((element) => {
+  element.addEventListener("change", updateSaveState);
+});
 
-  [goodbyeTitle, goodbyeMessage].forEach((element) => {
-    element?.addEventListener("input", updateSaveState);
-  });
+[welcomeTitle, welcomeMessage, goodbyeTitle, goodbyeMessage].forEach(
+  (element) => {
+    element.addEventListener("input", updateSaveState);
+  },
+);
 
-  refreshDiscordData?.addEventListener("click", async () => {
-    await loadDiscordOptions(true);
+refreshDiscordData.addEventListener("click", async () => {
+  await loadDiscordOptions(true);
 
-    updateSaveState();
-  });
+  updateSaveState();
+});
 
-  saveWelcome?.addEventListener("click", saveWelcomeSettings);
+saveWelcome.addEventListener("click", saveWelcomeSettings);
 
-  testWelcome?.addEventListener("click", sendTestWelcome);
-}
+testWelcome.addEventListener("click", sendTestWelcome);
+
+testGoodbye.addEventListener("click", sendTestGoodbye);
 
 /* =====================================================
    START
 ===================================================== */
 
-async function startWelcomeSystem() {
-  setupEvents();
-
-  updateInterface();
-
-  updatePreview();
-
+async function startWelcome() {
   try {
-    const accountReady = await loadAccount();
+    updateInterface();
+
+    const ready = await loadAccount();
 
     await loadStatus();
 
-    if (accountReady) {
+    if (ready) {
       await loadWelcomeSettings();
     }
 
-    console.log("✅ Arclume Welcome System ready");
+    console.log("✅ Arclume Welcome Flow ready");
   } catch (error) {
     console.error("Welcome startup error:", error);
 
-    if (saveStatus) {
-      saveStatus.textContent = "Welcome System startup failed";
-    }
+    saveStatus.textContent = "Welcome Flow startup failed";
   }
 }
 
-startWelcomeSystem();
+startWelcome();

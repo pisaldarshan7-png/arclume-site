@@ -5,9 +5,11 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta name="theme-color" content="#0a0907" />
+    <meta name="theme-color" content="#09090d" />
 
     <title>Arclume — Control Center</title>
+
+    <link rel="icon" type="image/png" href="/arclume-logo.png?v=30" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
 
@@ -18,18 +20,689 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="/dashboard.css?v=20261010-1" />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+
+        background: #08080b;
+
+        color: #f7f7fb;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* =====================================================
+         LOGO
+      ===================================================== */
+
+      .state-logo {
+        width: 145px;
+
+        height: 145px;
+
+        margin-bottom: 24px;
+
+        display: grid;
+
+        place-items: center;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(255, 255, 255, 0.12);
+
+        border-radius: 28px;
+
+        background: #070812;
+
+        box-shadow:
+          0 0 55px rgba(83, 98, 255, 0.18),
+          0 0 100px rgba(90, 63, 255, 0.08);
+      }
+
+      .state-logo img {
+        width: 100%;
+
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .brand-logo {
+        width: 42px;
+
+        height: 42px;
+
+        flex: 0 0 42px;
+
+        display: grid;
+
+        place-items: center;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        border-radius: 11px;
+
+        background: #070812;
+      }
+
+      .brand-logo img {
+        width: 100%;
+
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .logo-fallback {
+        display: none;
+
+        font-family: "Syne", sans-serif;
+
+        font-weight: 800;
+
+        color: #9c8cff;
+      }
+
+      /* =====================================================
+         IMPORTANT — MODULE DOCK FIX
+
+         OLD DASHBOARD HAD overflow:hidden.
+         WITH 12+ MODULES THAT COULD HIDE APPLICATIONS.
+      ===================================================== */
+
+      .control-dock {
+        max-width: calc(100vw - 24px) !important;
+
+        overflow-x: auto !important;
+
+        overflow-y: hidden !important;
+
+        scrollbar-width: none;
+
+        scroll-behavior: smooth;
+      }
+
+      .control-dock::-webkit-scrollbar {
+        display: none;
+      }
+
+      .control-dock button,
+      .control-dock a {
+        flex: 0 0 auto;
+
+        min-width: 112px !important;
+      }
+
+      /* =====================================================
+         LEVELING
+      ===================================================== */
+
+      #page-leveling {
+        padding-bottom: 120px;
+      }
+
+      .leveling-hero {
+        display: flex;
+
+        align-items: flex-end;
+
+        justify-content: space-between;
+
+        gap: 24px;
+
+        margin-bottom: 24px;
+      }
+
+      .leveling-live {
+        display: flex;
+
+        align-items: center;
+
+        gap: 9px;
+
+        padding: 10px 14px;
+
+        border: 1px solid rgba(167, 139, 250, 0.22);
+
+        border-radius: 999px;
+
+        background: rgba(124, 92, 255, 0.07);
+
+        color: rgba(245, 242, 255, 0.72);
+
+        font-size: 10px;
+
+        letter-spacing: 0.1em;
+      }
+
+      .leveling-live i {
+        width: 8px;
+
+        height: 8px;
+
+        border-radius: 50%;
+
+        background: #9effc7;
+
+        box-shadow: 0 0 16px rgba(158, 255, 199, 0.7);
+      }
+
+      .leveling-live.loading i {
+        background: #ffd37a;
+      }
+
+      .leveling-live.error i {
+        background: #ff7f8f;
+      }
+
+      .leveling-layout {
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1.45fr)
+          minmax(280px, 0.75fr);
+
+        gap: 20px;
+      }
+
+      .level-rank-card {
+        --level-bg: url("/arclume-logo.png");
+
+        position: relative;
+
+        min-height: 430px;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(255, 255, 255, 0.12);
+
+        border-radius: 28px;
+
+        background: #0b0a11;
+
+        isolation: isolate;
+      }
+
+      .level-rank-photo {
+        position: absolute;
+
+        inset: -30px;
+
+        z-index: -3;
+
+        background:
+          linear-gradient(120deg, rgba(7, 6, 12, 0.28), rgba(7, 6, 12, 0.87)),
+          var(--level-bg) center / cover no-repeat;
+
+        filter: blur(20px) saturate(1.15);
+
+        transform: scale(1.1);
+
+        opacity: 0.85;
+      }
+
+      .level-rank-card::before {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        z-index: -2;
+
+        background:
+          radial-gradient(
+            circle at 80% 10%,
+            rgba(139, 92, 246, 0.3),
+            transparent 34%
+          ),
+          linear-gradient(
+            135deg,
+            rgba(10, 9, 16, 0.35),
+            rgba(10, 9, 16, 0.95) 68%
+          );
+      }
+
+      .level-rank-content {
+        min-height: 430px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: space-between;
+
+        padding: 30px;
+      }
+
+      .level-rank-top,
+      .level-main-number {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+      }
+
+      .level-user {
+        display: flex;
+
+        align-items: center;
+
+        gap: 15px;
+
+        min-width: 0;
+      }
+
+      .level-user-avatar {
+        width: 82px;
+
+        height: 82px;
+
+        flex: 0 0 82px;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(255, 255, 255, 0.18);
+
+        border-radius: 24px;
+
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .level-user-avatar img,
+      .levelboard-avatar img {
+        width: 100%;
+
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+      }
+
+      .level-user-copy {
+        min-width: 0;
+      }
+
+      .level-user-copy h2 {
+        margin: 5px 0 0;
+
+        overflow: hidden;
+
+        color: #fff;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: clamp(24px, 3vw, 38px);
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+      }
+
+      .level-user-copy p {
+        margin: 5px 0 0;
+
+        color: rgba(245, 242, 255, 0.58);
+      }
+
+      .level-rank-badge {
+        min-width: 110px;
+
+        padding: 14px 16px;
+
+        border: 1px solid rgba(255, 255, 255, 0.13);
+
+        border-radius: 18px;
+
+        background: rgba(8, 7, 14, 0.46);
+
+        text-align: right;
+      }
+
+      .level-rank-badge strong {
+        display: block;
+
+        margin-top: 4px;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 28px;
+      }
+
+      .level-main-number {
+        align-items: flex-end;
+
+        margin: 34px 0 28px;
+      }
+
+      .level-number {
+        margin-top: 3px;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: clamp(76px, 10vw, 132px);
+
+        font-weight: 800;
+
+        line-height: 0.86;
+
+        letter-spacing: -0.06em;
+      }
+
+      .level-total-xp {
+        text-align: right;
+      }
+
+      .level-total-xp b {
+        display: block;
+
+        margin-top: 5px;
+
+        font-size: 20px;
+      }
+
+      .level-progress-meta,
+      .level-card-footer {
+        display: flex;
+
+        justify-content: space-between;
+
+        gap: 16px;
+
+        font-size: 10px;
+      }
+
+      .level-progress-meta {
+        margin-bottom: 9px;
+      }
+
+      .level-card-footer {
+        margin-top: 10px;
+
+        color: rgba(245, 242, 255, 0.45);
+      }
+
+      .level-progress-track {
+        height: 12px;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(255, 255, 255, 0.09);
+
+        border-radius: 999px;
+
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .level-progress-fill {
+        width: 0%;
+
+        height: 100%;
+
+        border-radius: inherit;
+
+        background: linear-gradient(90deg, #7666ff, #b99bff);
+
+        transition: width 0.7s ease;
+      }
+
+      .level-stat-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+      }
+
+      .level-stat {
+        min-height: 106px;
+
+        padding: 17px;
+
+        border: 1px solid rgba(255, 255, 255, 0.12);
+
+        border-radius: 20px;
+
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .level-stat strong {
+        display: block;
+
+        margin-top: 14px;
+
+        font-family: "Syne", sans-serif;
+
+        font-size: 25px;
+      }
+
+      .level-side-note {
+        margin-top: 16px;
+
+        padding: 18px;
+
+        border: 1px solid rgba(167, 139, 250, 0.16);
+
+        border-radius: 20px;
+
+        background: rgba(124, 92, 255, 0.05);
+      }
+
+      .level-side-note p {
+        margin: 8px 0 0;
+
+        color: rgba(245, 242, 255, 0.58);
+
+        line-height: 1.6;
+      }
+
+      .levelboard {
+        margin-top: 22px;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(255, 255, 255, 0.12);
+
+        border-radius: 24px;
+      }
+
+      .levelboard-head {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 16px;
+
+        padding: 18px 20px;
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .levelboard-head h3 {
+        margin: 4px 0 0;
+
+        font-family: "Syne", sans-serif;
+      }
+
+      .levelboard-row {
+        display: grid;
+
+        grid-template-columns:
+          54px
+          minmax(0, 1fr)
+          90px
+          120px;
+
+        align-items: center;
+
+        gap: 14px;
+
+        min-height: 74px;
+
+        padding: 12px 20px;
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .levelboard-row:last-child {
+        border-bottom: 0;
+      }
+
+      .levelboard-user {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        min-width: 0;
+      }
+
+      .levelboard-avatar {
+        width: 40px;
+
+        height: 40px;
+
+        flex: 0 0 40px;
+
+        overflow: hidden;
+
+        border-radius: 12px;
+      }
+
+      .levelboard-user b,
+      .levelboard-user small {
+        display: block;
+      }
+
+      .levelboard-user small {
+        color: rgba(245, 242, 255, 0.44);
+      }
+
+      .levelboard-level,
+      .levelboard-xp {
+        text-align: right;
+      }
+
+      .level-empty {
+        padding: 30px;
+
+        color: rgba(245, 242, 255, 0.5);
+
+        text-align: center;
+      }
+
+      select {
+        color-scheme: dark !important;
+
+        background: #0d0d13 !important;
+
+        color: #fff !important;
+      }
+
+      select option {
+        background: #0d0d13 !important;
+
+        color: #fff !important;
+      }
+
+      @media (max-width: 1000px) {
+        .leveling-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .leveling-hero,
+        .level-rank-top,
+        .level-main-number {
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+
+        .level-rank-badge,
+        .level-total-xp {
+          width: 100%;
+
+          text-align: left;
+        }
+
+        .levelboard-row {
+          grid-template-columns:
+            40px
+            minmax(0, 1fr)
+            70px;
+        }
+
+        .levelboard-xp {
+          display: none;
+        }
+
+        .control-dock {
+          left: 10px !important;
+
+          right: 10px !important;
+
+          bottom: 10px !important;
+
+          width: auto !important;
+
+          max-width: none !important;
+
+          transform: none !important;
+        }
+
+        .control-dock button,
+        .control-dock a {
+          min-width: 104px !important;
+        }
+      }
+    </style>
   </head>
 
   <body>
     <div class="dash-grain" aria-hidden="true"></div>
 
-    <!-- ================================================
-       LOADING
-  ================================================= -->
+    <!-- ==================================================
+         LOADING
+    =================================================== -->
 
     <section class="state-screen" id="loadingState">
-      <div class="state-mark">A</div>
+      <div class="state-logo">
+        <img
+          data-arclume-logo
+          src="/arclume-logo.png?v=20261004-30"
+          alt="Arclume"
+        />
+
+        <span class="logo-fallback"> A </span>
+      </div>
 
       <span class="mono state-code"> ARCLUME / BOOT </span>
 
@@ -40,59 +713,74 @@
       </div>
     </section>
 
-    <!-- ================================================
-       LOGIN
-  ================================================= -->
+    <!-- ==================================================
+         LOGIN
+    =================================================== -->
 
     <section class="state-screen hidden" id="loginState">
-      <div class="state-mark">A</div>
+      <div class="state-logo">
+        <img
+          data-arclume-logo
+          src="/arclume-logo.png?v=20261004-30"
+          alt="Arclume"
+        />
+
+        <span class="logo-fallback"> A </span>
+      </div>
 
       <span class="mono state-code"> AUTH / REQUIRED </span>
 
       <h1>Connect Discord.</h1>
 
-      <p>
-        Sign in to open the Arclume control surface for servers you can manage.
-      </p>
+      <p>Sign in with Discord to access Arclume.</p>
 
-      <a class="state-action" href="/auth/discord">
-        Continue with Discord
-        <span>↗</span>
-      </a>
+      <a class="state-action" href="/auth/discord"> Continue with Discord </a>
     </section>
 
-    <!-- ================================================
-       NO SERVER
-  ================================================= -->
+    <!-- ==================================================
+         NO SERVER
+    =================================================== -->
 
     <section class="state-screen hidden" id="noServerState">
-      <div class="state-mark">A</div>
+      <div class="state-logo">
+        <img
+          data-arclume-logo
+          src="/arclume-logo.png?v=20261004-30"
+          alt="Arclume"
+        />
+
+        <span class="logo-fallback"> A </span>
+      </div>
 
       <span class="mono state-code"> SERVER / NONE </span>
 
       <h1>No manageable server.</h1>
 
-      <p>
-        Arclume only shows servers where your Discord account has Administrator
-        or Manage Server access.
-      </p>
+      <p>Arclume could not find a Discord server that you can manage.</p>
 
-      <a class="state-action" href="logout">
-        Use another Discord account
-        <span>↗</span>
-      </a>
+      <a class="state-action" href="/logout"> Use another account </a>
     </section>
 
-    <!-- ================================================
-       CONTROL APP
-  ================================================= -->
+    <!-- ==================================================
+         MAIN APP
+    =================================================== -->
 
     <div class="control-app hidden" id="controlApp">
-      <!-- HEADER -->
+      <!-- =================================================
+           HEADER
+      ================================================== -->
 
       <header class="control-header">
-        <button class="brand-button" data-page="overview">
-          <span class="brand-mark"> A </span>
+        <button class="brand-button" data-page="overview" type="button">
+          <span class="brand-logo">
+            <img
+              data-arclume-logo
+              src="/arclume-logo.png?v=20261004-30"
+              alt="Arclume"
+            />
+
+            <span class="logo-fallback"> A </span>
+          </span>
 
           <span>
             <b> ARCLUME </b>
@@ -106,36 +794,36 @@
         </div>
 
         <div class="header-actions">
-          <button class="command-button" id="commandButton">
-            <span>⌕</span>
+          <button class="command-button" id="commandButton" type="button">
+            <span> / </span>
 
             Command
 
             <kbd> Ctrl K </kbd>
           </button>
 
-          <button class="server-button" id="serverButton">
+          <button class="server-button" id="serverButton" type="button">
             <span class="server-button-icon" id="headerServerIcon"> A </span>
 
             <span class="server-button-copy">
               <small class="mono"> ACTIVE SERVER </small>
 
-              <b id="headerServerName"> Loading… </b>
+              <b id="headerServerName"> Loading... </b>
             </span>
 
-            <span> ⌄ </span>
+            <span> v </span>
           </button>
         </div>
       </header>
 
-      <!-- ================================================
-         MAIN
-    ================================================= -->
+      <!-- =================================================
+           CONTENT
+      ================================================== -->
 
       <main class="control-main">
-        <!-- ============================================
-           OVERVIEW
-      ============================================= -->
+        <!-- ===============================================
+             OVERVIEW
+        ================================================ -->
 
         <section class="dash-page active" id="page-overview">
           <div class="overview-hero">
@@ -156,8 +844,6 @@
             </div>
           </div>
 
-          <!-- SERVER IDENTITY -->
-
           <div class="server-identity-band">
             <div class="server-identity-icon" id="heroServerIcon">A</div>
 
@@ -166,7 +852,7 @@
 
               <b id="identityServerName"> Server </b>
 
-              <small class="mono" id="identityServerId"> ID — </small>
+              <small class="mono" id="identityServerId"> ID - </small>
             </div>
 
             <div class="identity-user">
@@ -175,14 +861,18 @@
               <b id="identityUserName"> Discord User </b>
             </div>
 
-            <button class="switch-server" id="overviewSwitchServer">
-              SWITCH SERVER ↗
+            <button
+              class="switch-server"
+              id="overviewSwitchServer"
+              type="button"
+            >
+              SWITCH SERVER
             </button>
           </div>
 
-          <!-- ============================================
-             SYSTEM LEDGER
-        ============================================= -->
+          <!-- =============================================
+               LIVE CONTROL LEDGER
+          ============================================== -->
 
           <section class="status-ledger">
             <div class="ledger-heading">
@@ -192,12 +882,12 @@
             </div>
 
             <div class="ledger-table">
-              <!-- PROTECTION -->
+              <!-- 01 -->
 
-              <button class="ledger-row active" data-open-page="automod">
+              <button class="ledger-row" data-open-page="automod" type="button">
                 <span class="ledger-index mono"> 01 </span>
 
-                <span class="ledger-symbol orange"> ◆ </span>
+                <span class="ledger-symbol orange"> P </span>
 
                 <span class="ledger-name">
                   <small class="mono"> SECURITY </small>
@@ -217,80 +907,71 @@
                   <b id="overviewProtectionState"> ARMED </b>
                 </span>
 
-                <span class="ledger-arrow"> ↗ </span>
+                <span class="ledger-arrow"> &gt; </span>
               </button>
 
-              <!-- WELCOME -->
+              <!-- 02 -->
 
-              <button
-                class="ledger-row"
-                onclick="window.location.href = '/welcome.html'"
-              >
+              <button class="ledger-row" data-open-page="systems" type="button">
                 <span class="ledger-index mono"> 02 </span>
 
-                <span class="ledger-symbol violet"> ✦ </span>
+                <span class="ledger-symbol violet"> S </span>
 
                 <span class="ledger-name">
-                  <small class="mono"> COMMUNITY </small>
+                  <small class="mono"> NETWORK </small>
 
-                  <b> Welcome Flow </b>
+                  <b> System Index </b>
                 </span>
 
                 <span class="ledger-value">
-                  <small class="mono"> MODULE </small>
+                  <small class="mono"> MODULES </small>
 
-                  <b> AVAILABLE </b>
+                  <b> OPEN </b>
                 </span>
 
                 <span class="ledger-state">
                   <i></i>
 
-                  <b> LIVE </b>
+                  <b> AVAILABLE </b>
                 </span>
 
-                <span class="ledger-arrow"> ↗ </span>
+                <span class="ledger-arrow"> &gt; </span>
               </button>
 
-              <!-- ROLES -->
+              <!-- 03 -->
 
-              <button
-                class="ledger-row active"
-                onclick="window.location.href = '/roles.html'"
-              >
+              <a class="ledger-row" href="/roles.html">
                 <span class="ledger-index mono"> 03 </span>
 
-                <span class="ledger-symbol lime"> ◎ </span>
+                <span class="ledger-symbol lime"> R </span>
 
                 <span class="ledger-name">
                   <small class="mono"> IDENTITY </small>
 
-                  <b> Role Management </b>
+                  <b> Role Engine </b>
                 </span>
 
                 <span class="ledger-value">
                   <small class="mono"> MODULE </small>
 
-                  <b> AVAILABLE </b>
+                  <b> OPEN </b>
                 </span>
 
                 <span class="ledger-state">
                   <i></i>
 
-                  <b> LIVE </b>
+                  <b> AVAILABLE </b>
                 </span>
 
-                <span class="ledger-arrow"> ↗ </span>
-              </button>
+                <span class="ledger-arrow"> &gt; </span>
+              </a>
 
-              <!-- SIGNAL LOG -->
+              <!-- 04 -->
 
-              <button
-                class="ledger-row active"
-                onclick="window.location.href = '/logs.html'"
-              >
+              <a class="ledger-row" href="/logs.html">
                 <span class="ledger-index mono"> 04 </span>
 
-                <span class="ledger-symbol"> ⌁ </span>
+                <span class="ledger-symbol"> L </span>
 
                 <span class="ledger-name">
                   <small class="mono"> OBSERVABILITY </small>
@@ -299,26 +980,183 @@
                 </span>
 
                 <span class="ledger-value">
-                  <small class="mono"> MODULE </small>
+                  <small class="mono"> EVENTS </small>
 
-                  <b> AVAILABLE </b>
+                  <b> LIVE </b>
                 </span>
 
                 <span class="ledger-state">
                   <i></i>
 
+                  <b> AVAILABLE </b>
+                </span>
+
+                <span class="ledger-arrow"> &gt; </span>
+              </a>
+
+              <!-- 05 -->
+
+              <a class="ledger-row" href="/web-verification-settings.html">
+                <span class="ledger-index mono"> 05 </span>
+
+                <span class="ledger-symbol violet"> V </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> ACCESS </small>
+
+                  <b> Web Verification </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> VERIFY </small>
+
                   <b> LIVE </b>
                 </span>
 
-                <span class="ledger-arrow"> ↗ </span>
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b> AVAILABLE </b>
+                </span>
+
+                <span class="ledger-arrow"> &gt; </span>
+              </a>
+
+              <!-- 06 -->
+
+              <a class="ledger-row" href="/tickets.html">
+                <span class="ledger-index mono"> 06 </span>
+
+                <span class="ledger-symbol violet"> T </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> SUPPORT </small>
+
+                  <b> Ticket Relay </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> MODULE </small>
+
+                  <b> LIVE </b>
+                </span>
+
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b> AVAILABLE </b>
+                </span>
+
+                <span class="ledger-arrow"> &gt; </span>
+              </a>
+
+              <!-- 07 -->
+
+              <button
+                class="ledger-row"
+                id="overviewLevelingButton"
+                type="button"
+              >
+                <span class="ledger-index mono"> 07 </span>
+
+                <span class="ledger-symbol violet"> X </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> ACTIVITY </small>
+
+                  <b> Leveling Network </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> XP </small>
+
+                  <b> LIVE </b>
+                </span>
+
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b> AUTO </b>
+                </span>
+
+                <span class="ledger-arrow"> &gt; </span>
               </button>
+
+              <!-- 08 -->
+
+              <button class="ledger-row" id="overviewRulesButton" type="button">
+                <span class="ledger-index mono"> 08 </span>
+
+                <span class="ledger-symbol violet"> § </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> COMMUNITY </small>
+
+                  <b> Rules Studio </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> RULES </small>
+
+                  <b> READY </b>
+                </span>
+
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b> AVAILABLE </b>
+                </span>
+
+                <span class="ledger-arrow"> &gt; </span>
+              </button>
+
+              <!-- 09 -->
+
+              <button
+                class="ledger-row"
+                id="overviewModerationButton"
+                type="button"
+              >
+                <span class="ledger-index mono"> 09 </span>
+
+                <span class="ledger-symbol orange"> M </span>
+
+                <span class="ledger-name">
+                  <small class="mono"> STAFF CONTROL </small>
+
+                  <b> Moderation Center </b>
+                </span>
+
+                <span class="ledger-value">
+                  <small class="mono"> CASES </small>
+
+                  <b> LIVE </b>
+                </span>
+
+                <span class="ledger-state">
+                  <i></i>
+
+                  <b> AVAILABLE </b>
+                </span>
+
+                <span class="ledger-arrow"> &gt; </span>
+              </button>
+
+              <!--
+                10 Anti-Raid
+                11 Quarantine
+                12 Applications
+                13 Access Lock
+
+                Their scripts add these rows automatically.
+              -->
             </div>
           </section>
         </section>
 
-        <!-- ============================================
-           PROTECTION PAGE
-      ============================================= -->
+        <!-- =================================================
+             PROTECTION
+        ================================================== -->
 
         <section class="dash-page" id="page-automod">
           <div class="page-hero compact">
@@ -332,10 +1170,7 @@
                 <span> Matrix. </span>
               </h1>
 
-              <p>
-                Rules are written as a simple operational sequence: trigger →
-                response → state.
-              </p>
+              <p>Configure rule triggers, responses and protection states.</p>
             </div>
 
             <div class="master-control">
@@ -345,15 +1180,17 @@
                 <b id="masterProtectionLabel"> ARMED </b>
               </div>
 
-              <button class="toggle on" id="masterProtectionToggle">
+              <button
+                class="toggle on"
+                id="masterProtectionToggle"
+                type="button"
+              >
                 <i></i>
               </button>
             </div>
           </div>
 
-          <div class="matrix-note mono">
-            LOCAL DRAFT — THESE SETTINGS ARE NOT YET SYNCED TO THE LIVE BOT
-          </div>
+          <div class="matrix-note mono">LOCAL DRAFT</div>
 
           <div class="matrix-toolbar">
             <div class="matrix-summary">
@@ -378,16 +1215,25 @@
 
             <div class="matrix-actions">
               <label class="matrix-search">
-                <span> ⌕ </span>
+                <span> / </span>
 
-                <input id="ruleSearch" placeholder="Search rules…" />
+                <input
+                  id="ruleSearch"
+                  type="text"
+                  placeholder="Search rules..."
+                  autocomplete="off"
+                />
               </label>
 
-              <button class="secondary-action" id="matrixDefaultsButton">
+              <button
+                class="secondary-action"
+                id="matrixDefaultsButton"
+                type="button"
+              >
                 DEFAULTS
               </button>
 
-              <button class="primary-action" id="newRuleButton">
+              <button class="primary-action" id="newRuleButton" type="button">
                 + NEW RULE
               </button>
             </div>
@@ -403,7 +1249,7 @@
 
               <span> STATE </span>
 
-              <span></span>
+              <span> ACTION </span>
             </div>
 
             <div id="rulesList"></div>
@@ -414,9 +1260,9 @@
           </div>
         </section>
 
-        <!-- ============================================
-           SYSTEM INDEX
-      ============================================= -->
+        <!-- =================================================
+             SYSTEMS
+        ================================================== -->
 
         <section class="dash-page" id="page-systems">
           <div class="page-hero compact">
@@ -430,20 +1276,15 @@
                 <span> Index. </span>
               </h1>
 
-              <p>
-                Arclume modules are arranged as an operational sequence, not a
-                grid of cards.
-              </p>
+              <p>Arclume systems connected under one server context.</p>
             </div>
           </div>
 
           <div class="system-index">
-            <!-- PROTECTION -->
-
             <article class="system-index-row live">
               <span class="mono"> 01 </span>
 
-              <span class="system-index-symbol orange"> ◆ </span>
+              <span class="system-index-symbol orange"> P </span>
 
               <div>
                 <small class="mono"> SECURITY </small>
@@ -455,164 +1296,294 @@
 
               <b class="mono"> AVAILABLE </b>
 
-              <button data-open-page="automod">CONFIGURE ↗</button>
+              <button data-open-page="automod" type="button">OPEN</button>
             </article>
 
-            <!-- WELCOME -->
+            <article class="system-index-row live">
+              <span class="mono"> 07 </span>
+
+              <span class="system-index-symbol violet"> X </span>
+
+              <div>
+                <small class="mono"> ACTIVITY </small>
+
+                <h3>Leveling Network</h3>
+
+                <p>XP, ranks and server leaderboard.</p>
+              </div>
+
+              <b class="mono"> AVAILABLE </b>
+
+              <button id="systemLevelingButton" type="button">OPEN</button>
+            </article>
 
             <article class="system-index-row live">
-              <span class="mono"> 02 </span>
+              <span class="mono"> 08 </span>
 
-              <span class="system-index-symbol violet"> ✦ </span>
+              <span class="system-index-symbol violet"> § </span>
 
               <div>
                 <small class="mono"> COMMUNITY </small>
 
-                <h3>Welcome Flow</h3>
+                <h3>Rules Studio</h3>
 
-                <p>Join and goodbye experiences.</p>
+                <p>Server rules and publishing settings.</p>
               </div>
 
               <b class="mono"> AVAILABLE </b>
 
-              <button onclick="window.location.href = '/welcome.html'">
-                CONFIGURE ↗
-              </button>
+              <button id="systemRulesButton" type="button">OPEN</button>
             </article>
-
-            <!-- ROLES -->
 
             <article class="system-index-row live">
-              <span class="mono"> 03 </span>
+              <span class="mono"> 09 </span>
 
-              <span class="system-index-symbol lime"> ◎ </span>
+              <span class="system-index-symbol orange"> M </span>
 
               <div>
-                <small class="mono"> IDENTITY </small>
+                <small class="mono"> STAFF </small>
 
-                <h3>Role Management</h3>
+                <h3>Moderation Center</h3>
 
-                <p>Manual, automatic and self-service member roles.</p>
+                <p>Staff controls and moderation settings.</p>
               </div>
 
               <b class="mono"> AVAILABLE </b>
 
-              <button onclick="window.location.href = '/roles.html'">
-                CONFIGURE ↗
-              </button>
+              <button id="systemModerationButton" type="button">OPEN</button>
             </article>
 
-            <!-- SIGNAL LOG -->
-
-            <article class="system-index-row live">
-              <span class="mono"> 04 </span>
-
-              <span class="system-index-symbol"> ⌁ </span>
-
-              <div>
-                <small class="mono"> OBSERVABILITY </small>
-
-                <h3>Signal Log</h3>
-
-                <p>Member, role, message and moderation history.</p>
-              </div>
-
-              <b class="mono"> AVAILABLE </b>
-
-              <button onclick="window.location.href = '/logs.html'">
-                CONFIGURE ↗
-              </button>
-            </article>
-
-            <!-- TICKETS -->
-
-            <article class="system-index-row">
-              <span class="mono"> 05 </span>
-
-              <span class="system-index-symbol orange"> ◌ </span>
-
-              <div>
-                <small class="mono"> SUPPORT </small>
-
-                <h3>Ticket Relay</h3>
-
-                <p>Private support channels and routing.</p>
-              </div>
-
-              <b class="mono"> STAGED </b>
-
-              <button disabled>SOON</button>
-            </article>
-
-            <!-- COMMANDS -->
-
-            <article class="system-index-row">
-              <span class="mono"> 06 </span>
-
-              <span class="system-index-symbol violet"> ⌘ </span>
-
-              <div>
-                <small class="mono"> AUTOMATION </small>
-
-                <h3>Command Engine</h3>
-
-                <p>Command permissions and utility actions.</p>
-              </div>
-
-              <b class="mono"> STAGED </b>
-
-              <button disabled>SOON</button>
-            </article>
+            <!--
+              Anti-Raid, Quarantine,
+              Applications and Access Lock
+              add their own system cards.
+            -->
           </div>
+        </section>
+
+        <!-- =================================================
+             LEVELING
+        ================================================== -->
+
+        <section class="dash-page" id="page-leveling">
+          <div class="page-hero compact leveling-hero">
+            <div>
+              <span class="mono eyebrow"> 07 / ACTIVITY NETWORK </span>
+
+              <h1>
+                Leveling
+                <br />
+
+                <span> Network. </span>
+              </h1>
+
+              <p>Live XP, personal progress and the server leaderboard.</p>
+            </div>
+
+            <div class="leveling-live loading" id="levelingLiveState">
+              <i></i>
+
+              <span class="mono" id="levelingLiveText"> WAITING FOR DATA </span>
+            </div>
+          </div>
+
+          <div class="leveling-layout">
+            <article class="level-rank-card" id="levelRankCard">
+              <div class="level-rank-photo" aria-hidden="true"></div>
+
+              <div class="level-rank-content">
+                <div class="level-rank-top">
+                  <div class="level-user">
+                    <div class="level-user-avatar">
+                      <img
+                        id="levelUserAvatar"
+                        data-arclume-logo
+                        src="/arclume-logo.png?v=20261004-30"
+                        alt="Discord user"
+                      />
+                    </div>
+
+                    <div class="level-user-copy">
+                      <small class="mono"> SIGNED-IN MEMBER </small>
+
+                      <h2 id="levelUserName">Loading...</h2>
+
+                      <p id="levelUserHandle">@discord</p>
+                    </div>
+                  </div>
+
+                  <div class="level-rank-badge">
+                    <small class="mono"> SERVER RANK </small>
+
+                    <strong id="levelUserRank"> — </strong>
+                  </div>
+                </div>
+
+                <div class="level-main-number">
+                  <div>
+                    <span class="mono"> CURRENT LEVEL </span>
+
+                    <div class="level-number" id="levelUserLevel">0</div>
+                  </div>
+
+                  <div class="level-total-xp">
+                    <small class="mono"> TOTAL EXPERIENCE </small>
+
+                    <b id="levelUserTotalXP"> 0 XP </b>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="level-progress-meta mono">
+                    <span id="levelProgressLabel"> 0 / 100 XP </span>
+
+                    <span id="levelProgressPercent"> 0% </span>
+                  </div>
+
+                  <div class="level-progress-track" id="levelProgressTrack">
+                    <div
+                      class="level-progress-fill"
+                      id="levelProgressFill"
+                    ></div>
+                  </div>
+
+                  <div class="level-card-footer mono">
+                    <span id="levelNextLevel"> NEXT / LEVEL 1 </span>
+
+                    <span id="levelRemainingXP"> 100 XP REMAINING </span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <aside>
+              <div class="level-stat-grid">
+                <div class="level-stat">
+                  <small class="mono"> RANKED MEMBERS </small>
+
+                  <strong id="levelStatMembers"> 0 </strong>
+                </div>
+
+                <div class="level-stat">
+                  <small class="mono"> HIGHEST LEVEL </small>
+
+                  <strong id="levelStatHighest"> 0 </strong>
+                </div>
+
+                <div class="level-stat">
+                  <small class="mono"> SERVER XP </small>
+
+                  <strong id="levelStatXP"> 0 </strong>
+                </div>
+
+                <div class="level-stat">
+                  <small class="mono"> XP MESSAGES </small>
+
+                  <strong id="levelStatMessages"> 0 </strong>
+                </div>
+              </div>
+
+              <div class="level-side-note">
+                <span class="mono"> LIVE SYNC </span>
+
+                <p>XP and leaderboard data refresh automatically.</p>
+              </div>
+            </aside>
+          </div>
+
+          <section class="levelboard">
+            <header class="levelboard-head">
+              <div>
+                <span class="mono"> SERVER / TOP 10 </span>
+
+                <h3>XP Leaderboard</h3>
+              </div>
+
+              <small class="mono" id="levelUpdatedAt"> NOT SYNCED </small>
+            </header>
+
+            <div id="levelLeaderboard">
+              <div class="level-empty">Open Leveling to load leaderboard.</div>
+            </div>
+          </section>
         </section>
       </main>
 
-      <!-- ================================================
-         BOTTOM NAVIGATION
-    ================================================= -->
+      <!-- =================================================
+           BOTTOM BAR
+      ================================================== -->
 
-      <nav class="control-dock" aria-label="Dashboard navigation">
-        <button class="active" data-page="overview">
+      <nav class="control-dock">
+        <button class="active" data-page="overview" type="button">
           <span> 00 </span>
 
           <b> Overview </b>
         </button>
 
-        <button data-page="automod">
+        <button data-page="automod" type="button">
           <span> 01 </span>
 
           <b> Protection </b>
         </button>
 
-        <button data-page="systems">
+        <button data-page="systems" type="button">
           <span> 02 </span>
 
           <b> Systems </b>
         </button>
 
-        <a href="roles.html">
+        <a href="/roles.html">
           <span> 03 </span>
 
           <b> Roles </b>
         </a>
 
-        <a href="logs.html">
+        <a href="/logs.html">
           <span> 04 </span>
 
           <b> Logs </b>
         </a>
 
-        <a href="logout">
-          <span> ↗ </span>
+        <a href="/web-verification-settings.html">
+          <span> 05 </span>
+
+          <b> Verification </b>
+        </a>
+
+        <a href="/tickets.html">
+          <span> 06 </span>
+
+          <b> Tickets </b>
+        </a>
+
+        <button id="levelingNavButton" type="button">
+          <span> 07 </span>
+
+          <b> Leveling </b>
+        </button>
+
+        <!--
+          08 Rules
+          09 Moderation
+          10 Anti-Raid
+          11 Quarantine
+          12 Applications
+          13 Access Lock
+
+          These are added by their scripts.
+        -->
+
+        <a href="/logout">
+          <span> / </span>
 
           <b> Logout </b>
         </a>
       </nav>
     </div>
 
-    <!-- ================================================
-       SERVER OVERLAY
-  ================================================= -->
+    <!-- ==================================================
+         SERVER VAULT
+    =================================================== -->
 
     <div class="overlay hidden" id="serverOverlay">
       <section class="server-vault">
@@ -620,30 +1591,33 @@
           <div>
             <span class="mono eyebrow"> SERVER / VAULT </span>
 
-            <h2>Choose context.</h2>
+            <h2>Choose server.</h2>
 
-            <p>Only servers you can manage are shown.</p>
+            <p>Change your active Discord server.</p>
           </div>
 
-          <button class="close-button" data-close="serverOverlay">×</button>
+          <button class="close-button" data-close="serverOverlay" type="button">
+            X
+          </button>
         </header>
 
-        <div class="server-list" id="serverList"></div>
+        <div id="serverList"></div>
       </section>
     </div>
 
-    <!-- ================================================
-       COMMAND PALETTE
-  ================================================= -->
+    <!-- ==================================================
+         COMMAND
+    =================================================== -->
 
     <div class="overlay command-overlay hidden" id="commandOverlay">
       <section class="command-palette">
         <label>
-          <span> ⌕ </span>
+          <span> / </span>
 
           <input
             id="commandInput"
-            placeholder="Type a command…"
+            type="text"
+            placeholder="Search command..."
             autocomplete="off"
           />
 
@@ -652,15 +1626,13 @@
 
         <div id="commandResults"></div>
 
-        <footer class="mono">
-          ↑ ↓ NAVIGATE &nbsp;&nbsp; ENTER SELECT &nbsp;&nbsp; CTRL K OPEN
-        </footer>
+        <footer class="mono">ARCLUME COMMAND SURFACE</footer>
       </section>
     </div>
 
-    <!-- ================================================
-       RULE DRAWER
-  ================================================= -->
+    <!-- ==================================================
+         PROTECTION EDITOR
+    =================================================== -->
 
     <div class="drawer-backdrop hidden" id="ruleDrawerBackdrop">
       <aside class="rule-drawer">
@@ -671,12 +1643,14 @@
             <h2 id="ruleDrawerTitle">New rule</h2>
           </div>
 
-          <button class="close-button" id="closeRuleDrawer">×</button>
+          <button class="close-button" id="closeRuleDrawer" type="button">
+            X
+          </button>
         </header>
 
         <div class="drawer-body">
           <section class="drawer-step">
-            <span class="step-no mono"> 00 </span>
+            <span class="step-no mono"> 01 </span>
 
             <div>
               <b class="mono step-label"> IDENTITY </b>
@@ -684,7 +1658,7 @@
               <label>
                 <small class="mono"> RULE NAME </small>
 
-                <input id="ruleName" />
+                <input id="ruleName" type="text" />
               </label>
 
               <label>
@@ -696,7 +1670,7 @@
           </section>
 
           <section class="drawer-step">
-            <span class="step-no mono"> 01 </span>
+            <span class="step-no mono"> 02 </span>
 
             <div>
               <b class="mono step-label"> TRIGGER </b>
@@ -729,7 +1703,7 @@
                 </label>
 
                 <label>
-                  <small class="mono"> WINDOW / SEC </small>
+                  <small class="mono"> WINDOW / SECONDS </small>
 
                   <input id="ruleWindow" type="number" min="1" />
                 </label>
@@ -738,7 +1712,7 @@
           </section>
 
           <section class="drawer-step">
-            <span class="step-no mono"> 02 </span>
+            <span class="step-no mono"> 03 </span>
 
             <div>
               <b class="mono step-label"> RESPONSE </b>
@@ -759,16 +1733,20 @@
         </div>
 
         <footer>
-          <button class="secondary-action" id="cancelRuleDrawer">CANCEL</button>
+          <button class="secondary-action" id="cancelRuleDrawer" type="button">
+            CANCEL
+          </button>
 
-          <button class="primary-action" id="saveRuleButton">SAVE RULE</button>
+          <button class="primary-action" id="saveRuleButton" type="button">
+            SAVE RULE
+          </button>
         </footer>
       </aside>
     </div>
 
-    <!-- ================================================
-       DEFAULT SETTINGS DRAWER
-  ================================================= -->
+    <!-- ==================================================
+         DEFAULTS
+    =================================================== -->
 
     <div class="drawer-backdrop hidden" id="defaultsDrawerBackdrop">
       <aside class="rule-drawer compact">
@@ -779,43 +1757,41 @@
             <h2>Default response</h2>
           </div>
 
-          <button class="close-button" id="closeDefaultsDrawer">×</button>
+          <button class="close-button" id="closeDefaultsDrawer" type="button">
+            X
+          </button>
         </header>
 
         <div class="drawer-body">
-          <section class="drawer-step">
-            <span class="step-no mono"> A </span>
+          <label>
+            <small class="mono"> DEFAULT ACTION </small>
 
-            <div>
-              <b class="mono step-label"> RESPONSE </b>
+            <select id="defaultAction">
+              <option>Delete</option>
 
-              <label>
-                <small class="mono"> DEFAULT ACTION </small>
+              <option>Delete + Warn</option>
 
-                <select id="defaultAction">
-                  <option>Delete</option>
+              <option>Delete + Timeout</option>
+            </select>
+          </label>
 
-                  <option>Delete + Warn</option>
+          <label>
+            <small class="mono"> TIMEOUT MINUTES </small>
 
-                  <option>Delete + Timeout</option>
-                </select>
-              </label>
-
-              <label>
-                <small class="mono"> TIMEOUT MINUTES </small>
-
-                <input id="defaultTimeout" type="number" min="1" />
-              </label>
-            </div>
-          </section>
+            <input id="defaultTimeout" type="number" min="1" />
+          </label>
         </div>
 
         <footer>
-          <button class="secondary-action" id="cancelDefaultsDrawer">
+          <button
+            class="secondary-action"
+            id="cancelDefaultsDrawer"
+            type="button"
+          >
             CANCEL
           </button>
 
-          <button class="primary-action" id="saveDefaultsButton">
+          <button class="primary-action" id="saveDefaultsButton" type="button">
             SAVE DEFAULTS
           </button>
         </footer>
@@ -824,6 +1800,780 @@
 
     <div class="toast" id="toast"></div>
 
-    <script src="dashboard.js"></script>
+    <!-- ==================================================
+         DASHBOARD CORE
+    =================================================== -->
+
+    <script src="/dashboard.js?v=20261010-1"></script>
+
+    <!-- ==================================================
+         RULES / 08
+    =================================================== -->
+
+    <script src="/rules-settings.js?v=20261010-1"></script>
+
+    <!-- ==================================================
+         MODERATION / 09
+    =================================================== -->
+
+    <script src="/moderation-settings.js?v=20261010-1"></script>
+
+    <!-- ==================================================
+         ANTI RAID / 10
+    =================================================== -->
+
+    <script src="/anti-raid-settings.js?v=20261010-1"></script>
+
+    <!-- ==================================================
+         QUARANTINE / 11
+    =================================================== -->
+
+    <script src="/quarantine-settings.js?v=20261010-1"></script>
+
+    <!-- ==================================================
+         APPLICATIONS / 12
+
+         WEBSITE:
+         - Form editor
+         - Questions
+         - Review channel
+         - Log channel
+         - Accepted role
+         - Review submissions
+         - Accept / deny / under review
+
+         DISCORD:
+         Existing applications-discord.js continues to
+         post submissions to the configured Review Channel.
+    =================================================== -->
+
+    <script src="/applications-settings.js?v=20261010-2"></script>
+
+    <!-- ==================================================
+         ACCESS LOCK / 13
+    =================================================== -->
+
+    <script src="/access-lock.js?v=20261010-3"></script>
+
+    <!-- ==================================================
+         SAFE MODULE CONNECTOR
+    =================================================== -->
+
+    <script>
+      (() => {
+        "use strict";
+
+        /* ================================================
+           LOGO FALLBACK
+        ================================================= */
+
+        const logoCandidates = [
+          "/arclume-logo.png?v=20261004-30",
+
+          "/arclume-logo.webp?v=20261004-30",
+
+          "/arclume-logo.jpg?v=20261004-30",
+
+          "/arclume-logo.jpeg?v=20261004-30",
+
+          "/arclume-logo.PNG?v=20261004-30",
+        ];
+
+        document.querySelectorAll("[data-arclume-logo]").forEach((image) => {
+          let index = 0;
+
+          image.addEventListener(
+            "error",
+
+            function tryNextLogo() {
+              index++;
+
+              if (index < logoCandidates.length) {
+                image.src = logoCandidates[index];
+
+                return;
+              }
+
+              image.style.display = "none";
+
+              const fallback =
+                image.parentElement?.querySelector(".logo-fallback");
+
+              if (fallback) {
+                fallback.style.display = "block";
+              }
+            },
+          );
+        });
+
+        /* ================================================
+           FIND MODULE
+        ================================================= */
+
+        function findDockItem(name) {
+          const wanted = String(name || "")
+            .trim()
+            .toLowerCase();
+
+          return Array.from(
+            document.querySelectorAll(".control-dock button, .control-dock a"),
+          ).find(
+            (item) =>
+              item.querySelector("b")?.textContent?.trim().toLowerCase() ===
+              wanted,
+          );
+        }
+
+        function setDockNumber(name, number) {
+          const item = findDockItem(name);
+
+          if (!item) {
+            return;
+          }
+
+          const span = item.querySelector("span");
+
+          if (span) {
+            span.textContent = number;
+          }
+        }
+
+        /* ================================================
+           MODULE CARD NUMBER
+        ================================================= */
+
+        function setOverviewNumber(id, number) {
+          const item = document.getElementById(id);
+
+          const label = item?.querySelector(".ledger-index");
+
+          if (label) {
+            label.textContent = number;
+          }
+        }
+
+        function setSystemNumber(buttonID, number) {
+          const button = document.getElementById(buttonID);
+
+          const row = button?.closest(".system-index-row");
+
+          const numberElement = row?.querySelector(":scope > .mono");
+
+          if (numberElement) {
+            numberElement.textContent = number;
+          }
+        }
+
+        /* ================================================
+           MODULE PAGE NUMBER
+        ================================================= */
+
+        function setPageEyebrow(pageID, value) {
+          const page = document.getElementById(pageID);
+
+          const eyebrow = page?.querySelector(".eyebrow");
+
+          if (eyebrow) {
+            eyebrow.textContent = value;
+          }
+        }
+
+        /* ================================================
+           MODULE ORDER
+        ================================================= */
+
+        function normalizeDockOrder() {
+          const dock = document.querySelector(".control-dock");
+
+          if (!dock) {
+            return;
+          }
+
+          const antiRaid = findDockItem("Anti-Raid");
+
+          const quarantine = findDockItem("Quarantine");
+
+          const applications = findDockItem("Applications");
+
+          const accessLock = findDockItem("Access Lock");
+
+          const logout = findDockItem("Logout");
+
+          /*
+            Put dynamic modules immediately
+            before Logout in exact order.
+          */
+
+          if (logout) {
+            if (antiRaid) {
+              dock.insertBefore(antiRaid, logout);
+            }
+
+            if (quarantine) {
+              dock.insertBefore(quarantine, logout);
+            }
+
+            if (applications) {
+              dock.insertBefore(applications, logout);
+            }
+
+            if (accessLock) {
+              dock.insertBefore(accessLock, logout);
+            }
+          }
+        }
+
+        /* ================================================
+           FIX ALL NUMBERS
+        ================================================= */
+
+        function fixNumbers() {
+          setDockNumber("Leveling", "07");
+
+          setDockNumber("Rules", "08");
+
+          setDockNumber("Moderation", "09");
+
+          setDockNumber("Anti-Raid", "10");
+
+          setDockNumber("Quarantine", "11");
+
+          setDockNumber("Applications", "12");
+
+          setDockNumber("Access Lock", "13");
+
+          /*
+            Overview cards.
+          */
+
+          setOverviewNumber("overviewApplicationsButton", "12");
+
+          setOverviewNumber("overviewAccessLockButton", "13");
+
+          /*
+            System cards.
+          */
+
+          setSystemNumber("systemApplicationsButton", "12");
+
+          setSystemNumber("systemAccessLockButton", "13");
+
+          /*
+            Page headings.
+          */
+
+          setPageEyebrow("page-applications", "12 / APPLICATIONS CENTER");
+
+          setPageEyebrow("page-access-lock", "13 / ACCESS CONTROL");
+
+          normalizeDockOrder();
+        }
+
+        /*
+          Dynamic scripts build their UI after
+          this dashboard has started.
+
+          Safe retries make sure their final
+          module numbers/order are correct.
+        */
+
+        fixNumbers();
+
+        setTimeout(fixNumbers, 150);
+
+        setTimeout(fixNumbers, 500);
+
+        setTimeout(fixNumbers, 1000);
+
+        setTimeout(fixNumbers, 2000);
+
+        setTimeout(fixNumbers, 3500);
+
+        /* ================================================
+           CORRECT PAGE CODE AFTER DYNAMIC MODULE CLICK
+        ================================================= */
+
+        document.querySelector(".control-dock")?.addEventListener(
+          "click",
+
+          (event) => {
+            const item = event.target.closest("button, a");
+
+            if (!item) {
+              return;
+            }
+
+            const name = item
+              .querySelector("b")
+              ?.textContent?.trim()
+              .toLowerCase();
+
+            if (name === "applications") {
+              setTimeout(
+                () => {
+                  const pageCode = document.getElementById("pageCode");
+
+                  if (pageCode) {
+                    pageCode.textContent = "12 / APPLICATIONS";
+                  }
+                },
+
+                0,
+              );
+            }
+
+            if (name === "access lock") {
+              setTimeout(
+                () => {
+                  const pageCode = document.getElementById("pageCode");
+
+                  if (pageCode) {
+                    pageCode.textContent = "13 / ACCESS LOCK";
+                  }
+                },
+
+                0,
+              );
+            }
+          },
+        );
+
+        /* ================================================
+           LEVELING
+        ================================================= */
+
+        const levelingPage = document.getElementById("page-leveling");
+
+        function openLeveling() {
+          if (!levelingPage) {
+            return;
+          }
+
+          document.querySelectorAll(".dash-page").forEach((page) => {
+            page.classList.remove("active");
+          });
+
+          levelingPage.classList.add("active");
+
+          document
+            .querySelectorAll(".control-dock button")
+            .forEach((button) => {
+              button.classList.remove("active");
+            });
+
+          document.getElementById("levelingNavButton")?.classList.add("active");
+
+          const pageCode = document.getElementById("pageCode");
+
+          if (pageCode) {
+            pageCode.textContent = "07 / LEVELING";
+          }
+
+          window.scrollTo({
+            top: 0,
+
+            behavior: "smooth",
+          });
+
+          loadLeveling();
+        }
+
+        document
+          .getElementById("levelingNavButton")
+          ?.addEventListener("click", openLeveling);
+
+        document
+          .getElementById("overviewLevelingButton")
+          ?.addEventListener("click", openLeveling);
+
+        document
+          .getElementById("systemLevelingButton")
+          ?.addEventListener("click", openLeveling);
+
+        let levelLoading = false;
+
+        async function loadLeveling() {
+          if (levelLoading) {
+            return;
+          }
+
+          let guildID = window.currentGuild?.id;
+
+          if (!guildID) {
+            const text =
+              document.getElementById("identityServerId")?.textContent || "";
+
+            guildID = text.match(/\d{5,32}/)?.[0];
+          }
+
+          const state = document.getElementById("levelingLiveState");
+
+          const stateText = document.getElementById("levelingLiveText");
+
+          if (!guildID) {
+            state?.classList.add("error");
+
+            if (stateText) {
+              stateText.textContent = "NO ACTIVE SERVER";
+            }
+
+            return;
+          }
+
+          levelLoading = true;
+
+          state?.classList.remove("error");
+
+          state?.classList.add("loading");
+
+          if (stateText) {
+            stateText.textContent = "SYNCING XP";
+          }
+
+          try {
+            const response = await fetch(
+              `/api/guild/${encodeURIComponent(guildID)}/leveling`,
+
+              {
+                credentials: "same-origin",
+              },
+            );
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+              throw new Error(data.error || `HTTP ${response.status}`);
+            }
+
+            renderLevelData(data);
+
+            state?.classList.remove("loading", "error");
+
+            if (stateText) {
+              stateText.textContent = "LIVE";
+            }
+          } catch (error) {
+            console.error("Leveling load error:", error);
+
+            state?.classList.remove("loading");
+
+            state?.classList.add("error");
+
+            if (stateText) {
+              stateText.textContent = "SYNC ERROR";
+            }
+          } finally {
+            levelLoading = false;
+          }
+        }
+
+        function setText(id, value) {
+          const element = document.getElementById(id);
+
+          if (element) {
+            element.textContent = value;
+          }
+        }
+
+        function formatNumber(value) {
+          return Number(value || 0).toLocaleString();
+        }
+
+        function renderLevelData(data) {
+          const current = data.currentUser || {};
+
+          const user = current.user || {};
+
+          const progress = current.progress || {};
+
+          const level = Number(current.level ?? progress.level ?? 0);
+
+          const totalXP = Number(current.xp ?? progress.totalXP ?? 0);
+
+          const done = Number(progress.progress || 0);
+
+          const needed = Math.max(
+            1,
+
+            Number(progress.needed || 100),
+          );
+
+          const percentage = Math.min(
+            100,
+
+            Math.max(
+              0,
+
+              Number(progress.percent ?? Math.floor((done / needed) * 100)),
+            ),
+          );
+
+          const remaining = Math.max(
+            0,
+
+            Number(progress.remaining ?? needed - done),
+          );
+
+          const avatar =
+            user.avatar ||
+            data.guild?.icon ||
+            "/arclume-logo.png?v=20261004-30";
+
+          const avatarElement = document.getElementById("levelUserAvatar");
+
+          if (avatarElement) {
+            avatarElement.src = avatar;
+          }
+
+          setText(
+            "levelUserName",
+
+            user.displayName || user.username || "Discord User",
+          );
+
+          setText(
+            "levelUserHandle",
+
+            `@${user.username || "discord"}`,
+          );
+
+          setText(
+            "levelUserRank",
+
+            current.position ? `#${current.position}` : "UNRANKED",
+          );
+
+          setText("levelUserLevel", level);
+
+          setText(
+            "levelUserTotalXP",
+
+            `${formatNumber(totalXP)} XP`,
+          );
+
+          setText(
+            "levelProgressLabel",
+
+            `${formatNumber(done)} / ${formatNumber(needed)} XP`,
+          );
+
+          setText(
+            "levelProgressPercent",
+
+            `${percentage}%`,
+          );
+
+          const fill = document.getElementById("levelProgressFill");
+
+          if (fill) {
+            fill.style.width = `${percentage}%`;
+          }
+
+          setText(
+            "levelNextLevel",
+
+            `NEXT / LEVEL ${progress.nextLevel ?? level + 1}`,
+          );
+
+          setText(
+            "levelRemainingXP",
+
+            `${formatNumber(remaining)} XP REMAINING`,
+          );
+
+          const stats = data.stats || {};
+
+          setText(
+            "levelStatMembers",
+
+            formatNumber(stats.rankedMembers),
+          );
+
+          setText(
+            "levelStatHighest",
+
+            formatNumber(stats.highestLevel),
+          );
+
+          setText(
+            "levelStatXP",
+
+            formatNumber(stats.totalXP),
+          );
+
+          setText(
+            "levelStatMessages",
+
+            formatNumber(stats.xpMessages),
+          );
+
+          setText(
+            "levelUpdatedAt",
+
+            `SYNCED ${new Date().toLocaleTimeString()}`,
+          );
+
+          const card = document.getElementById("levelRankCard");
+
+          if (card) {
+            card.style.setProperty(
+              "--level-bg",
+
+              `url("${avatar}")`,
+            );
+          }
+
+          renderLeaderboard(data.leaderboard || []);
+        }
+
+        function renderLeaderboard(rows) {
+          const container = document.getElementById("levelLeaderboard");
+
+          if (!container) {
+            return;
+          }
+
+          if (!Array.isArray(rows) || rows.length === 0) {
+            container.innerHTML = `
+              <div class="level-empty">
+                Nobody has earned XP yet.
+              </div>
+            `;
+
+            return;
+          }
+
+          container.innerHTML = rows
+            .slice(0, 10)
+            .map((entry, index) => {
+              const user = entry.user || {};
+
+              const avatar = user.avatar || "/arclume-logo.png?v=20261004-30";
+
+              const name = user.displayName || user.username || "Unknown User";
+
+              return `
+                    <div class="levelboard-row">
+
+                      <div>
+                        #${entry.position || index + 1}
+                      </div>
+
+                      <div class="levelboard-user">
+
+                        <div class="levelboard-avatar">
+
+                          <img
+                            src="${avatar}"
+                            alt=""
+                          />
+
+                        </div>
+
+                        <div>
+
+                          <b>
+                            ${name}
+                          </b>
+
+                          <small>
+                            @${user.username || "unknown"}
+                          </small>
+
+                        </div>
+
+                      </div>
+
+                      <div class="levelboard-level">
+
+                        <small class="mono">
+                          LEVEL
+                        </small>
+
+                        <b>
+                          ${formatNumber(entry.level)}
+                        </b>
+
+                      </div>
+
+                      <div class="levelboard-xp">
+
+                        <small class="mono">
+                          EXPERIENCE
+                        </small>
+
+                        <b>
+                          ${formatNumber(entry.xp)} XP
+                        </b>
+
+                      </div>
+
+                    </div>
+                  `;
+            })
+            .join("");
+        }
+
+        /* ================================================
+           RULES + MODERATION
+        ================================================= */
+
+        function openModule(name) {
+          const item = findDockItem(name);
+
+          if (!item) {
+            if (typeof window.toast === "function") {
+              window.toast(`${name.toUpperCase()} IS STILL LOADING`);
+            }
+
+            console.warn(`${name} navigation not found`);
+
+            return;
+          }
+
+          item.click();
+        }
+
+        document.getElementById("overviewRulesButton")?.addEventListener(
+          "click",
+
+          () => {
+            openModule("Rules");
+          },
+        );
+
+        document.getElementById("systemRulesButton")?.addEventListener(
+          "click",
+
+          () => {
+            openModule("Rules");
+          },
+        );
+
+        document.getElementById("overviewModerationButton")?.addEventListener(
+          "click",
+
+          () => {
+            openModule("Moderation");
+          },
+        );
+
+        document.getElementById("systemModerationButton")?.addEventListener(
+          "click",
+
+          () => {
+            openModule("Moderation");
+          },
+        );
+
+        console.log("✅ Arclume dashboard modules connected safely");
+
+        console.log("📋 Applications = Module 12");
+
+        console.log("🔒 Access Lock = Module 13");
+
+        console.log("↔️ Dashboard dock horizontal scrolling enabled");
+      })();
+    </script>
   </body>
 </html>
